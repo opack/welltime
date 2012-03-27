@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:timepickerex="http://schemas.android.com/apk/res/fr.redmoon.tictac"
+	android:title="@string/pref_title">
+
+	<!-- Limites -->
+	<!-- Nécessaire suite au bug Android http://code.google.com/p/android/issues/detail?id=4611 -->
+	<PreferenceScreen
+		android:title="@string/pref_limites"
+		android:summary="@string/pref_limites_summary">
+		<intent
+		    android:action="android.intent.action.VIEW"
+	        android:targetPackage="fr.redmoon.tictac"
+	        android:targetClass="fr.redmoon.tictac.PreferencesActivity"
+	        android:data="preferences://limits" />
+	</PreferenceScreen>
+	
+	<!-- Initialisation de l'horaire variable -->
+	<PreferenceScreen
+		android:title="@string/pref_initflex"
+		android:summary="@string/pref_initflex_summary">
+		<intent
+		    android:action="android.intent.action.VIEW"
+	        android:targetPackage="fr.redmoon.tictac"
+	        android:targetClass="fr.redmoon.tictac.PreferencesActivity"
+	        android:data="preferences://flex" />
+	</PreferenceScreen>
+	
+	<!-- Types de jour -->
+	<PreferenceScreen
+		android:title="@string/pref_daytypes"
+		android:summary="@string/pref_daytypes_summary">
+	<intent
+		    android:action="android.intent.action.VIEW"
+	        android:targetPackage="fr.redmoon.tictac"
+	        android:targetClass="fr.redmoon.tictac.PreferencesActivity"
+	        android:data="preferences://days" />
+	</PreferenceScreen>
+		
+	<!-- Décalage entre l'heure du téléphone et l'heure de la pointeuse -->
+	<SignedTimePickerPreference
+		android:title="@string/pref_clock_shift"
+		android:summary="@string/pref_clock_shift_summary"
+		android:key="clock_shift"
+		android:defaultValue="00:00" />
+	
+	<!-- Affichage de la version de l'application -->
+	<Preference
+		android:summary="@string/app_version"
+		android:title="Version"
+		android:selectable="false"
+		android:enabled="false" />
+</PreferenceScreen>

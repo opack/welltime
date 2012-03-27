@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="fr.redmoon.tictac"
+    android:versionCode="5"
+    android:versionName="@string/app_version">
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    
+    <uses-sdk
+        android:minSdkVersion="7" />
+      
+    <application
+    	android:icon="@drawable/icon"
+    	android:label="@string/app_name"
+    	android:theme="@style/TicTacLightTheme.NoShadow" >
+    	
+        <activity
+        	android:name="MainActivity"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        	
+        <activity
+        	android:name=".DayActivity" />
+        	
+        <activity
+        	android:name=".WeekActivity" />
+        
+        <activity
+        	android:name=".ManageActivity" />
+        		
+        <activity
+        	android:name=".PreferencesActivity" />
+
+        <!-- activity
+        	android:name=".WidgetConfigurationActivity"
+        	android:label="@string/app_name">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" /> 
+				<category android:name="android.intent.category.LAUNCHER" /> 
+			</intent-filter>
+			<intent-filter>
+				<action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" /> 
+			</intent-filter>
+		</activity -->
+		
+		<service android:name=".bus.services.AddCheckingService" />
+
+	    <receiver android:name=".gui.widgets.WidgetProvider">
+			<intent-filter>
+				<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+			</intent-filter>
+			<meta-data
+				android:name="android.appwidget.provider"
+				android:resource="@xml/widget_info" />
+		</receiver>
+		
+	 </application>
+</manifest> 

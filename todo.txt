@@ -1,0 +1,37 @@
+Fait :
+	- Modification des couleurs par défaut lors du premier lancement
+	- Modification du thème de l'application (y compris les préférences) et des onglets
+
+Vue Manage
+	Opérations générales
+		Pointer une période
+		Faire une recherche
+		Faire un export
+Vue Days
+	Visualisation d'un jour
+		[0.1.2] Affichage des pointages de la journée
+		Affichage des statistiques du jour
+			[0.1.2/...]Temps effectué / temps restant (un clic switch de l'un à l'autre)
+			HV à l'heure actuelle / HV en début de jour (un clic switch de l'un à l'autre)
+		Pointer l'heure actuelle
+	Menu
+		Sauter à une date
+		Changer le type du jour
+		Modifier le temps extra
+Vue Weeks
+	Visualisation d'une semaine
+		Affichage des totaux des jours de la semaine
+		Affichage des statistiques de la semaine
+			Temps effectué / temps restant (un clic switch de l'un à l'autre)
+			HV à l'heure actuelle / HV en début de jour / HV en début de semaine (un clic switch de l'un à l'autre)
+	Menu général
+		Sauter à une semaine
+		Pointer l'ensemble de la semaine
+	Menu contextuel sur un jour
+		Changer le type du jour
+		Modifier le temps extra
+
+- Ajouter la possibilité d'ajouter une note à chaque jour. si une note existe alors un petit icone note apparaît en haut à droite du jour et pour chaque jour ayant une note dans la liste de la vue semaine
+- Les durées associées à chaque type de jour doivent être récupérées dynamiquement lors du calcul du temps du jour et non pas ajoutées à la main dans le temps additionnel.
+- Bug lors du calcul du temps effectué à la journée si on part manger (ex 11h45), qu'on revient avant les 45 minutes (ex 12h10), qu'on ressort juste après (ex 12h15) et qu'on revient après les 45min (ex 12h45).
+- Ajouter une vue "Mois" qui affiche un calendrier dont chaque case est clicable pour afficher le jour sélectionné. Chaque case porte également la couleur associée au type de jour. 

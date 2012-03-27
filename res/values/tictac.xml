@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<!-- Propriétés de l'application -->
+    <string name="app_name">TicTac</string>
+    <string name="app_version">beta (0.4.2)</string>
+    
+    <!-- Titre des onglets -->
+    <string name="tab_manage">Gestion</string>
+    <string name="tab_day">Jour</string>
+    <string name="tab_week">Semaine</string>
+    <string name="tab_preferences">Préferences</string>
+    
+    <!-- Menus communs -->
+    <string name="menu_show_day">Aller au&#8230;</string>
+    <string name="menu_preferences">Préférences</string>
+    <string name="menu_day_show_details">Afficher les détails</string>    
+    
+    <!-- Libellés pour les boîtes de dialogue -->
+    <string name="dlg_title_edit_day_type">Choisissez le nouveau type de jour :</string>
+    <string name="dlg_title_edit_day_note">Saissez une note :</string>
+    <string name="dlg_title_first_launch">Premier lancement !</string>
+    <string name="dlg_msg_first_launch">Bienvenue dans TicTac !\nIl semble que ce soit la première fois que vous utilisez TicTac.\nVous allez être redirigé vers l\'écran de préférences qui vous permettra de définir toutes les plages horaires que doit prendre en compte TicTac.\nPas d\'inquiétude, des valeurs par défaut sont prédéfinies pour vous soulager un peu dans cette épreuve fastidieuse ;-)</string>
+    <string name="btn_yes">Oui</string>
+    <string name="btn_no">Non</string>
+    <string name="btn_close">Fermer</string>
+    <string name="btn_save">Enregistrer</string>
+    <string name="btn_cancel">Annuler</string>
+    
+    <!-- Liste des types de jour -->
+    <string-array name="dayTypesEntries">
+        <item>Normal</item>
+        <item>R.T.T.</item>
+        <item>Congé payé</item>
+        <item>Férié</item>
+        <item>Maladie</item>
+    </string-array>
+    <string-array name="dayTypesValues">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+</resources>

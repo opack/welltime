@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="timepickerex">
+        <attr name="hourMin" format="integer" />
+        <attr name="hourMax" format="integer" />
+		
+		<attr name="minuteMin" format="integer" />
+        <attr name="minuteMax" format="integer" />
+        
+		<attr name="defaultTime" format="string" />
+    </declare-styleable>
+</resources>
+
