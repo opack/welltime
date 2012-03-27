@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+    
+    <RelativeLayout
+        android:layout_width="fill_parent" 
+	   	android:layout_height="wrap_content">
+		<TextView
+			android:id="@+id/txt_current"
+			android:layout_width="fill_parent"
+	    	android:layout_height="wrap_content"
+	    	android:textSize="20sp"
+	    	android:textStyle="bold"
+	    	android:gravity="center" />
+		
+		<ImageView
+			android:id="@+id/img_note"
+			android:layout_width="24sp"
+			android:layout_height="24sp"
+			android:layout_alignRight="@+id/txt_current"
+			android:layout_centerVertical="true"
+			android:src="@drawable/note" />
+	</RelativeLayout>
+
+    <ViewFlipper
+	   	android:id="@+id/view_flipper"
+	   	android:layout_width="fill_parent" 
+	   	android:layout_height="wrap_content"
+	   	android:layout_weight="3"
+	   	android:paddingTop="10sp" >
+    
+	    <ListView
+			android:id="@+id/list"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent" />
+	    
+	    <!-- Un layout pour le détail sera inflaté à l'exécution -->
+	    
+	</ViewFlipper>
+	
+	<TextView
+		android:id="@+id/txt_stats"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:gravity="center_horizontal"
+    	android:textSize="24sp" />
+		
+	<LinearLayout
+	    android:orientation="horizontal"
+	    android:layout_width="fill_parent"
+	    android:layout_height="72sp" >
+	    
+		<ImageView
+			android:id="@+id/btn_previous"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:src="@drawable/previous"
+			android:clickable="true"
+			android:onClick="showPrevious" />
+			
+		 <View
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1" />
+		    
+	    <ImageView
+			android:id="@+id/btn_checkin"
+			android:layout_width="72sp"
+			android:layout_height="72sp"
+			android:adjustViewBounds="true"
+			android:src="@drawable/clock_blue"
+			android:clickable="true"
+			android:onClick="doClockin" />
+		
+	    <View
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1" />
+	     
+		<ImageView
+			android:id="@+id/btn_next"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:src="@drawable/next"
+			android:clickable="true"
+			android:onClick="showNext" />
+	</LinearLayout>
+	
+</LinearLayout>

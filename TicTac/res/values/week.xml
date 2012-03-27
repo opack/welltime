@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Vue semaine -->
+    <string name="current_week">S%1$d : %2$s - %3$s</string>
+    <string name="week_stats">Total : %1$s</string>
+    <string name="week_stats_none">Aucun jour travaillé cette semaine.</string>
+    <string name="week_flex_time">HV au %1$s : %2$s</string>
+    <string name="week_work_time">Temps travaillé : %1$s</string>
+    <string name="week_lost_time">Temps perdu : %1$s</string>
+
+    <!-- Menu principal -->
+    <string name="menu_week_add_day">Ajouter un jour</string>
+    
+    <!-- Menu contextuel -->
+    <string name="menu_day_show_checkings">Afficher les pointages</string>
+	<string name="menu_day_delete">Supprimer le jour</string>
+	
+	<!-- Divers -->
+	<string name="dlg_msg_confirm_day_deletion">Voulez-vous vraiment supprimer le jour du %1$s ?</string>
+</resources>

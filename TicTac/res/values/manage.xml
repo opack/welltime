@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Opération export des données -->
+    <string-array name="export_data">
+        <item>Exporter les données</item>
+        <item>Ecrire les données dans un fichier CSV sur la carte SD.</item>
+    </string-array>
+    <string name="export_days_filename_pattern">TicTac - Horaires du %1$d au %2$d.csv</string>
+    <string name="export_days_success">L\'export des jours du %1$s au %2$s a été correctement réalisé.</string>
+    <string name="export_days_fail">L\'export des données a échoué.</string>
+    <string name="export_days_no_data">Il n\'y a aucun jour dans cette période.</string>
+    <string name="export_dlg_start">Choisissez une date de début :</string>
+    <string name="export_dlg_end">Choisissez une date de fin :</string>
+    
+    <!-- Opération import des données -->
+    <string-array name="import_data">
+        <item>Importer les données</item>
+        <item>Lire les données depuis un fichier CSV sur la carte SD.</item>
+    </string-array>
+	<string name="import_filechooser_title">Choisissez le fichier à importer :</string>
+	<string name="import_days_results">Import terminé.\n%1$d jour(s) créé(s).\n%2$d jour(s) mis à jour.</string>
+	
+	<!-- Opération export des préférences -->
+	<string-array name="export_prefs">
+        <item>Exporter les préférences</item>
+        <item>Ecrire les préférences dans un fichier sur la carte SD.</item>
+    </string-array>
+	<string name="export_prefs_filename">TicTac.prefs</string>
+	<string name="export_prefs_success">Les préférences ont bien été exportées !</string>
+	<string name="export_prefs_fail">L\'export des préférences a échoué.</string>
+	
+	<!-- Opération import des préférences -->
+	<string-array name="import_prefs">
+        <item>Importer les préférences</item>
+        <item>Lire les préférences depuis un fichier sur la carte SD.</item>
+    </string-array>
+	<string name="import_prefs_success">Les préférences ont bien été importées !</string>
+	<string name="import_prefs_fail">L\'import des préférences a échoué.</string>
+    
+    <!-- Erreurs -->
+    <string name="error_mkdir_failed">L\'opération a été interrompu car un répertoire n\'a pas pu être créé.</string>
+    <string name="error_sdcard_unknown">Une erreur inconnue a empêché l\'écriture sur la carte SD.</string>
+	<string name="error_sdcard_read_only">Erreur : la carte SD est en lecture seule.</string>
+	<string name="error_sdcard_nofs">Erreur : la carte SD ne peut pas être utilisée car elle formatée dans un format inconnu ou n\'est pas formatée.</string>
+	<string name="error_sdcard_removed">Erreur : la carte SD est introuvable. Veuillez insérer une carte SD.</string>
+	<string name="error_sdcard_shared">Erreur : la carte SD n\'est pas montée car elle est utilisée pour une connexion USB. Déconnectez le câble avant de réessayer.</string>
+	<string name="error_sdcard_unmountable">Erreur : la carte SD ne peut pas être montée. Il se peut qu\'elle soit corrompue ou endommagée.</string>
+	<string name="error_sdcard_unmounted">Erreur : la carte SD est présente mais n\'est pas montée. Veuillez la monter avant de réessayer.</string>
+	<string name="error_sdcard_checking">La carte SD est en cours de vérification. Veuillez attendre la fin de l\'opération avant de réessayer.</string>
+</resources>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<!-- Vue jour -->
+    <string name="day_stats">Total : %1$s</string>
+    <string name="day_type">Type :</string>
+    <string name="day_work_time">Travail :</string>
+    <string name="day_extra_time">Extra :</string>
+    <string name="day_lost_time">Perdu :</string>
+    <string name="day_note">Note :</string>
+    
+    <!-- Menu principal -->
+    <string name="menu_day_add_checking">Ajouter un pointage</string>
+    <string name="menu_day_show_week">Afficher la semaine</string>
+    
+    <!-- Menu contextuel -->
+	<string name="menu_checking_edit">Modifier le pointage</string>
+	<string name="menu_checking_delete">Supprimer le pointage</string>
+	
+	<!-- Messages d'erreur -->
+	<string name="error_checking_already_exists">Le pointage n\'a pas été ajouté car il existe déjà.</string>
+	<string name="error_day_does_not_exist">Désolé, aucun jour n\'existe en base pour le %1$s.</string>
+	
+	<!-- Divers -->
+	<string name="dlg_msg_confirm_checking_deletion">Voulez-vous vraiment supprimer le pointage de %1$s ?</string>
+</resources>

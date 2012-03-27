@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_title">Préférences</string>
+    
+    <!-- Ecran "Limites" -->
+    <string name="pref_limites">Limites</string>
+    <string name="pref_limites_summary">Définissez les limites de temps.</string>
+    <string name="pref_dailyworktime">Temps de travail quotidien</string>
+    <string name="pref_weeklyworktime">Temps de travail hebdomadaire</string>
+    <string name="pref_lunch">Pause repas</string>
+    <string name="pref_lunch_min">Durée minimum</string>
+    <string name="pref_lunch_min_summary">Temps minimum à décompter pour chaque pause repas</string>
+    <string name="pref_lunch_start">Heure de début</string>
+    <string name="pref_lunch_start_summary">Heure à partir de laquelle une sortie débute la pause repas.</string>
+    <string name="pref_lunch_end">Heure de fin</string>
+    <string name="pref_lunch_end_summary">Heure jusqu\'à laquelle une sortie débute la pause repas.</string>
+    <string name="pref_flextime">Horaire variable</string>
+    <string name="pref_minimum">Minimum</string>
+    <string name="pref_minimum_summary">Temps de travail contractuel.</string>
+    <string name="pref_maximum">Maximum</string>
+    <string name="pref_maximum_summary">Temps au-dessus duquel vous êtes écrêté.</string>
+    
+    <!-- Ecran "Initialisation de l'horaire variable" -->
+    <string name="pref_initflex">Initialisation de l\'horaire variable</string>
+	<string name="pref_initflex_summary">Choisissez la valeur initiale de l\'horaire variable et la date à laquelle cet valeur s\'applique.</string>
+	<string name="pref_initflexdate">Date</string>
+	<string name="pref_initflexdate_summary">Jour au début duquel l\'horaire variable avait la valeur indiquée.</string>
+	<string name="pref_initflextime">Temps</string>
+	<string name="pref_initflextime_summary">Valeur d\'horaire variable au jour indiqué précédemment.</string>
+	
+	<!-- Ecran "Types de jour" -->
+	<string name="pref_daytype_time">Durée</string>
+	<string name="pref_daytype_color">Couleur</string>
+	<string name="pref_daytypes">Types de jour</string>
+	<string name="pref_daytypes_summary">Modifiez les propriétés des types de jour.</string>
+	<string name="pref_daytype_normal">Journée normale</string>
+	<string name="pref_daytype_normal_time_summary">Temps de travail théorique.</string>
+	<string name="pref_daytype_normal_color_summary">Choisissez la couleur représentant les jours normaux.</string>
+	<string name="pref_daytype_vacancy">Congé payé</string>
+	<string name="pref_daytype_vacancy_time_summary">Temps crédité lorsque vous êtes en congé payé.</string>
+	<string name="pref_daytype_vacancy_color_summary">Choisissez la couleur représentant les jours de congé payé.</string>
+	<string name="pref_daytype_rtt">R.T.T.</string>
+	<string name="pref_daytype_rtt_time_summary">Temps crédité lorsque vous êtes en RTT.</string>
+	<string name="pref_daytype_rtt_color_summary">Choisissez la couleur représentant les jours de RTT.</string>
+	<string name="pref_daytype_illness">Maladie</string>
+	<string name="pref_daytype_illness_time_summary">Temps crédité lorsque vous êtes malade.</string>
+	<string name="pref_daytype_illness_color_summary">Choisissez la couleur représentant les jours de maladie.</string>
+	<string name="pref_daytype_publicholiday">Férié</string>
+	<string name="pref_daytype_publicholiday_time_summary">Temps crédité en cas de jour férié.</string>
+	<string name="pref_daytype_publicholiday_color_summary">Choisissez la couleur représentant les jours fériés.</string>
+	
+	<!-- Ecran principal -->
+	<string name="pref_clock_shift">Décalage horloge</string>
+	<string name="pref_clock_shift_summary">Indiquez le décalage entre la pointeuse et l\'heure du téléphone.</string>
+</resources>

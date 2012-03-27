@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Limites -->
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:timepickerex="http://schemas.android.com/apk/res/fr.redmoon.tictac">
+	<!-- Temps de travail quotidien -->
+	<PreferenceCategory 
+		android:title="@string/pref_dailyworktime" >
+		<TimePickerPreference
+			android:title="@string/pref_minimum"
+			android:key="day_min"
+			android:summary="@string/pref_minimum_summary"
+			android:defaultValue="07:00"/>
+		<TimePickerPreference
+			android:title="@string/pref_maximum"
+			android:key="day_max"
+			android:summary="@string/pref_maximum_summary"
+			android:defaultValue="09:00" />
+	</PreferenceCategory>
+	
+	<!-- Pause repas -->
+	<PreferenceCategory 
+		android:title="@string/pref_lunch" >
+		<TimePickerPreference
+			android:title="@string/pref_lunch_min"
+			android:key="lunch_min"
+			android:summary="@string/pref_lunch_min_summary"
+			android:defaultValue="00:45" />
+		<TimePickerPreference
+			android:title="@string/pref_lunch_start"
+			android:key="lunch_start"
+			android:summary="@string/pref_lunch_start_summary"
+			android:defaultValue="11:45" />
+		<TimePickerPreference
+			android:title="@string/pref_lunch_end"
+			android:key="lunch_end"
+			android:summary="@string/pref_lunch_end_summary"
+			android:defaultValue="14:00" />
+	</PreferenceCategory>
+	
+	<!-- Temps de travail hebdomadaire -->
+	<PreferenceCategory 
+		android:title="@string/pref_weeklyworktime" >
+		<TimePickerExPreference
+			android:title="@string/pref_minimum"
+			android:key="week_min"
+			android:summary="@string/pref_minimum_summary"
+			android:defaultValue="00:00"
+			timepickerex:defaultTime="35:00"
+	        timepickerex:hourMin="0"
+	        timepickerex:hourMax="99"
+	        timepickerex:minuteMin="0"
+	        timepickerex:minuteMax="60" />
+	    <TimePickerExPreference
+			android:title="@string/pref_maximum"
+			android:key="week_max"
+			android:summary="@string/pref_maximum_summary"
+			android:defaultValue="00:00"
+			timepickerex:defaultTime="40:00"
+	        timepickerex:hourMin="0"
+	        timepickerex:hourMax="99"
+	        timepickerex:minuteMin="0"
+	        timepickerex:minuteMax="60" />
+	</PreferenceCategory>
+	
+	<!-- Horaire variable -->
+	<PreferenceCategory 
+		android:title="@string/pref_flextime" >
+		<SignedTimePickerPreference
+			android:title="@string/pref_minimum"
+			android:key="flex_min"
+			android:defaultValue="00:00" />
+		<TimePickerPreference
+			android:title="@string/pref_maximum"
+			android:key="flex_max"
+			android:summary="@string/pref_maximum_summary"
+			android:defaultValue="07:00" />
+	</PreferenceCategory>
+</PreferenceScreen>
