@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -23,7 +22,6 @@ import android.widget.Toast;
 import fr.redmoon.tictac.WeekActivity.OnDayDeletionListener;
 import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.bus.DayTypes;
-import fr.redmoon.tictac.bus.PreferencesUtils;
 import fr.redmoon.tictac.bus.TimeUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
 import fr.redmoon.tictac.bus.bean.PreferencesBean;
@@ -87,9 +85,6 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
 			return true;
 		case R.id.menu_day_show_week:
 			showWeek();
-			return true;
-		case R.id.menu_preferences:
-			PreferencesUtils.showPreferences(this);
 			return true;
 		}
 
@@ -268,7 +263,7 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
         }
         
         // On colore le fond de l'écran avec la couleur du type de jour
-        final int dayColor = PreferencesBean.instance.getColorByDayType(day.type);
+        final int dayColor = PreferencesBean.getColorByDayType(day.type);
         findViewById(R.id.txt_current).setBackgroundColor(dayColor);
         
         // Masquage de l'image indiquant la présence d'une note si

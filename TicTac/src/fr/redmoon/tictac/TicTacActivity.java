@@ -243,7 +243,31 @@ public abstract class TicTacActivity extends Activity {
 	 * Gère le changement de vue suite à un sweep. On affiche soit le détail
 	 * des pointages, soit celui du jour.
 	 * @param lastDirection
+	 * @param viewId
 	 */
+	final protected void switchDetailsView(final Direction lastDirection, final int viewId) {
+		if (viewId > 0) {
+			// Une vue est spécifiée : on va switchée vers celle-là
+			mCurrentView = findViewById(viewId);
+		} else {
+			// Aucune vue spécifiée : on switch vers l'autre
+			switch (lastDirection) {
+				// Qu'on glisse vers la gauche ou la droite, on va switcher
+				// entre les détails et les pointages
+				case left:
+				case right:
+					pointToNextDisplay();
+					break;
+				default:
+					return;
+			}
+		}
+		
+		// Affichage des données
+		populateView(mWorkDayBean.date);
+		mViewFlipperManager.flipView(lastDirection, mCurrentView.getId());
+	}
+	
 	final protected void switchDetailsView(final Direction lastDirection) {
 		switch (lastDirection) {
 			// Qu'on glisse vers la gauche ou la droite, on va switcher

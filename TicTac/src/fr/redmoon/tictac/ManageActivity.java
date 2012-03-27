@@ -7,7 +7,6 @@ import java.util.List;
 import android.app.Dialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
@@ -19,7 +18,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.bus.PreferencesUtils;
@@ -220,15 +218,16 @@ public class ManageActivity extends ListActivity {
 				importDataPhase1();
 				break;
 			case POS_EXPORT_PREFS:
-				//DBGexportPrefs();
-				Context mContext = getApplicationContext();
-				Dialog dialog = new Dialog(mContext);
-
-				dialog.setContentView(R.layout.period_checkin);
-				dialog.setTitle("Custom Dialog");
-
-				TextView text = (TextView) dialog.findViewById(R.id.text);
-				text.setText("Hello, this is a custom dialog!");
+				exportPrefs();
+				//DBG
+//				Context mContext = getApplicationContext();
+//				Dialog dialog = new Dialog(mContext);
+//
+//				dialog.setContentView(R.layout.period_checkin);
+//				dialog.setTitle("Custom Dialog");
+//
+//				TextView text = (TextView) dialog.findViewById(R.id.text);
+//				text.setText("Hello, this is a custom dialog!");
 				break;
 			case POS_IMPORT_PREFS:
 				importPrefsPhase1();

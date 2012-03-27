@@ -14,7 +14,7 @@ public class DateUtils {
 	/**
 	 * Date en format long
 	 */
-	public static final String FORMAT_DATE_LONG = "%d/%m/%Y";
+	public static final String FORMAT_DATE_LONG = "%d/%m/%y";
 	
 	/**
 	 * Date en détails

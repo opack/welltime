@@ -151,7 +151,7 @@ public class TimeUtils {
 		}
 		
 		// On ajoute le temps correspondant au type du jour
-		total += PreferencesBean.instance.getTimeByDayType(day.type);
+		total += PreferencesBean.getTimeByDayType(day.type);
 		
 		if (addExtraAndClip) {
 			// On ajoute ensuite le temps additionnel.
