@@ -8,7 +8,6 @@ import java.util.List;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.format.Time;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -101,9 +100,6 @@ public class WeekActivity extends TicTacActivity {
 			return true;
 		case R.id.menu_show_day:
 			promptShowDay();
-			return true;
-		case R.id.menu_preferences:
-			PreferencesUtils.showPreferences(this);
 			return true;
 		}
 
@@ -266,7 +262,7 @@ public class WeekActivity extends TicTacActivity {
     		mWeekWorked += dayTotal;
     		
     		// Sauvegarde de la couleur de fond de ce jour
-            dayInfos[2] = String.valueOf(PreferencesBean.instance.getColorByDayType(day.type));
+            dayInfos[2] = String.valueOf(PreferencesBean.getColorByDayType(day.type));
     	}
     	
         // Affichage des jours.

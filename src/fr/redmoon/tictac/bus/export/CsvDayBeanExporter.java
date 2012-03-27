@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.util.List;
 
 import android.app.Activity;
-import android.util.Log;
 import fr.redmoon.tictac.R;
 import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.bus.TimeUtils;

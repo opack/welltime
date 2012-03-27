@@ -8,6 +8,7 @@
     <RelativeLayout
         android:layout_width="fill_parent" 
 	   	android:layout_height="wrap_content">
+	   	
 		<TextView
 			android:id="@+id/txt_current"
 			android:layout_width="fill_parent"
@@ -17,12 +18,24 @@
 	    	android:gravity="center" />
 		
 		<ImageView
-			android:id="@+id/img_note"
+			android:id="@+id/btn_previous"
+			android:layout_width="24sp"
+			android:layout_height="24sp"
+			android:layout_alignLeft="@+id/txt_current"
+			android:layout_centerVertical="true"
+			android:src="@drawable/previous"
+			android:clickable="true"
+			android:onClick="showPrevious" />
+		
+		<ImageView
+			android:id="@+id/btn_next"
 			android:layout_width="24sp"
 			android:layout_height="24sp"
 			android:layout_alignRight="@+id/txt_current"
 			android:layout_centerVertical="true"
-			android:src="@drawable/note" />
+			android:src="@drawable/next"
+			android:clickable="true"
+			android:onClick="showNext" />
 	</RelativeLayout>
 
     <ViewFlipper
@@ -52,15 +65,6 @@
 	    android:orientation="horizontal"
 	    android:layout_width="fill_parent"
 	    android:layout_height="72sp" >
-	    
-		<ImageView
-			android:id="@+id/btn_previous"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:src="@drawable/previous"
-			android:clickable="true"
-			android:onClick="showPrevious" />
-			
 		 <View
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
@@ -79,14 +83,12 @@
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
 	        android:layout_weight="1" />
-	     
-		<ImageView
-			android:id="@+id/btn_next"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:src="@drawable/next"
-			android:clickable="true"
-			android:onClick="showNext" />
+	    
+	    <ImageView
+			android:id="@+id/img_note"
+			android:layout_width="24sp"
+			android:layout_height="24sp"
+			android:src="@drawable/note" />
 	</LinearLayout>
 	
 </LinearLayout>

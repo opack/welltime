@@ -64,9 +64,9 @@ public class MainActivity extends TabActivity {
 		tabHost = getTabHost();
 		
 		// Ajout des onglets
-		addTab(R.string.tab_day, R.drawable.tab_info, DayActivity.class);
-		addTab(R.string.tab_week, R.drawable.tab_info, WeekActivity.class);
-		addTab(R.string.tab_manage, R.drawable.tab_info, ManageActivity.class);
+		addTab(R.string.tab_day, R.drawable.tab_days, DayActivity.class);
+		addTab(R.string.tab_week, R.drawable.tab_weeks, WeekActivity.class);
+		addTab(R.string.tab_manage, R.drawable.tab_manage, ManageActivity.class);
 		
 		// On supprime la barre sous les onglets
 		// TODO
@@ -105,7 +105,7 @@ public class MainActivity extends TabActivity {
 		tabHost.setCurrentTab(tabIndexToSwitchTo);
 		final TicTacActivity a = (TicTacActivity)getCurrentActivity();
 		if (viewId > 0) {
-			a.switchDetailsView(Direction.left);
+			a.switchDetailsView(Direction.left, viewId);
 		}
 		a.populateView(date);		
 	}
