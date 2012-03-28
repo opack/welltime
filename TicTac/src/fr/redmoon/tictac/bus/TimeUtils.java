@@ -214,6 +214,12 @@ public class TimeUtils {
 		timeToUpdate.normalize(true);
 	}
 	
+	public static Time parseDate(final long date) {
+		final Time time = new Time();
+		parseDate(date, time);
+		return time;
+	}
+	
 	/**
 	 * Calcule le temps HV effectué entre les dates indiquées.
 	 */

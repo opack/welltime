@@ -319,7 +319,7 @@ public class WeekActivity extends TicTacActivity {
 		// autant le faire sur un lundi.
 		TimeUtils.parseDate(initialDay, mWorkTime);
 		DateUtils.getDateOfDayOfWeek(mWorkTime, Time.MONDAY, mWorkTime);
-		final Calendar calendar = new GregorianCalendar(mWorkTime.year, mWorkTime.month + 1, mWorkTime.monthDay); // On sauvegarde le lundi pour passer facilement d'une semaine à l'autre
+		final Calendar calendar = new GregorianCalendar(mWorkTime.year, mWorkTime.month, mWorkTime.monthDay); // On sauvegarde le lundi pour passer facilement d'une semaine à l'autre
 
 		long curDate = DateUtils.getDayId(calendar);
 		int flexCurTime = initialTime;
