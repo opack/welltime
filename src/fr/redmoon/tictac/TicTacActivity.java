@@ -19,7 +19,6 @@ import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
 import fr.redmoon.tictac.db.DbAdapter;
 import fr.redmoon.tictac.gui.datepicker.DatePickerDialogHelper;
-import fr.redmoon.tictac.gui.daytypes.UpdateDayTypeListener;
 import fr.redmoon.tictac.gui.listeners.AddCheckingListener;
 import fr.redmoon.tictac.gui.listeners.AddDayListener;
 import fr.redmoon.tictac.gui.listeners.EditNoteListener;
@@ -86,7 +85,6 @@ public abstract class TicTacActivity extends Activity {
 	private UpdateExtraListener mUpdateExtraListener;
 	private AddDayListener mAddDayListener;
 	private ShowDayListener mShowDayListener;
-	private UpdateDayTypeListener mUpdateDayTypeListener;
 	private EditNoteListener mEditNoteListener;
 	
 	protected long mToday = -1;
@@ -109,7 +107,6 @@ public abstract class TicTacActivity extends Activity {
         mUpdateExtraListener = new UpdateExtraListener(this);
         mAddDayListener = new AddDayListener(this);
         mShowDayListener = new ShowDayListener(this);
-        mUpdateDayTypeListener = new UpdateDayTypeListener(this);
         mEditNoteListener = new EditNoteListener(this);
         
         // Création du bean de travail
@@ -195,14 +192,11 @@ public abstract class TicTacActivity extends Activity {
 	 * Initialise le gestionnaire de flip.
 	 * @param flipViews Tableau de 2 vues, dont la seconde est la vue de détails à inflater
 	 */
-	protected void initSweep(final int[] flipViews, final int... detailsLayoutsToInflate) {
+	protected void initSweep(final int[] flipViews, final int detailLayoutToInflate) {
 		// Création de la vue de détail
 		final ViewFlipper flipper = (ViewFlipper)findViewById(R.id.view_flipper);
-		View details = null;
-		for (int layoutToInflate : detailsLayoutsToInflate) {
-	 		details = View.inflate(this, layoutToInflate, null);
-	 		flipper.addView(details);
-		}
+		View details = View.inflate(this, detailLayoutToInflate, null);
+ 		flipper.addView(details);
 		
     	// Création du détecteur de gestes
     	mGestureListener = new ViewSwitcherGestureListener();
@@ -370,41 +364,6 @@ public abstract class TicTacActivity extends Activity {
 		args.putLong(DATE, date);
 		args.putInt(TIME, 0);// Par défaut, on met l'heure à 00:00
 		showDialog(DIALOG_TIMEPICKER_ADD_CHECKING, args);
-	}
-	
-	/**
-	 * Affiche une boîte de dialogue permettant la saisie du type de jour
-	 * et met à jour la base le cas échéant.
-	 */
-	protected void promptEditDayType(final long date, final int currentType) {
-		// Prépare le listener
-		mUpdateDayTypeListener.prepare(date);
-
-		// Création de la boîte de dialogue
-		// On ne passe pas par le mécanisme onCreateDialog/onPrepareDialg car on ne pourrait alors
-		// pas initialiser la valeur actuelle dans la liste.
-		// En effet, soit on crée la dialog dans le onCreateDialog (logique) mais on n'a alors pas
-		// encore le type de jour courant.
-		// Soit on le fait dans le onPrepare (bizarre, mais là au moins on a les infos permettant
-		// de préparer la dlg, comme le type actuel du jour) mais là on n'a plus moyen de créer la
-		// dlg puisqu'à ce niveau on ne peut que paramétrer une dialogue existante. Et comme il ne
-		// semble pas y avoir moyen de faire un setSelected ou un truc dans le genre, on l'a dans
-		// le ...
-		// Donc on fait ce qui suit, et d'ailleurs c'est même limite plus clair.
-		// Seul éceuil, Android ne gère pas la vie de notre boîte de dialogue, mais on s'en fiche
-		// puisqu'on la recrée à chaque fois.
-		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle(R.string.dlg_title_edit_day_type);
-		builder.setSingleChoiceItems(R.array.dayTypesEntries, currentType, mUpdateDayTypeListener);
-		builder.setNeutralButton(R.string.btn_close, new DialogInterface.OnClickListener() {
-        	@Override
-    		public void onClick(DialogInterface dialog, int id) {
-            	dialog.dismiss();
-        	}
-        });
-		
-		// Affiche la jolie boî-boîte
-		builder.show();
 	}
 	
 	/**

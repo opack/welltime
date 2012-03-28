@@ -36,6 +36,17 @@
     </string-array>
 	<string name="import_prefs_success">Les préférences ont bien été importées !</string>
 	<string name="import_prefs_fail">L\'import des préférences a échoué.</string>
+	
+	<!-- Opération pointage d'une période -->
+	<string-array name="period_checkin">
+        <item>Pointer une période</item>
+        <item>Pointer tous les jours d\'une période donnée.</item>
+    </string-array>
+    <string name="period_checkin_title">Pointage d\'une période</string>
+    <string name="period_checkin_prompt_dates">Choisissez les dates de la période à pointer :</string>
+    <string name="period_checkin_prompt_day_type">Choisissez le type des jours à créer :</string>
+    <string name="btn_checkin">Pointer</string>
+    <string name="period_checkin_results">Pointage terminé.\n%1$d jour(s) créé(s).\n%2$d jour(s) mis à jour.</string>
     
     <!-- Erreurs -->
     <string name="error_mkdir_failed">L\'opération a été interrompu car un répertoire n\'a pas pu être créé.</string>

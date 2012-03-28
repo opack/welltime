@@ -13,15 +13,18 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import fr.redmoon.tictac.WeekActivity.OnDayDeletionListener;
 import fr.redmoon.tictac.bus.DateUtils;
-import fr.redmoon.tictac.bus.DayTypes;
 import fr.redmoon.tictac.bus.TimeUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
 import fr.redmoon.tictac.bus.bean.PreferencesBean;
@@ -42,9 +45,25 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
         
         // Création de l'interface graphique
         setContentView(R.layout.view);
-     		
+        
         // Initialisation du gestionnaire de sweep
         initSweep(new int[]{R.id.list, R.id.day_details}, R.layout.day_details);
+        
+        // Remplissage de la liste des jours dans le détail
+        final Spinner spinner = (Spinner)findViewById(R.id.day_type);
+ 	    final ArrayAdapter<CharSequence> dayTypeAdapter = ArrayAdapter.createFromResource(this, R.array.dayTypesEntries, android.R.layout.simple_spinner_item);
+ 	    dayTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+ 	    spinner.setAdapter(dayTypeAdapter);
+ 	    spinner.setOnItemSelectedListener(new OnItemSelectedListener(){
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+				updateDayType(pos);
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> arg0) {
+			}
+ 	    });
         
         // Création de l'adapteur affichant les pointages. Pour l'instant, aucun pointage.
         final ListAdapter adapter = new DayAdapter(this, R.layout.day_item, mCheckingsArray);
@@ -329,7 +348,8 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
 		total = workTime - lost;
 	
 		// Mise à jour des composants graphiques
-		setText(R.id.day_type, DayTypes.values()[day.type].getLabel(this));
+		final Spinner spinner = (Spinner)findViewById(R.id.day_type);
+		spinner.setSelection(day.type);
 		setText(R.id.day_work_time, TimeUtils.formatMinutes(workTime));
 		setText(R.id.day_extra_time, TimeUtils.formatTime(day.extra));
 		setText(R.id.day_lost_time, TimeUtils.formatMinutes(lost));
@@ -375,8 +395,11 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
 		promptEditExtraTime(mWorkDayBean.date, mWorkDayBean.extra);
 	}
 	
-	public void promptEditDayType(final View btn) {
-		promptEditDayType(mWorkDayBean.date, mWorkDayBean.type);
+	public void updateDayType(final int dayType) {
+		if (mDb.updateDayType(mWorkDayBean.date, dayType)) {
+			// Mise à jour de l'affichage
+			populateView(mWorkDayBean.date);
+		}
 	}
 	
 	public void promptEditNote(final View btn) {

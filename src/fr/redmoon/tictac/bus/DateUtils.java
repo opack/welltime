@@ -80,7 +80,7 @@ public class DateUtils {
 	 * @return
 	 */
 	public static long getDayId(final Calendar calendar) {
-		return calendar.get(Calendar.YEAR) * 10000 + calendar.get(Calendar.MONTH) * 100 + calendar.get(Calendar.DAY_OF_MONTH);
+		return calendar.get(Calendar.YEAR) * 10000 + (calendar.get(Calendar.MONTH) + 1) * 100 + calendar.get(Calendar.DAY_OF_MONTH);
 	}
 	
 	/**
@@ -212,5 +212,16 @@ public class DateUtils {
 		sb.append(date.substring(0, 2));
 		// Conversion en long
 		return Long.parseLong(sb.toString());
+	}
+
+	/**
+	 * Retourne true si le calendrier spécifié pointe sur un jour qui est considéré
+	 * comme travaillé
+	 * @param calendar
+	 * @return
+	 */
+	public static boolean isWorkingWeekDay(Calendar calendar) {
+		final int dayId = calendar.get(Calendar.DAY_OF_WEEK);
+		return Calendar.MONDAY <= dayId && dayId <= Calendar.FRIDAY;
 	}
 }
