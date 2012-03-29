@@ -5,7 +5,9 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
+import fr.redmoon.tictac.bus.PreferenceKeys;
 import fr.redmoon.tictac.bus.PreferencesUtils;
+import fr.redmoon.tictac.bus.bean.PreferencesBean;
 
 public class PreferencesActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
 	public static final String URI_PAGE_MAIN = "preferences://main";
@@ -41,5 +43,15 @@ public class PreferencesActivity extends PreferenceActivity implements OnSharedP
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 		PreferencesUtils.updatePreferencesBean(this);
+		
+		// Si on a modifié une préférence en rapport avec l'HV, on met à 0 les flexCurXXX
+		// pour qu'ils soient recalculés dès que possible (dans WeekActivity)
+		if (PreferenceKeys.flexInitDate.getKey().equals(key)
+		|| PreferenceKeys.flexInitTime.getKey().equals(key)) {
+			PreferencesBean.instance.flexCurDate = 0;
+			PreferencesBean.instance.flexCurTime = 0;
+			PreferencesUtils.savePreference(this, PreferenceKeys.flexCurDate.getKey(), (long)0);
+			PreferencesUtils.savePreference(this, PreferenceKeys.flexCurTime.getKey(), 0);
+		}
 	}
 }
