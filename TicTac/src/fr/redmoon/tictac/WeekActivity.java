@@ -337,10 +337,9 @@ public class WeekActivity extends TicTacActivity {
 		flexCurTime = Math.min(flexCurTime, PreferencesBean.instance.flexMax);
 		
 		// On enregistre le temps additionnel et la date à laquelle il a été calculé
-		// TODO Cette info semble inutile !!! Pourquoi l'enregistrer dans les préférences ?
 		PreferencesBean.instance.flexCurDate = currentMonday;
-		PreferencesBean.instance.flexCurTime = flexCurTime;
 		PreferencesUtils.savePreference(this, PreferenceKeys.flexCurDate.getKey(), PreferencesBean.instance.flexCurDate);
+		PreferencesBean.instance.flexCurTime = flexCurTime;
 		PreferencesUtils.savePreference(this, PreferenceKeys.flexCurTime.getKey(), PreferencesBean.instance.flexCurTime);
 		
 		return flexCurTime;
