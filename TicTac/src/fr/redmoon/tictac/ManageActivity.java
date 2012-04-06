@@ -25,21 +25,18 @@ import android.widget.DatePicker;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
-import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.bus.PreferencesUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
 import fr.redmoon.tictac.bus.bean.PreferencesBean;
 import fr.redmoon.tictac.bus.export.BinPreferencesBeanExporter;
 import fr.redmoon.tictac.bus.export.BinPreferencesBeanImporter;
-import fr.redmoon.tictac.bus.export.CsvDayBeanExporter;
 import fr.redmoon.tictac.bus.export.CsvDayBeanImporter;
 import fr.redmoon.tictac.bus.export.FileExporter;
 import fr.redmoon.tictac.bus.export.FileImporter;
 import fr.redmoon.tictac.db.DbAdapter;
-import fr.redmoon.tictac.gui.datepicker.ChoosePeriodControler;
-import fr.redmoon.tictac.gui.datepicker.ChoosePeriodControler.OnPeriodChoosedListener;
+import fr.redmoon.tictac.gui.dialogs.listeners.PeriodCheckinListener;
+import fr.redmoon.tictac.gui.dialogs.listeners.PeriodExporterListener;
 import fr.redmoon.tictac.gui.listadapter.ManageAdapter;
-import fr.redmoon.tictac.gui.listeners.PeriodCheckinListener;
 
 public class ManageActivity extends ListActivity {
 	/** Nested class that performs progress calculations (counting) */
@@ -115,6 +112,7 @@ public class ManageActivity extends ListActivity {
 	
 	private static final int PROGRESS_DIALOG = 0;
 	private static final int PERIOD_CHECKIN_DIALOG = 1;
+	private static final int PERIOD_EXPORT_DIALOG = 2;
 	private DbInserterThread progressThread;
 	private ProgressDialog progressDialog;
 	
@@ -177,6 +175,8 @@ public class ManageActivity extends ListActivity {
             return createProgressDialog();
         case PERIOD_CHECKIN_DIALOG:
         	return createPeriodCheckinDialog();
+        case PERIOD_EXPORT_DIALOG:
+        	return createPeriodExportDialog();
         default:
             return null;
         }
@@ -200,7 +200,7 @@ public class ManageActivity extends ListActivity {
         //On affecte la vue personnalisé que l'on a crée à notre AlertDialog
         adb.setView(dialogView);
         
-      //On donne un titre à l'AlertDialog
+        //On donne un titre à l'AlertDialog
         adb.setTitle(R.string.period_checkin_title);
  
         //On modifie l'icône de l'AlertDialog pour le fun ;)
@@ -226,6 +226,39 @@ public class ManageActivity extends ListActivity {
           } });
 		return adb.create();
 	}
+	
+	private Dialog createPeriodExportDialog() {
+		//On instancie notre layout en tant que View
+        LayoutInflater factory = LayoutInflater.from(this);
+        final View dialogView = factory.inflate(R.layout.period_chooser, null);
+ 
+        //Création de l'AlertDialog
+        AlertDialog.Builder adb = new AlertDialog.Builder(this);
+ 
+        //On affecte la vue personnalisé que l'on a crée à notre AlertDialog
+        adb.setView(dialogView);
+        
+        //On donne un titre à l'AlertDialog
+        adb.setTitle(R.string.export_title);
+ 
+        //On modifie l'icône de l'AlertDialog pour le fun ;)
+        //adb.setIcon(android.R.drawable.ic_dialog_alert);
+        
+        //On affecte un bouton "OK" à notre AlertDialog et on lui affecte un évènement
+        adb.setPositiveButton(R.string.btn_ok, new PeriodExporterListener(
+        	this, 
+        	mDb, 
+        	(DatePicker)dialogView.findViewById(R.id.date1), 
+        	(DatePicker)dialogView.findViewById(R.id.date2))
+        );
+ 
+        //On crée un bouton "Annuler" à notre AlertDialog et on lui affecte un évènement
+        adb.setNegativeButton(R.string.btn_cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+        
+		return adb.create();
+	}
 
 	@Override
     protected void onPrepareDialog(int id, Dialog dialog) {
@@ -234,6 +267,7 @@ public class ManageActivity extends ListActivity {
             progressDialog.setProgress(0);
             progressDialog.setMax(progressThread.getMax());
             progressThread.start();
+            break;
         }
     }
         
@@ -266,7 +300,7 @@ public class ManageActivity extends ListActivity {
 		
 		switch (position) {
 			case POS_EXPORT_DATA:
-				exportData();
+				showDialog(PERIOD_EXPORT_DIALOG);
 				break;
 			case POS_IMPORT_DATA:
 				importDataPhase1();
@@ -283,42 +317,6 @@ public class ManageActivity extends ListActivity {
 		}
 	}
 
-	/**
-	 * Prompte l'utilisateur pour déterminer la période à exporter puis lance
-	 * l'export.
-	 */
-	private void exportData() {
-		// Création du contrôleur qui va ordonner l'appel aux différentes boîtes de dialogue.
-		final ChoosePeriodControler controler = new ChoosePeriodControler(this, new OnPeriodChoosedListener() {
-			
-			@Override
-			public void onPeriodSet(final long start, final long end) {
-				// Récupération des jours à extraire
-				final List<DayBean> days = new ArrayList<DayBean>();
-				mDb.fetchDays(start, end, days);
-				
-				// Export des données vers le fichier texte
-				String message = "";
-				final FileExporter<List<DayBean>> exporter = new CsvDayBeanExporter(ManageActivity.this);
-				if (days.isEmpty()) {
-					message = getString(R.string.export_days_no_data);
-				} else if (exporter.exportData(days)) {
-					message = getString(
-						R.string.export_days_success,
-						DateUtils.formatDateDDMMYYYY(start),
-						DateUtils.formatDateDDMMYYYY(end)
-					);
-				} else {
-					message = getString(R.string.export_days_fail);
-				}
-				Toast.makeText(ManageActivity.this, message, Toast.LENGTH_LONG).show();
-			}
-		});
-		
-		// Démarrage du flux
-		controler.prompt();
-	}
-	
 	/**
 	 * Exporte les préférences
 	 */

@@ -9,8 +9,7 @@
     <string name="export_days_success">L\'export des jours du %1$s au %2$s a été correctement réalisé.</string>
     <string name="export_days_fail">L\'export des données a échoué.</string>
     <string name="export_days_no_data">Il n\'y a aucun jour dans cette période.</string>
-    <string name="export_dlg_start">Choisissez une date de début :</string>
-    <string name="export_dlg_end">Choisissez une date de fin :</string>
+    <string name="export_title">Export des pointages sur la période</string>
     
     <!-- Opération import des données -->
     <string-array name="import_data">
