@@ -1,6 +1,7 @@
 package fr.redmoon.tictac.gui.dialogs;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
@@ -10,8 +11,10 @@ import android.view.View;
 import android.widget.EditText;
 import fr.redmoon.tictac.R;
 import fr.redmoon.tictac.TicTacActivity;
+import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.gui.dialogs.listeners.AddCheckingListener;
 import fr.redmoon.tictac.gui.dialogs.listeners.EditNoteListener;
+import fr.redmoon.tictac.gui.dialogs.listeners.ShowDayListener;
 import fr.redmoon.tictac.gui.dialogs.listeners.UpdateCheckingListener;
 import fr.redmoon.tictac.gui.dialogs.listeners.UpdateExtraListener;
 
@@ -23,6 +26,7 @@ public class DayDialogDelegate {
 	private UpdateCheckingListener mUpdateCheckingListener;
 	private UpdateExtraListener mUpdateExtraListener;
 	private EditNoteListener mEditNoteListener;
+	private ShowDayListener mShowDayListener;
 	
 	private final TicTacActivity mActivity;
 	
@@ -34,6 +38,7 @@ public class DayDialogDelegate {
         mUpdateCheckingListener = new UpdateCheckingListener(_activity);
         mUpdateExtraListener = new UpdateExtraListener(_activity);
         mEditNoteListener = new EditNoteListener(_activity);
+        mShowDayListener = new ShowDayListener(_activity);
 	}
 	
 	public Dialog createDialog(final int id) {
@@ -46,6 +51,9 @@ public class DayDialogDelegate {
 			return TimePickerDialogHelper.createDialog(mActivity, mUpdateExtraListener);
 		case DialogTypes.TEXTINPUT_EDIT_NOTE:
 			return createEditNoteDialog();
+		case DialogTypes.DATEPICKER_SHOW_DAY:
+			final long today = mActivity.getToday();
+			return DatePickerDialogHelper.createDialog(mActivity, mShowDayListener, DateUtils.extractYear(today), DateUtils.extractMonth(today), DateUtils.extractDayOfMonth(today));
 		}
 		return null;
 	}
@@ -72,6 +80,11 @@ public class DayDialogDelegate {
 				if (initialNote != null) {
 					input.setSelection(initialNote.length());
 				}
+				break;
+			case DialogTypes.DATEPICKER_SHOW_DAY:
+				// C'est un peu inutile car on passe toujours le jour courant.
+				final long date = args.getLong(DialogArgs.DATE);
+				DatePickerDialogHelper.prepare((DatePickerDialog) dialog, DateUtils.extractYear(date), DateUtils.extractMonth(date), DateUtils.extractDayOfMonth(date));
 				break;
 		}
 	}

@@ -26,15 +26,18 @@ public class TimeUtils {
 	/**
 	 * Format un temps au format hhmm en hh:mm, pour l'affichage.
 	 * @param time
+	 * @param showPlusSign Indique s'il faut, le cas échéant, afficher le signe +
 	 * @return
 	 */
-	public static String formatTime(int time) {
+	public static String formatTime(int time, boolean showPlusSign) {
 		mWorkStringBuilder.setLength(0);
 		
 		if (time < 0) {
 			mWorkStringBuilder.append("-");
 			time = Math.abs(time);
-		}		
+		} else if (showPlusSign) {
+			mWorkStringBuilder.append("+");
+		}
 		final int hour = time / 100;
 		if (hour < 10) {
 			mWorkStringBuilder.append("0");
@@ -50,6 +53,10 @@ public class TimeUtils {
 		return mWorkStringBuilder.toString();
 	}
 	
+	public static String formatTime(int time) {
+		return formatTime(time, false);
+	}
+	
 	/**
 	 * Formatte un nombre de minutes en hh:mm, pour l'affichage.
 	 * @param time
@@ -57,6 +64,15 @@ public class TimeUtils {
 	 */
 	public static String formatMinutes(final int minutes) {
 		return formatTime(convertInTime(minutes));
+	}
+	
+	/**
+	 * Formatte un nombre de minutes en hh:mm, pour l'affichage.
+	 * @param time
+	 * @return
+	 */
+	public static String formatMinutesWithSign(final int minutes) {
+		return formatTime(convertInTime(minutes), true);
 	}
 	
 	/**

@@ -10,5 +10,5 @@
    
    	<item android:id="@+id/menu_day_show_week"
         android:title="@string/menu_day_show_week"
-        android:icon="@drawable/ic_tab_weeks_grey" />
+        android:icon="@drawable/ic_tab_months_grey" />
 </menu>
