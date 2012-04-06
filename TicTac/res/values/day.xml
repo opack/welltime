@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<!-- Vue jour -->
-    <string name="day_stats">Total : %1$s</string>
     <string name="day_type">Type :</string>
     <string name="day_work_time">Travail :</string>
     <string name="day_extra_time">Extra :</string>

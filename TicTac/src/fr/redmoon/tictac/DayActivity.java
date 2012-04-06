@@ -22,7 +22,6 @@ import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 import fr.redmoon.tictac.WeekActivity.OnDayDeletionListener;
 import fr.redmoon.tictac.bus.DateUtils;
@@ -53,7 +52,9 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
         setContentView(R.layout.view);
         
         // Initialisation du gestionnaire de sweep
-        initSweep(new int[]{R.id.list, R.id.day_details}, R.layout.day_details);
+        initSweep(
+        	new int[]{R.id.day_checkings, R.id.day_details},
+        	new int[]{R.layout.day_checkings, R.layout.day_details});
         
         // Remplissage de la liste des jours dans le détail
         final Spinner spinner = (Spinner)findViewById(R.id.day_type);
@@ -198,7 +199,7 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
 	 * @param date
 	 */
 	private void showWeek() {
-		switchTab(1, mWorkDayBean.date);
+		switchTab(1, mWorkDayBean.date, R.id.week_days);
 	}
     
     /**
@@ -262,19 +263,15 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
      * @param day
      */
     private void populateCommon(final DayBean day) {
-    	// On affiche le nom du jour
+    	// // Affichage du jour courant, du temps effectué et du temps restant
     	DateUtils.fillTime(day.date, mWorkTime);
         mWorkTime.normalize(true);
-        final TextView txtCurrentDay = (TextView)findViewById(R.id.txt_current);
-		txtCurrentDay.setText(mWorkTime.format(DateUtils.FORMAT_DATE_DETAILS));
-		
-		// Affichage du temps effectué.
-		final int dayTotal = TimeUtils.computeTotal(day);
-        final TextView txtDayStats = (TextView)findViewById(R.id.txt_stats);
-        txtDayStats.setText(getResources().getString(
-			R.string.day_stats,
-			TimeUtils.formatMinutes(dayTotal)
-		));
+        final String strCurrent = mWorkTime.format(DateUtils.FORMAT_DATE_DETAILS);
+		final int total = TimeUtils.computeTotal(day);
+        populateCommon(
+        		strCurrent,
+        		total,
+        		PreferencesBean.instance.dayMin);
         
         // Le bouton de pointage n'est affiché que pour aujourd'hui
         final ImageView image = (ImageView)findViewById(R.id.btn_checkin);

@@ -25,8 +25,6 @@ public class MainActivity extends TabActivity {
 	    setContentView(R.layout.tictac);
 	    createTabs();
 	    initPrefs();
-	    int n = Color.argb(255, 245, 245, 245);
-	    Log.d("TicTac", "Col = " + n);
 	}
 	
 	private void initPrefs() {
@@ -66,6 +64,7 @@ public class MainActivity extends TabActivity {
 		// Ajout des onglets
 		addTab(R.string.tab_day, R.drawable.tab_days, DayActivity.class);
 		addTab(R.string.tab_week, R.drawable.tab_weeks, WeekActivity.class);
+		addTab(R.string.tab_month, R.drawable.tab_months, MonthActivity.class);
 		addTab(R.string.tab_manage, R.drawable.tab_manage, ManageActivity.class);
 		
 		// On supprime la barre sous les onglets

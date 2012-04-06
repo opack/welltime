@@ -17,7 +17,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.bus.PreferenceKeys;
 import fr.redmoon.tictac.bus.PreferencesUtils;
@@ -69,7 +68,9 @@ public class WeekActivity extends TicTacActivity {
         findViewById(R.id.img_note).setVisibility(View.INVISIBLE);
         
         // Initialisation du gestionnaire de sweep
-        initSweep(new int[]{R.id.list, R.id.week_details}, R.layout.week_details);
+        initSweep(
+            	new int[]{R.id.week_days, R.id.week_details},
+            	new int[]{R.layout.week_days, R.layout.week_details});
         
         // Création de l'adapteur affichant les jours. Pour l'instant aucun jour.
         final ListAdapter adapter = new WeekAdapter(this, R.layout.week_item, mDaysArray);
@@ -159,7 +160,7 @@ public class WeekActivity extends TicTacActivity {
 	 * @param date
 	 */
 	private void showDayCheckings(final long date) {
-		switchTab(0, date, R.id.list);
+		switchTab(0, date, R.id.day_checkings);
 	}
 
 	public void showPrevious(final View btn) {
@@ -231,22 +232,18 @@ public class WeekActivity extends TicTacActivity {
      * @param day
      */
     private void populateCommon(final Time monday, final Time sunday) {
-    	// Affichage de la période de la semaine
-        final TextView txtCurrentWeek = (TextView)findViewById(R.id.txt_current);
-        txtCurrentWeek.setText(getResources().getString(
-			R.string.current_week,
-			monday.getWeekNumber(),
-			monday.format(DateUtils.FORMAT_DATE_LONG),
-			sunday.format(DateUtils.FORMAT_DATE_LONG)
-		));
+        final String txtCurrent = getResources().getString(
+    			R.string.current_week,
+    			monday.getWeekNumber(),
+    			monday.format(DateUtils.FORMAT_DATE_LONG),
+    			sunday.format(DateUtils.FORMAT_DATE_LONG)
+    		);
+        final int total = Math.min(mWeekWorked, PreferencesBean.instance.weekMax);
         
-        // Affichage du temps effectué
-    	final int weekTotal = Math.min(mWeekWorked, PreferencesBean.instance.weekMax);
-        final TextView txtWeekStats = (TextView)findViewById(R.id.txt_stats);
-        txtWeekStats.setText(getResources().getString(
-			R.string.week_stats,
-			TimeUtils.formatMinutes(weekTotal)
-		));
+        populateCommon(
+    		txtCurrent,
+    		total,
+    		PreferencesBean.instance.weekMin);
     }
     
     /**

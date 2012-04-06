@@ -2,12 +2,13 @@
 <resources>
 	<!-- Propriétés de l'application -->
     <string name="app_name">TicTac</string>
-    <string name="app_version">beta (0.4.3)</string>
+    <string name="app_version">beta (0.4.4)</string>
     
     <!-- Titre des onglets -->
-    <string name="tab_manage">Gestion</string>
     <string name="tab_day">Jour</string>
     <string name="tab_week">Semaine</string>
+    <string name="tab_month">Mois</string>
+    <string name="tab_manage">Gestion</string>
     <string name="tab_preferences">Préferences</string>
     
     <!-- Menus communs -->

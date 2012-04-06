@@ -36,30 +36,51 @@
 			android:src="@drawable/next"
 			android:clickable="true"
 			android:onClick="showNext" />
+		
 	</RelativeLayout>
-
+	
+	<ImageView
+		android:id="@+id/img_note"
+		android:layout_width="24sp"
+		android:layout_height="24sp"
+		android:src="@drawable/note" />
+	
     <ViewFlipper
 	   	android:id="@+id/view_flipper"
 	   	android:layout_width="fill_parent" 
 	   	android:layout_height="wrap_content"
 	   	android:layout_weight="3"
-	   	android:paddingTop="10sp" >
+	   	android:paddingTop="6sp" >
     
-	    <ListView
-			android:id="@+id/list"
-			android:layout_width="fill_parent"
-			android:layout_height="fill_parent" />
-	    
-	    <!-- Un layout pour le détail sera inflaté à l'exécution -->
+	    <!-- Des layouts seront inflatés à l'exécution -->
 	    
 	</ViewFlipper>
 	
-	<TextView
-		android:id="@+id/txt_stats"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:gravity="center_horizontal"
-    	android:textSize="24sp" />
+    <TableLayout
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:stretchColumns="1" >
+	    <TableRow>
+			<TextView
+				android:id="@+id/txt_total"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+		    	android:textSize="16sp" />
+			
+			<ProgressBar
+			    android:id="@+id/bar_total"
+		        android:layout_width="0dip"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center_vertical"
+				style="@style/BlueProgressBarHorizontal"/>
+			
+			<TextView
+				android:id="@+id/txt_remaining"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+		    	android:textSize="16sp" />
+		</TableRow>
+	</TableLayout>
 		
 	<LinearLayout
 	    android:orientation="horizontal"
@@ -83,12 +104,6 @@
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
 	        android:layout_weight="1" />
-	    
-	    <ImageView
-			android:id="@+id/img_note"
-			android:layout_width="24sp"
-			android:layout_height="24sp"
-			android:src="@drawable/note" />
 	</LinearLayout>
 	
 </LinearLayout>

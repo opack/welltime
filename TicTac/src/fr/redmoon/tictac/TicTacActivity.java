@@ -3,14 +3,17 @@ package fr.redmoon.tictac;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.format.Time;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 import fr.redmoon.tictac.bus.DateUtils;
+import fr.redmoon.tictac.bus.TimeUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
 import fr.redmoon.tictac.db.DbAdapter;
 import fr.redmoon.tictac.gui.dialogs.DialogArgs;
@@ -92,27 +95,30 @@ public abstract class TicTacActivity extends Activity {
     
 	/**
 	 * Initialise le gestionnaire de flip.
-	 * @param flipViews Tableau de 2 vues, dont la seconde est la vue de détails à inflater
+	 * @param flipViewsIds Identifiants des vues qu'on va switcher
+	 * @param layoutsToInflate Identifiants des layouts qu'on va inflater
 	 */
-	protected void initSweep(final int[] flipViews, final int detailLayoutToInflate) {
+	protected void initSweep(final int[] flipViewsIds, final int[] layoutsToInflate) {
 		// Création de la vue de détail
 		final ViewFlipper flipper = (ViewFlipper)findViewById(R.id.view_flipper);
-		View details = View.inflate(this, detailLayoutToInflate, null);
- 		flipper.addView(details);
+		for (int layout : layoutsToInflate) {
+			View details = View.inflate(this, layout, null);
+			flipper.addView(details);
+		}
 		
     	// Création du détecteur de gestes
     	mGestureListener = new ViewSwitcherGestureListener();
     	mGestureDetector = new GestureDetector(mGestureListener);
     	
     	// Création du gestionnaire de ViewFlipper
-    	mFlipViews = flipViews;
+    	mFlipViews = flipViewsIds;
     	mViewFlipperManager = new ViewFlipperManager(
     		this,
     		mFlipViews
     	);
     	
     	mLastViewFlipTime = 0;
-    	mCurrentView = findViewById(R.id.list);
+    	mCurrentView = findViewById(flipViewsIds[0]);
     }
 	
 	@Override
@@ -324,6 +330,43 @@ public abstract class TicTacActivity extends Activity {
 	
 	public long getToday() {
 		return mToday;
+	}
+
+	/**
+     * Mise à jour des composants communs à l'affichage "Pointages" et "Détails"
+     * @param day
+     */
+	protected void populateCommon(final CharSequence strCurrent, final int total, final int max) {
+		// Affichage de la période de la semaine
+        final TextView txtCurrent = (TextView)findViewById(R.id.txt_current);
+        txtCurrent.setText(strCurrent);
+        
+        // Affichage du temps effectué et du temps restant
+        final TextView txtTotal = (TextView)findViewById(R.id.txt_total);
+        txtTotal.setText(TimeUtils.formatMinutes(total));
+        
+        final int remaining = total - max;
+		final TextView txtRemaining = (TextView)findViewById(R.id.txt_remaining);
+		txtRemaining.setText(TimeUtils.formatMinutesWithSign(remaining));
+		if (remaining < 0) {
+			// Il reste du temps à faire : on écrit en rouge
+			txtRemaining.setTextColor(Color.RED);
+		} else if (remaining == 0) {
+			// On a fait pile le temps demandé : on écrit en noir
+			txtRemaining.setTextColor(Color.BLACK);
+		} else {
+			// Du temps HV a été cumulé : on écrit en vert
+			txtRemaining.setTextColor(Color.GREEN);
+		}
+        
+        // Mise à jour de la barre de progression
+        final ProgressBar barTotal = (ProgressBar)findViewById(R.id.bar_total);
+        barTotal.setMax(max);
+        // Lorsqu'on gèrera les objectifs, le max devra être adapté pour refléter l'objectif
+        // et le secondary indiquera le weekMin. Pour l'instant on considère donc que l'objectif
+        // est le dayMin.
+        //barTotal.setSecondaryProgress(PreferencesBean.instance.weekMin);
+        barTotal.setProgress(total);
 	}
 }
 
