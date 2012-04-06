@@ -1,4 +1,4 @@
-package fr.redmoon.tictac.gui.datepicker;
+package fr.redmoon.tictac.gui.dialogs;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -18,9 +18,5 @@ public class DatePickerDialogHelper {
 		if (title != null) {
 			dialog.setTitle(title);
 		}
-	}
-
-	public static DatePickerDialog createPeriodChooserDialog(final Context context, final ChoosePeriodControler listener) {
-		return new DatePickerDialog(context, listener, 2011, 0, 1);
 	}
 }

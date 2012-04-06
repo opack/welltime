@@ -3,6 +3,7 @@ package fr.redmoon.tictac;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
@@ -28,11 +29,13 @@ import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.bus.TimeUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
 import fr.redmoon.tictac.bus.bean.PreferencesBean;
+import fr.redmoon.tictac.gui.dialogs.DayDialogDelegate;
 import fr.redmoon.tictac.gui.listadapter.DayAdapter;
 import fr.redmoon.tictac.gui.widgets.WidgetProvider;
 
 public class DayActivity extends TicTacActivity implements OnDayDeletionListener {
 	private int mCheckingToEdit;
+	private DayDialogDelegate mDialogDelegate;
 	
 	// Ci-dessous suivent les objets instanciés une unique fois pour des raisons de performance.
 	// On les crée au démarrage de l'application et on les réutilise avec des màj pour éviter
@@ -40,8 +43,11 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
 	private ListView mLstCheckings;
 	private final List<String[]> mCheckingsArray = new ArrayList<String[]>();
 	
+	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        mDialogDelegate = new DayDialogDelegate(this);
         
         // Création de l'interface graphique
         setContentView(R.layout.view);
@@ -133,6 +139,17 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
 		return super.onContextItemSelected(item);
 	}
 	
+	@Override
+	protected Dialog onCreateDialog(final int id) {
+		return mDialogDelegate.createDialog(id);
+	}
+	
+	@Override
+	protected void onPrepareDialog(final int id, final Dialog dialog, final Bundle args) {
+		super.onPrepareDialog(id, dialog, args);
+		mDialogDelegate.prepareDialog(id, dialog, args);
+	}
+	
     /**
      * Ajoute un pointage à l'heure courante
      * @param btn Bouton qui a été cliqué.
@@ -215,14 +232,6 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
     	
     	// Rafraîchit l'interface graphique.
     	populateView(mWorkDayBean);
-    }
-    
-    /**
-     * Affiche la note et en propose l'écition
-     * @param btn
-     */
-    public void showNote(final View btn) {
-    	promptEditNote(mWorkDayBean.date, mWorkDayBean.note);
     }
     
     /**

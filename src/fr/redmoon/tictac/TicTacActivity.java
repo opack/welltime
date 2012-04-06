@@ -2,33 +2,22 @@ package fr.redmoon.tictac;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
-import android.app.Dialog;
-import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.format.Time;
 import android.view.GestureDetector;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
 import fr.redmoon.tictac.db.DbAdapter;
-import fr.redmoon.tictac.gui.datepicker.DatePickerDialogHelper;
-import fr.redmoon.tictac.gui.listeners.AddCheckingListener;
-import fr.redmoon.tictac.gui.listeners.AddDayListener;
-import fr.redmoon.tictac.gui.listeners.EditNoteListener;
-import fr.redmoon.tictac.gui.listeners.ShowDayListener;
-import fr.redmoon.tictac.gui.listeners.UpdateCheckingListener;
-import fr.redmoon.tictac.gui.listeners.UpdateExtraListener;
+import fr.redmoon.tictac.gui.dialogs.DialogArgs;
+import fr.redmoon.tictac.gui.dialogs.DialogTypes;
 import fr.redmoon.tictac.gui.sweep.Direction;
 import fr.redmoon.tictac.gui.sweep.ViewFlipperManager;
 import fr.redmoon.tictac.gui.sweep.ViewSwitcherGestureListener;
-import fr.redmoon.tictac.gui.timepicker.TimePickerDialogHelper;
 
 /**
  * Gère les fonctionnalités communes à toutes les activités de l'application :
@@ -42,35 +31,6 @@ public abstract class TicTacActivity extends Activity {
 	 */
 	private static final int MIN_VIEW_FLIP_INTERVAL = 1000;
 	
-	/**
-	 * Constante identifiant les boîtes de dialogue
-	 */
-	protected static final int DIALOG_TIMEPICKER_ADD_CHECKING = 0;
-	protected static final int DIALOG_TIMEPICKER_EDIT_CHECKING = 1;
-	protected static final int DIALOG_TIMEPICKER_EDIT_EXTRA = 2;
-	protected static final int DIALOG_DATEPICKER_ADD_DAY = 3;
-	protected static final int DIALOG_DATEPICKER_SHOW_DAY = 4;
-	
-	/**
-	 * Constante identifiant un argument spécifiant une date
-	 */
-	protected static final String DATE = "DATE";
-	
-	/**
-	 * Constante identifiant un argument spécifiant un horaire
-	 */
-	protected static final String TIME = "TIME";
-	
-	/**
-	 * Constante identifiant un argument spécifiant un type de jour
-	 */
-	protected static final String DAY_TYPE = "DAY_TYPE";
-	
-	/**
-	 * Constante identifiant un argument spécifiant une note
-	 */
-	protected static final String NOTE = "NOTE";
-	
 	// Objets chargés de gérer "physiquement" la bascule d'une vue à l'autre
 	protected ViewFlipperManager mViewFlipperManager;
 	private ViewSwitcherGestureListener mGestureListener;
@@ -78,14 +38,6 @@ public abstract class TicTacActivity extends Activity {
 	protected View mCurrentView; // Vue actuellement affichée
 	private long mLastViewFlipTime; // Heure du dernier changement de vue, pour éviter des changements trop rapprochés.
 	private int[] mFlipViews;// Vues qu'on doit flipper, la seconde étant la vue de détails à inflater.
-	
-	// Listeners pour les boîtes de dialogue
-	private AddCheckingListener mAddCheckingListener;
-	private UpdateCheckingListener mUpdateCheckingListener;
-	private UpdateExtraListener mUpdateExtraListener;
-	private AddDayListener mAddDayListener;
-	private ShowDayListener mShowDayListener;
-	private EditNoteListener mEditNoteListener;
 	
 	protected long mToday = -1;
 	protected final Time mWorkTime = new Time();
@@ -100,14 +52,6 @@ public abstract class TicTacActivity extends Activity {
         // Ouverture de l'accès à la base de données
         mDb = new DbAdapter(this);
         mDb.openDatabase();
-        
-        // Préparation des listeners pour les boîtes de dialogue
-        mAddCheckingListener = new AddCheckingListener(this);
-        mUpdateCheckingListener = new UpdateCheckingListener(this);
-        mUpdateExtraListener = new UpdateExtraListener(this);
-        mAddDayListener = new AddDayListener(this);
-        mShowDayListener = new ShowDayListener(this);
-        mEditNoteListener = new EditNoteListener(this);
         
         // Création du bean de travail
         mWorkDayBean = new DayBean();
@@ -126,48 +70,6 @@ public abstract class TicTacActivity extends Activity {
 		return mDb;
 	}
 
-	@Override
-	protected Dialog onCreateDialog(final int id) {
-    	switch (id) {
-    	case DIALOG_TIMEPICKER_ADD_CHECKING:
-    		return TimePickerDialogHelper.createDialog(this, mAddCheckingListener);
-		case DIALOG_TIMEPICKER_EDIT_CHECKING:
-			return TimePickerDialogHelper.createDialog(this, mUpdateCheckingListener);
-		case DIALOG_TIMEPICKER_EDIT_EXTRA:
-			return TimePickerDialogHelper.createDialog(this, mUpdateExtraListener);
-		case DIALOG_DATEPICKER_ADD_DAY:
-			return DatePickerDialogHelper.createDialog(this, mAddDayListener, DateUtils.extractYear(mToday), DateUtils.extractMonth(mToday), DateUtils.extractDayOfMonth(mToday));
-		case DIALOG_DATEPICKER_SHOW_DAY:
-			return DatePickerDialogHelper.createDialog(this, mShowDayListener, DateUtils.extractYear(mToday), DateUtils.extractMonth(mToday), DateUtils.extractDayOfMonth(mToday));
-		}
-		return null;
-	}
-	
-	@Override
-	protected void onPrepareDialog(final int id, final Dialog dialog, final Bundle args) {
-		super.onPrepareDialog(id, dialog, args);
-		switch (id) {
-			case DIALOG_TIMEPICKER_ADD_CHECKING:
-				mAddCheckingListener.prepare(args.getLong(DATE));
-				TimePickerDialogHelper.prepare((TimePickerDialog) dialog, args.getInt(TIME));
-				break;
-			case DIALOG_TIMEPICKER_EDIT_CHECKING:
-				mUpdateCheckingListener.prepare(args.getLong(DATE), args.getInt(TIME));
-				TimePickerDialogHelper.prepare((TimePickerDialog) dialog, args.getInt(TIME));
-				break;
-			case DIALOG_TIMEPICKER_EDIT_EXTRA:
-				mUpdateExtraListener.prepare(args.getLong(DATE));
-				TimePickerDialogHelper.prepare((TimePickerDialog) dialog, args.getInt(TIME));
-				break;
-			case DIALOG_DATEPICKER_ADD_DAY:
-			case DIALOG_DATEPICKER_SHOW_DAY:
-				// C'est un peu inutile car on passe toujours le jour courant.
-				final long date = args.getLong(DATE);
-				DatePickerDialogHelper.prepare((DatePickerDialog) dialog, DateUtils.extractYear(date), DateUtils.extractMonth(date), DateUtils.extractDayOfMonth(date));
-				break;
-		}
-	}
-    
 //  @Override
 //	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 //		super.onCreateContextMenu(menu, v, menuInfo);
@@ -315,9 +217,9 @@ public abstract class TicTacActivity extends Activity {
 	 */
 	protected void promptEditExtraTime(final long date, final int extra) {
 		final Bundle args = new Bundle();
-		args.putLong(DATE, date);
-		args.putInt(TIME, extra);
-		showDialog(DIALOG_TIMEPICKER_EDIT_EXTRA, args);
+		args.putLong(DialogArgs.DATE, date);
+		args.putInt(DialogArgs.TIME, extra);
+		showDialog(DialogTypes.TIMEPICKER_EDIT_EXTRA, args);
 	}
 	
 	/**
@@ -329,9 +231,9 @@ public abstract class TicTacActivity extends Activity {
 	 */
 	protected void promptEditChecking(final long date, final int checkingToEdit) {
 		final Bundle args = new Bundle();
-		args.putLong(DATE, date);
-		args.putInt(TIME, checkingToEdit);
-		showDialog(DIALOG_TIMEPICKER_EDIT_CHECKING, args);
+		args.putLong(DialogArgs.DATE, date);
+		args.putInt(DialogArgs.TIME, checkingToEdit);
+		showDialog(DialogTypes.TIMEPICKER_EDIT_CHECKING, args);
 	}
 	
 	/**
@@ -340,8 +242,8 @@ public abstract class TicTacActivity extends Activity {
 	 */
 	protected void promptAddDay() {
 		final Bundle args = new Bundle();
-		args.putLong(DATE, mToday);
-		showDialog(DIALOG_DATEPICKER_ADD_DAY, args);
+		args.putLong(DialogArgs.DATE, mToday);
+		showDialog(DialogTypes.DATEPICKER_ADD_DAY, args);
 	}
 	
 	/**
@@ -350,8 +252,8 @@ public abstract class TicTacActivity extends Activity {
 	 */
 	protected void promptShowDay() {
 		final Bundle args = new Bundle();
-		args.putLong(DATE, mToday);
-		showDialog(DIALOG_DATEPICKER_SHOW_DAY, args);
+		args.putLong(DialogArgs.DATE, mToday);
+		showDialog(DialogTypes.DATEPICKER_SHOW_DAY, args);
 	}
 	
 	/**
@@ -361,9 +263,9 @@ public abstract class TicTacActivity extends Activity {
 	 */
 	protected void promptAddChecking(final long date) {
 		final Bundle args = new Bundle();
-		args.putLong(DATE, date);
-		args.putInt(TIME, 0);// Par défaut, on met l'heure à 00:00
-		showDialog(DIALOG_TIMEPICKER_ADD_CHECKING, args);
+		args.putLong(DialogArgs.DATE, date);
+		args.putInt(DialogArgs.TIME, 0);// Par défaut, on met l'heure à 00:00
+		showDialog(DialogTypes.TIMEPICKER_ADD_CHECKING, args);
 	}
 	
 	/**
@@ -374,33 +276,10 @@ public abstract class TicTacActivity extends Activity {
 	 * @param day
 	 */
 	protected void promptEditNote(final long date, final String initialNote) {
-		// Prépare le listener
-		mEditNoteListener.prepare(date);
-
-		// Création de la boîte de dialogue		
-		final AlertDialog.Builder alert = new AlertDialog.Builder(this);
-		alert.setTitle(R.string.dlg_title_edit_day_note);
-		final EditText input = new EditText(this);
-		input.setLines(3);
-		input.setGravity(Gravity.TOP);
-		input.setText(initialNote);
-		if (initialNote != null) {
-			input.setSelection(initialNote.length());
-		}
-		alert.setView(input);
-		alert.setPositiveButton(R.string.btn_save, new DialogInterface.OnClickListener() {
-			@Override
-    		public void onClick(DialogInterface dialog, int id) {
-				mEditNoteListener.onNoteSaved(input.getText().toString());
-        	}
-		});
-		alert.setNegativeButton(R.string.btn_cancel, new DialogInterface.OnClickListener() {
-			@Override
-    		public void onClick(DialogInterface dialog, int id) {
-            	dialog.dismiss();
-        	}
-		});
-		alert.show();
+		final Bundle args = new Bundle();
+		args.putLong(DialogArgs.DATE, date);
+		args.putString(DialogArgs.NOTE, initialNote);
+		showDialog(DialogTypes.TEXTINPUT_EDIT_NOTE, args);
 	}
 	
 	/**
@@ -441,6 +320,10 @@ public abstract class TicTacActivity extends Activity {
 	protected void setText(final int viewId, final String text) {
 		final TextView label = (TextView)findViewById(viewId);
 		label.setText(text);
+	}
+	
+	public long getToday() {
+		return mToday;
 	}
 }
 

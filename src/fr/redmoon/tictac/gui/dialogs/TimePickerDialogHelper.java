@@ -1,4 +1,4 @@
-package fr.redmoon.tictac.gui.timepicker;
+package fr.redmoon.tictac.gui.dialogs;
 
 import fr.redmoon.tictac.bus.TimeUtils;
 import android.app.Dialog;

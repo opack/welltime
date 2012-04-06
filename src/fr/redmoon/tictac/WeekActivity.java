@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.format.Time;
@@ -23,6 +24,7 @@ import fr.redmoon.tictac.bus.PreferencesUtils;
 import fr.redmoon.tictac.bus.TimeUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
 import fr.redmoon.tictac.bus.bean.PreferencesBean;
+import fr.redmoon.tictac.gui.dialogs.WeekDialogDelegate;
 import fr.redmoon.tictac.gui.listadapter.WeekAdapter;
 import fr.redmoon.tictac.gui.widgets.WidgetProvider;
 
@@ -35,6 +37,8 @@ public class WeekActivity extends TicTacActivity {
 		 */
 		void onDeleteDay(long date);
 	}
+	
+	private WeekDialogDelegate mDialogDelegate;
 	
 	private List<DayBean> mWeek;
 	private int mSelectedDay;
@@ -53,6 +57,8 @@ public class WeekActivity extends TicTacActivity {
 	
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
+    	
+    	mDialogDelegate = new WeekDialogDelegate(this);
 
         // Création du bean de travail
         mWeek = new ArrayList<DayBean>();
@@ -131,6 +137,17 @@ public class WeekActivity extends TicTacActivity {
 			return true;
 		}
 		return super.onContextItemSelected(item);
+	}
+	
+	@Override
+	protected Dialog onCreateDialog(final int id) {
+		return mDialogDelegate.createDialog(id);
+	}
+	
+	@Override
+	protected void onPrepareDialog(final int id, final Dialog dialog, final Bundle args) {
+		super.onPrepareDialog(id, dialog, args);
+		mDialogDelegate.prepareDialog(id, dialog, args);
 	}
     
 	private void showDayDetails(final DayBean day) {
