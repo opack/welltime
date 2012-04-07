@@ -40,7 +40,6 @@ public class WeekActivity extends TicTacActivity implements OnDayDeletionListene
 	
 	private long mMonday;
 	private long mSunday;
-	private Calendar mWorkCal;
 	
 	// Ci-dessous suivent les objets instanciés une unique fois pour des raisons de performance.
 	// On les crée au démarrage de l'application et on les réutilise avec des màj pour éviter
@@ -72,7 +71,6 @@ public class WeekActivity extends TicTacActivity implements OnDayDeletionListene
         mLstDays.setAdapter(adapter);
         
         // Affichage du jour courant
-        mWorkCal = new GregorianCalendar(DateUtils.extractYear(mToday), DateUtils.extractMonth(mToday), DateUtils.extractDayOfMonth(mToday));
         mMonday = mToday; 	// On passe la date et non pas juste le bean pour
         					// s'assurer qu'une lecture des données en base
         					// sera effectuée afin d'initialiser le bean.
@@ -122,6 +120,12 @@ public class WeekActivity extends TicTacActivity implements OnDayDeletionListene
 		
 		// Mise à jour du jour sélectionné et du menu (en fonction de l'existence du jour en base)
 		mSelectedDay = (Integer)v.getTag();
+		
+		// Si le jour n'existe pas en base, on masque certaines options
+		final DayBean day = mWeek.get(mSelectedDay);
+		if (!mDb.isDayExisting(day.date)) {
+			menu.findItem(R.id.menu_day_delete).setVisible(false);
+		}
 	}
 	
 	@Override

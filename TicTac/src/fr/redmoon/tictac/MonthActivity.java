@@ -79,6 +79,13 @@ public class MonthActivity extends TicTacActivity implements OnDayDeletionListen
 		
 		// Mise à jour du jour sélectionné et du menu (en fonction de l'existence du jour en base)
 		mSelectedDay = (Long)v.getTag();
+		
+		// Si le jour n'existe pas en base, on masque certaines options
+		if (!mDb.isDayExisting(mSelectedDay)) {
+			menu.findItem(R.id.menu_day_show_checkings).setVisible(false);
+			menu.findItem(R.id.menu_day_show_details).setVisible(false);
+			menu.findItem(R.id.menu_day_delete).setVisible(false);
+		}
 	}
 	
 	@Override
@@ -99,6 +106,14 @@ public class MonthActivity extends TicTacActivity implements OnDayDeletionListen
 		}
 		return super.onContextItemSelected(item);
 	}
+	
+	@Override
+    protected void onResume() {
+    	populateView(DateUtils.getDayId(mWorkTime)); 	// On passe la date et non pas juste le bean pour
+														// s'assurer qu'une lecture des données en base
+														// sera effectuée afin d'initialiser le bean.
+    	super.onResume();
+    }
 
 	@Override
 	public void populateView(final long date) {

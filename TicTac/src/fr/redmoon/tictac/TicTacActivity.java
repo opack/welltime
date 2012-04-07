@@ -1,6 +1,8 @@
 package fr.redmoon.tictac;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import android.app.Activity;
@@ -62,6 +64,7 @@ public abstract class TicTacActivity extends Activity {
 	protected DbAdapter mDb;
 	
 	protected DayBean mWorkDayBean;
+	protected Calendar mWorkCal;
 
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,6 +78,7 @@ public abstract class TicTacActivity extends Activity {
         
         // Récupération de la date du jour
         mToday = DateUtils.getCurrentDayId(mWorkTime);
+        mWorkCal = new GregorianCalendar(DateUtils.extractYear(mToday), DateUtils.extractMonth(mToday), DateUtils.extractDayOfMonth(mToday));
     }
 	
 	@Override

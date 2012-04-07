@@ -87,7 +87,7 @@ public class CalendarAdapter extends BaseAdapter {
         }
         
         // Ajout/retrait de ce jour comme proposant un menu contextuel suivant qu'il est dans
-        // un entête ou non
+        // un entête ou non, ou dans le WE
         if (row == 0 || col == 0) {
             mActivity.unregisterForContextMenu(v);
         } else {

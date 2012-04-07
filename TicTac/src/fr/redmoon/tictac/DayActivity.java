@@ -1,6 +1,7 @@
 package fr.redmoon.tictac;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import android.app.Dialog;
@@ -211,11 +212,21 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
      * @param btn
      */
     public void showPrevious(final View btn) {
-    	// On récupère le jour en base
-    	mDb.fetchPreviousDay(mWorkDayBean.date, mWorkDayBean);
+    	// On se place sur le dimanche de la semaine, et on avance d'un jour
+    	mWorkCal.set(DateUtils.extractYear(mWorkDayBean.date), DateUtils.extractMonth(mWorkDayBean.date), DateUtils.extractDayOfMonth(mWorkDayBean.date));
+    	final int dayOfWeek = mWorkCal.get(Calendar.DAY_OF_WEEK);
+    	if (Calendar.TUESDAY <= dayOfWeek && dayOfWeek <= Calendar.FRIDAY) {
+    		// Si le jour est entre mardi et vendredi, on peut reculer d'un jour : on sera toujours
+    		// sur un jour de semaine travaillé (lundi - vendredi)
+    		mWorkCal.add(Calendar.DAY_OF_YEAR, -1);
+    	} else {
+    		// On est dimanche ou lundi, et on ne peut pas avancer d'un seul jour sinon on tombe le
+    		// week-end. On va donc reculer d'assez de jours pour tomber sur le vendredi.
+    		mWorkCal.add(Calendar.DAY_OF_YEAR, Calendar.FRIDAY - dayOfWeek);
+    	}
     	
-    	// Rafraîchit l'interface graphique.
-    	populateView(mWorkDayBean);
+    	// Maintenant on affiche la semaine de ce jour
+    	populateView(DateUtils.getDayId(mWorkCal));
     }
     
     /**
@@ -223,20 +234,21 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
      * @param btn
      */
     public void showNext(final View btn) {
-    	// On récupère le jour en base
-    	mDb.fetchNextDay(mWorkDayBean.date, mWorkDayBean);
-    	
-    	// Faut-il préparer le jour d'aujourd'hui ? Oui, si :
-    	//  - on a essayé de récupérer un jour qui n'a pas été trouvé
-    	//  - ce jour est avant aujourd'hui
-    	if (!mWorkDayBean.isValid
-    	&& mWorkDayBean.date < mToday) {
-    		mWorkDayBean.reset();
-    		mWorkDayBean.date = mToday;
+    	// On se place sur le jour courant, et on avance d'un jour
+    	mWorkCal.set(DateUtils.extractYear(mWorkDayBean.date), DateUtils.extractMonth(mWorkDayBean.date), DateUtils.extractDayOfMonth(mWorkDayBean.date));
+    	final int dayOfWeek = mWorkCal.get(Calendar.DAY_OF_WEEK);
+    	if (Calendar.SUNDAY <= dayOfWeek && dayOfWeek <= Calendar.THURSDAY) {
+    		// Si le jour est entre dimanche et jeudi, on peut avancer d'un jour : on sera toujours
+    		// sur un jour de semaine travaillé (lundi - vendredi)
+    		mWorkCal.add(Calendar.DAY_OF_YEAR, 1);
+    	} else {
+    		// On est vendredi ou samedi, et on ne peut pas avancer d'un seul jour sinon on tombe le
+    		// week-end. On va donc avancer d'assez de jours pour tomber sur le lundi.
+    		mWorkCal.add(Calendar.DAY_OF_YEAR, 9 - dayOfWeek);
     	}
     	
-    	// Rafraîchit l'interface graphique.
-    	populateView(mWorkDayBean);
+    	// Maintenant on affiche la semaine de ce jour
+    	populateView(DateUtils.getDayId(mWorkCal));
     }
     
     /**
@@ -246,6 +258,11 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
     public void populateView(final long day) {
     	// On récupère le jour en base
     	mDb.fetchDay(day, mWorkDayBean);
+    	
+    	// Si le jour n'existe pas, on fait comme si =)
+    	if (!mWorkDayBean.isValid) {
+    		mWorkDayBean.date = day;
+    	}
     	
     	// Rafraîchit l'interface graphique.
     	populateView(mWorkDayBean);
@@ -267,7 +284,7 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
      * @param day
      */
     private void populateCommon(final DayBean day) {
-    	// // Affichage du jour courant, du temps effectué et du temps restant
+    	// Affichage du jour courant, du temps effectué et du temps restant
     	DateUtils.fillTime(day.date, mWorkTime);
         mWorkTime.normalize(true);
         final String strCurrent = mWorkTime.format(DateUtils.FORMAT_DATE_DETAILS);
