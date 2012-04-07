@@ -159,6 +159,9 @@ public class DaysTableHelper extends TableHelper {
 			beanToFill.extra = data.getInt(COL_EXTRA_INDEX);
 			beanToFill.note = data.getString(COL_NOTE_INDEX);
 			return true;
+		} else {
+			// Le jour n'est pas renseigné en base
+			beanToFill.type = DayTypes.not_worked.ordinal();
 		}
 		return false;
 	}

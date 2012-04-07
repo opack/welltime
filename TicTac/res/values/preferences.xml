@@ -33,6 +33,7 @@
 	<string name="pref_daytype_color">Couleur</string>
 	<string name="pref_daytypes">Types de jour</string>
 	<string name="pref_daytypes_summary">Modifiez les propriétés des types de jour.</string>
+	<string name="pref_daytype_notworked">Non renseigné</string>
 	<string name="pref_daytype_normal">Journée normale</string>
 	<string name="pref_daytype_normal_time_summary">Temps de travail théorique.</string>
 	<string name="pref_daytype_normal_color_summary">Choisissez la couleur représentant les jours normaux.</string>

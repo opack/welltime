@@ -3,7 +3,9 @@ package fr.redmoon.tictac;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import android.app.Dialog;
 import android.os.Bundle;
@@ -25,6 +27,7 @@ import fr.redmoon.tictac.bus.bean.DayBean;
 import fr.redmoon.tictac.bus.bean.PreferencesBean;
 import fr.redmoon.tictac.gui.dialogs.WeekDialogDelegate;
 import fr.redmoon.tictac.gui.listadapter.WeekAdapter;
+import fr.redmoon.tictac.gui.listadapter.WeekAdapterEntry;
 
 public class WeekActivity extends TicTacActivity implements OnDayDeletionListener {
 	
@@ -37,12 +40,13 @@ public class WeekActivity extends TicTacActivity implements OnDayDeletionListene
 	
 	private long mMonday;
 	private long mSunday;
+	private Calendar mWorkCal;
 	
 	// Ci-dessous suivent les objets instanciés une unique fois pour des raisons de performance.
 	// On les crée au démarrage de l'application et on les réutilise avec des màj pour éviter
 	// d'autres instanciations.
 	private ListView mLstDays;
-	private final List<String[]> mDaysArray = new ArrayList<String[]>();
+	private final List<WeekAdapterEntry> mDaysArray = new ArrayList<WeekAdapterEntry>();
 	
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
@@ -68,6 +72,7 @@ public class WeekActivity extends TicTacActivity implements OnDayDeletionListene
         mLstDays.setAdapter(adapter);
         
         // Affichage du jour courant
+        mWorkCal = new GregorianCalendar(DateUtils.extractYear(mToday), DateUtils.extractMonth(mToday), DateUtils.extractDayOfMonth(mToday));
         mMonday = mToday; 	// On passe la date et non pas juste le bean pour
         					// s'assurer qu'une lecture des données en base
         					// sera effectuée afin d'initialiser le bean.
@@ -148,30 +153,21 @@ public class WeekActivity extends TicTacActivity implements OnDayDeletionListene
 	}
     
 	public void showPrevious(final View btn) {
-    	// On récupère en base le jour précédent le lundi actuellement affiché
-    	mDb.fetchPreviousDay(mMonday, mWorkDayBean);
-    	if (mWorkDayBean.isValid) {
-	    	// Rafraîchit l'interface graphique.
-	    	populateView(mWorkDayBean.date);
-    	}
+		// On se place sur le lundi de la semaine, et on recule d'un jour
+    	mWorkCal.set(DateUtils.extractYear(mMonday), DateUtils.extractMonth(mMonday), DateUtils.extractDayOfMonth(mMonday));
+    	mWorkCal.add(Calendar.DAY_OF_YEAR, -1);
+    	
+    	// Maintenant on affiche la semaine de ce jour
+    	populateView(DateUtils.getDayId(mWorkCal));
     }
     
     public void showNext(final View btn) {
-    	// On récupère en base le jour précédent le lundi actuellement affiché
-    	mDb.fetchNextDay(mSunday, mWorkDayBean);
+    	// On se place sur le dimanche de la semaine, et on avance d'un jour
+    	mWorkCal.set(DateUtils.extractYear(mSunday), DateUtils.extractMonth(mSunday), DateUtils.extractDayOfMonth(mSunday));
+    	mWorkCal.add(Calendar.DAY_OF_YEAR, 1);
     	
-    	// Faut-il préparer la semaine d'aujourd'hui ?
-    	// Faut-il préparer le jour d'aujourd'hui ? Oui, si :
-    	//  - on a essayé de récupérer un jour qui n'a pas été trouvé
-    	//  - ce jour est avant aujourd'hui
-    	if (!mWorkDayBean.isValid
-    	&& mWorkDayBean.date < mToday) {
-    		mWorkDayBean.reset();
-    		mWorkDayBean.date = mToday;
-    	}
-    	
-    	// Rafraîchit l'interface graphique.
-    	populateView(mWorkDayBean.date);
+    	// Maintenant on affiche la semaine de ce jour
+    	populateView(DateUtils.getDayId(mWorkCal));
     }
     
     /**
@@ -195,11 +191,31 @@ public class WeekActivity extends TicTacActivity implements OnDayDeletionListene
     	mDb.fetchDays(mMonday, mSunday, mWeek);
 
     	// On conserve le jour de travail (notamment pour le sweep)
+    	final Set<Long> daysById = new HashSet<Long>();
     	for (DayBean day : mWeek) {
+    		daysById.add(day.date);
+    		
     		if (day.date == date) {
     			mWorkDayBean = day;
-    			break;
     		}
+    	}
+    	
+    	// Ajout de jours permettant de remplir les trous de la semaine
+    	mWorkCal.set(monday.year, monday.month, monday.monthDay);
+    	long dayId;
+    	for (int curDay = 0; curDay < 5; curDay++) {
+    		// Si le jour n'est pas en base, on en crée un faux
+    		dayId = DateUtils.getDayId(mWorkCal);
+    		if (!daysById.contains(dayId)) {
+    			// Le nouveau jour créé sera noté comme non valide et de type
+    			// "non travaillé".
+    			DayBean fillin = new DayBean();
+    			fillin.date = dayId;
+    			mWeek.add(curDay, fillin);
+    		}
+    		
+    		// On passe au jour suivant
+    		mWorkCal.add(Calendar.DAY_OF_YEAR, 1);
     	}
     	
     	// Rafraîchit l'interface graphique.
@@ -243,24 +259,29 @@ public class WeekActivity extends TicTacActivity implements OnDayDeletionListene
     	
     	// On crée le tableau qui est attendu par l'adapter d'affichage
     	mDaysArray.clear();
-    	String[] dayInfos = null;
+    	WeekAdapterEntry dayInfos = null;
     	for (DayBean day : week) {
-    		// Création du tableau contenant les infos du jour
-    		dayInfos = new String[3];
+    		// Création de la structure contenant les infos du jour
+    		dayInfos = new WeekAdapterEntry();
     		mDaysArray.add(dayInfos);
+    		dayInfos.isValid = day.isValid;
     		
     		// Remplissage de la date du jour
-			dayInfos[0] = DateUtils.formatDateDDMM(day.date);
+			dayInfos.date = DateUtils.formatDateDDMM(day.date);
     		
 			// Calcul du temps effectué
-    		final int dayTotal = TimeUtils.computeTotal(day);
-    		dayInfos[1] = TimeUtils.formatMinutes(dayTotal);
-    		
-    		// Mise à jour du total de la semaine
-    		mWeekWorked += dayTotal;
+			if (day.isValid) {
+	    		final int dayTotal = TimeUtils.computeTotal(day);
+	    		dayInfos.total = TimeUtils.formatMinutes(dayTotal);
+	    		
+	    		// Mise à jour du total de la semaine
+	    		mWeekWorked += dayTotal;
+			} else {
+				dayInfos.total = TimeUtils.UNKNOWN_TIME_STRING;
+			}
     		
     		// Sauvegarde de la couleur de fond de ce jour
-            dayInfos[2] = String.valueOf(PreferencesBean.getColorByDayType(day.type));
+            dayInfos.bkColor = PreferencesBean.getColorByDayType(day.type);
     	}
     	
         // Affichage des jours.
