@@ -2,6 +2,9 @@ package fr.redmoon.tictac.bus.bean;
 
 import java.io.Serializable;
 
+import android.graphics.Color;
+import fr.redmoon.tictac.bus.DayTypes;
+
 
 /**
  * Classe qui conserve la dernière version connue des préférences
@@ -80,25 +83,22 @@ public class PreferencesBean implements Serializable{
 	 * @return
 	 */
 	public static int getTimeByDayType(final int type) {
-		switch (type) {
-			// Normal
-			case 0:
-				return instance.dayTypeNormalTime;
-			//RTT
-			case 1:
-				return instance.dayTypeRttTime;
-			// CP
-			case 2:
-				return instance.dayTypeVacancyTime;
-			// Férié
-			case 3:
-				return instance.dayTypePublicHolidayTime;
-			// Maladie
-			case 4:
-				return instance.dayTypeIllnessTime;
+		if (type == DayTypes.not_worked.ordinal()) {
+			return 0;
+		} else if (type == DayTypes.normal.ordinal()) {
+			return instance.dayTypeNormalTime;
+		} else if (type == DayTypes.RTT.ordinal()) {
+			return instance.dayTypeRttTime;
+		} else if (type == DayTypes.vacancy.ordinal()) {
+			return instance.dayTypeVacancyTime;
+		} else if (type == DayTypes.publicHoliday.ordinal()) {
+			return instance.dayTypePublicHolidayTime;
+		} else if (type == DayTypes.illness.ordinal()) {
+			return instance.dayTypeIllnessTime;
+		} else {
+			// Type de jour inconnu
+			return 0;
 		}
-		// Type de jour inconnu
-		return 0;
 	}
 	
 	/**
@@ -107,25 +107,22 @@ public class PreferencesBean implements Serializable{
 	 * @return
 	 */
 	public static int getColorByDayType(final int type) {
-		switch (type) {
-			// Normal
-			case 0:
-				return instance.dayTypeNormalColor;
-			//RTT
-			case 1:
-				return instance.dayTypeRttColor;
-			// CP
-			case 2:
-				return instance.dayTypeVacancyColor;
-			// Férié
-			case 3:
-				return instance.dayTypePublicHolidayColor;
-			// Maladie
-			case 4:
-				return instance.dayTypeIllnessColor;
+		if (type == DayTypes.not_worked.ordinal()) {
+			return Color.rgb(204, 204, 204);
+		} else if (type == DayTypes.normal.ordinal()) {
+			return instance.dayTypeNormalColor;
+		} else if (type == DayTypes.RTT.ordinal()) {
+			return instance.dayTypeRttColor;
+		} else if (type == DayTypes.vacancy.ordinal()) {
+			return instance.dayTypeVacancyColor;
+		} else if (type == DayTypes.publicHoliday.ordinal()) {
+			return instance.dayTypePublicHolidayColor;
+		} else if (type == DayTypes.illness.ordinal()) {
+			return instance.dayTypeIllnessColor;
+		} else {
+			// Type de jour inconnu
+			return 0;
 		}
-		// Type de jour inconnu
-		return 0;
 	}
 
 	public void clone(final PreferencesBean otherPrefs) {

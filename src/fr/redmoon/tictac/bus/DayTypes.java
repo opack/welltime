@@ -9,7 +9,8 @@ public enum DayTypes {
 	RTT  (R.string.pref_daytype_rtt),
 	vacancy (R.string.pref_daytype_vacancy),
 	publicHoliday (R.string.pref_daytype_publicholiday),
-	illness (R.string.pref_daytype_illness);
+	illness (R.string.pref_daytype_illness),
+	not_worked (R.string.pref_daytype_notworked);
 	
 	private final int labelResId;
 	
