@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="60px"
-    android:background="@drawable/list_item_background"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/list_item_calendar_background_std"
     android:orientation="vertical"
     android:padding="8dp" >
 
@@ -18,7 +18,7 @@
 
     <ImageView
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/date_icon"
+        android:id="@+id/note"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:src="@drawable/note"
