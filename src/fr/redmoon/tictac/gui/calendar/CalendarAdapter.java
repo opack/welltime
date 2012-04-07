@@ -1,9 +1,12 @@
 package fr.redmoon.tictac.gui.calendar;
 
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
+import android.text.format.Time;
 import android.util.MonthDisplayHelper;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -12,24 +15,29 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 import fr.redmoon.tictac.R;
+import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
 import fr.redmoon.tictac.bus.bean.PreferencesBean;
 
 public class CalendarAdapter extends BaseAdapter {
-	private final Context mContext;
+	private final Activity mActivity;
 
 	private MonthDisplayHelper mHelper;
     private SparseArray<DayBean> mDaysData;
-    public String[] days;
     private final String[] mDaysShortNames;
     
-    public CalendarAdapter(final Context _context, final int year, final int month) {
-    	mContext = _context;
-    	mDaysShortNames = mContext.getResources().getStringArray(R.array.days_short_names);
+    private final Time mWorkTime;
+    private final Calendar mWorkCal;
+    
+    public CalendarAdapter(final Activity _activity, final int year, final int month) {
+    	mActivity = _activity;
+    	mDaysShortNames = mActivity.getResources().getStringArray(R.array.days_short_names);
     	
     	showMonth(year, month);
         
-        this.mDaysData = new SparseArray<DayBean>();
+        mDaysData = new SparseArray<DayBean>();
+        mWorkTime = new Time();
+        mWorkCal = new GregorianCalendar();
     }
     
     public void setItems(final SparseArray<DayBean> items) {
@@ -55,7 +63,7 @@ public class CalendarAdapter extends BaseAdapter {
     	View v = convertView;
     	// Si la vue n'est pas recyclée, on initialise son contenu
         if (convertView == null) {
-        	LayoutInflater vi = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        	LayoutInflater vi = (LayoutInflater)mActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             v = vi.inflate(R.layout.calendar_item, null);
         }
         
@@ -77,34 +85,53 @@ public class CalendarAdapter extends BaseAdapter {
         	// de façon à lui masquer le fait qu'on a ajouté une ligne et une colonne d'entête
         	adaptDayView(row - 1, col - 1, v);
         }
+        
+        // Ajout/retrait de ce jour comme proposant un menu contextuel suivant qu'il est dans
+        // un entête ou non
+        if (row == 0 || col == 0) {
+            mActivity.unregisterForContextMenu(v);
+        } else {
+            mActivity.registerForContextMenu(v);
+        }
         return v;
     }
     
     private void adaptRowHeaderView(final int col, final View view) {
-    	final TextView dayView = (TextView)view.findViewById(R.id.date);
+    	final TextView dayView = (TextView)view.findViewById(R.id.day_num);
     	if (col == 0) {
     		// La colonne 0 est celle où sont affichées les semaines. On n'aura
     		// donc pas à écrire de nom de jour dessus. On vide la case
     		dayView.setText("");
-	    	view.setBackgroundColor(mContext.getResources().getColor(R.color.app_background));
+	    	view.setBackgroundColor(mActivity.getResources().getColor(R.color.app_background));
     	} else {
 	    	dayView.setText(mDaysShortNames[col - 1]);
 	    	dayView.setTextColor(Color.WHITE);
-	    	view.setBackgroundColor(mContext.getResources().getColor(R.color.light_blue));
+	    	view.setBackgroundColor(mActivity.getResources().getColor(R.color.light_blue));
     	}
 	}
 
 	private void adaptColHeaderView(int row, View view) {
-		final TextView dayView = (TextView)view.findViewById(R.id.date);
+		final TextView dayView = (TextView)view.findViewById(R.id.day_num);
 		if (row == 0) {
     		// La ligne 0 est celle où sont affichées les noms des jours. On n'aura
     		// donc pas à écrire de numéro de semaine dessus.
 			dayView.setText("");
-	    	view.setBackgroundColor(mContext.getResources().getColor(R.color.app_background));
+	    	view.setBackgroundColor(mActivity.getResources().getColor(R.color.app_background));
     	} else {
-	    	dayView.setText("00");
+    		// Pour déterminer le numéro de la semaine, on se base sur le premier jour du mois,
+    		// auquel on ajoute 7 jours pour chaque ligne. Ca nous donne donc le 1er, le 8 etc...
+    		// Chaque jour étant forcément sur une ligne différente, on peut en déduire le numéro
+    		// de la semaine auquel il appartient.
+    		// Le row-1 est nécessaire car on a une ligne d'entête que l'on veut ignorer dans ce
+    		// calcul.
+    		final int dayNum = 1 + (row - 1) * 7;
+    		mWorkTime.set(dayNum, mHelper.getMonth(), mHelper.getYear());
+    		mWorkTime.normalize(true);
+    		final int weekNumber = mWorkTime.getWeekNumber();
+    		
+	    	dayView.setText(String.valueOf(weekNumber));
 	    	dayView.setTextColor(Color.WHITE);
-	    	view.setBackgroundColor(mContext.getResources().getColor(R.color.light_blue));
+	    	view.setBackgroundColor(mActivity.getResources().getColor(R.color.light_blue));
     	}
 	}
 
@@ -117,34 +144,57 @@ public class CalendarAdapter extends BaseAdapter {
      */
     private void adaptDayView(final int row, final int col, View view) {
     	final int position = row * 7 + col - mHelper.getOffset() + 1;
-    	final TextView dayLabel = (TextView)view.findViewById(R.id.date);
+    	final TextView dayLabel = (TextView)view.findViewById(R.id.day_num);
     	final DayBean dayData = mDaysData.get(position);
+    	final boolean isWithinCurrentMonth = mHelper.isWithinCurrentMonth(row, col);
     	
-    	final String dayNumber = String.valueOf(mHelper.getDayAt(row, col));
-    	dayLabel.setText(dayNumber);
+    	// Ecriture du numéro du jour
+    	final int dayNumber = mHelper.getDayAt(row, col);
+    	dayLabel.setText(String.valueOf(dayNumber));
+    	
+    	// Ajout de l'identifiant du jour, qui sera utilisé pour l'identifier si on utilise
+        // le menu contextuel
+    	// Si on est dans le mois courant, alors on déduit l'identifiant du jour grâce au
+    	// MonthDisplayHelper
+    	long dayId = 0;
+    	if (isWithinCurrentMonth) {
+    		dayId = DateUtils.getDayId(mHelper.getYear(), mHelper.getMonth(), dayNumber);
+    	}
+    	// On est hors du mois. On va se servir d'un Calendar pour se positionner sur la date
+		// courante et avancer ou reculer d'un mois, de façon à obtenir la bonne date.
+    	else {
+    		// On se place sur le premier jour du mois
+    		mWorkCal.set(mHelper.getYear(), mHelper.getMonth(), 1);
+    		// On se décale d'autant de jours que la position (donc éventuellement négatif)
+    		mWorkCal.add(Calendar.DAY_OF_YEAR, position);
+    		// Il ne reste plus qu'à extraire le jour qu'a calculé le Calendar
+    		dayId = DateUtils.getDayId(mWorkCal.get(Calendar.YEAR), mWorkCal.get(Calendar.MONTH), dayNumber);
+    	}
+    	view.setTag(dayId);
+    	
     	// Coloration du fond des cases :
     	// Les jours du mois précédent/suivant sont affichés en gris
-        if(!mHelper.isWithinCurrentMonth(row, col)) {
+        if(!isWithinCurrentMonth) {
         	dayLabel.setTextColor(Color.LTGRAY);
-        	view.setBackgroundColor(mContext.getResources().getColor(R.color.calendar_day_out_of_month));
+        	view.setBackgroundColor(mActivity.getResources().getColor(R.color.calendar_day_out_of_month));
         }
         // Les jours normaux prennent la couleur du type du jour
         // ou gris si aucun nour n'a été pointé
         else {
-	        dayLabel.setTextColor(mContext.getResources().getColor(R.color.calendar_day_standard));
+	        dayLabel.setTextColor(mActivity.getResources().getColor(R.color.calendar_day_standard));
 	        // Coloration du fond avec la couleur du type de jour
 	        if (dayData != null) {
 	        	final int dayColor = PreferencesBean.getColorByDayType(dayData.type);
 	        	view.setBackgroundColor(dayColor);
 	        } else {
-	        	view.setBackgroundColor(mContext.getResources().getColor(R.color.calendar_day_not_worked));
+	        	view.setBackgroundColor(mActivity.getResources().getColor(R.color.calendar_day_not_worked));
 	        }
         }
         
-        // Affichage d'une icone indiquant la présence d'une note
+        // Coloration du texte pour indiquer la présence d'une note
         if (dayData != null && dayData.note != null && !dayData.note.isEmpty()) {
         	// Une note existe pour ce jour : on affiche le libellé du jour en jaune
-        	dayLabel.setTextColor(mContext.getResources().getColor(R.color.calendar_day_with_note));
+        	dayLabel.setTextColor(mActivity.getResources().getColor(R.color.calendar_day_with_note));
         }
 	}
 

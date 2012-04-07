@@ -1,5 +1,8 @@
 package fr.redmoon.tictac;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -21,6 +24,7 @@ import fr.redmoon.tictac.gui.dialogs.DialogTypes;
 import fr.redmoon.tictac.gui.sweep.Direction;
 import fr.redmoon.tictac.gui.sweep.ViewFlipperManager;
 import fr.redmoon.tictac.gui.sweep.ViewSwitcherGestureListener;
+import fr.redmoon.tictac.gui.widgets.WidgetProvider;
 
 /**
  * Gère les fonctionnalités communes à toutes les activités de l'application :
@@ -29,6 +33,16 @@ import fr.redmoon.tictac.gui.sweep.ViewSwitcherGestureListener;
  *  - afficher des boîtes de dialogue
  */
 public abstract class TicTacActivity extends Activity {
+	
+	public interface OnDayDeletionListener{
+		/**
+		 * Appelée lorsqu'un jour a été supprimé
+		 * @param date
+		 */
+		void onDeleteDay(long date);
+	}
+	private static List<OnDayDeletionListener> sDayDeletionListeners;
+	
 	/**
 	 * Temps minimum entre deux flips de vue (changement de jour...)
 	 */
@@ -201,10 +215,6 @@ public abstract class TicTacActivity extends Activity {
      */
     public abstract void populateView(final long day);
     
-	protected void switchTab(final int tabIndexToSwitchTo, final long date){
-        switchTab(tabIndexToSwitchTo, date, 0);
-	}
-	
 	/**
 	 * Modifie l'onglet actuellement affiché
 	 * @param indexTabToSwitchTo
@@ -367,6 +377,74 @@ public abstract class TicTacActivity extends Activity {
         // est le dayMin.
         //barTotal.setSecondaryProgress(PreferencesBean.instance.weekMin);
         barTotal.setProgress(total);
+	}
+	
+	/**
+	 * Affiche un message demandant la confirmation de la suppression,
+	 * puis supprime le jour indiqué le cas échéant.
+	 * @param date
+	 */
+	protected void deleteDay(final long date) {
+		// Création des éléments de la boîte de dialogue
+		final CharSequence message = getString(R.string.dlg_msg_confirm_day_deletion, DateUtils.formatDateDDMM(date));
+		final DialogInterface.OnClickListener positiveListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            	// Suppression du jour en base
+            	mDb.deleteDay(date);
+            	
+            	// Mise à jour de l'affichage
+            	populateView(date);
+//            	mWeek.remove(selectedDay);
+//            	if (!mWeek.isEmpty()) {
+//            		// Il reste au moins un jour : on affiche la semaine correspondante.
+//            		populateView(mWeek.get(0).date);
+//            	} else {
+//            		// La semaine est vide : on affiche la semaine précédente
+//            		long previous = mDb.fetchPreviousDay(date);
+//            		if (previous == -1) {
+//            			// S'il n'y a pas de jour précédent, alors on affiche la semaine d'aujourd'hui.
+//            			previous = mToday;
+//            		}
+//            		populateView(previous);
+//            	}
+            	
+            	// Si on a supprimé le jour d'aujourd'hui, on met à jour le widget
+            	if (mToday == date) {
+            		WidgetProvider.updateClockinImage(TicTacActivity.this);
+            	}
+            	
+            	// Si on a supprimé le jour actuellement affiché dans la vue "Jour", on l'en informe
+            	// pour qu'elle mette à jour son affichage
+            	fireOnDeleteDay(date);
+            }
+        };
+        final DialogInterface.OnClickListener negativeListener = new DialogInterface.OnClickListener() {
+        	@Override
+    		public void onClick(DialogInterface dialog, int id) {
+            	dialog.cancel();
+        	}
+        };
+        
+        // Affichage de la boîte de dialogue
+		showConfirmDialog(message, positiveListener, negativeListener);
+	}
+	
+	public static void registerDayDeletionListener(final OnDayDeletionListener listener) {
+		if (sDayDeletionListeners == null) {
+			sDayDeletionListeners = new ArrayList<OnDayDeletionListener>();
+		}
+		sDayDeletionListeners.add(listener);
+	}
+	
+	/**
+	 * Notifie les listeners qu'un jour a été supprimé
+	 * @param date
+	 */
+	private static void fireOnDeleteDay(final long date) {
+		for (OnDayDeletionListener listener : sDayDeletionListeners) {
+			listener.onDeleteDay(date);
+		}
 	}
 }
 

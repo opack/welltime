@@ -2,13 +2,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@drawable/list_item_calendar_background_std"
     android:orientation="vertical"
     android:padding="8dp" >
 
     <TextView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/date"
+        android:id="@+id/day_num"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center"

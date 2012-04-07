@@ -5,9 +5,7 @@ import android.app.AlertDialog;
 import android.app.TabActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -18,6 +16,11 @@ import fr.redmoon.tictac.bus.bean.PreferencesBean;
 import fr.redmoon.tictac.gui.sweep.Direction;
 
 public class MainActivity extends TabActivity {
+	public static final int TAB_DAY_POS = 0;
+	public static final int TAB_WEEK_POS = 1;
+	public static final int TAB_MONTH_POS = 2;
+	public static final int TAB_MANAGE_POS = 3;
+	
 	private TabHost tabHost;
 	
 	public void onCreate(Bundle savedInstanceState) {
@@ -71,7 +74,7 @@ public class MainActivity extends TabActivity {
 		// TODO
 		
 	    // On démarre sur l'onglet "Jour"
-	    tabHost.setCurrentTab(0);
+	    tabHost.setCurrentTab(TAB_DAY_POS);
 	}
 	
 	private void addTab(int labelId, int drawableId, Class<? extends Activity> activityClass) {
