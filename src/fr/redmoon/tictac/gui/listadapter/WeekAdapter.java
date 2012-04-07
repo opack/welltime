@@ -33,6 +33,9 @@ public class WeekAdapter extends ArrayAdapter<WeekAdapterEntry> {
 			
 			// On conserve la position du jour dans la liste. Pratique pour mapper avec la liste de jours ;)
 			v.setTag(position);
+			
+			// Activation du menu contextuel
+			activity.registerForContextMenu(v);
 		}
 		final WeekAdapterEntry infos = items.get(position);
 		if (infos != null) {
@@ -50,11 +53,11 @@ public class WeekAdapter extends ArrayAdapter<WeekAdapterEntry> {
 			v.setBackgroundColor(infos.bkColor);
 			
 			// Si le jour est valide, alors on active le menu contextuel
-			if (infos.isValid) {
-				activity.registerForContextMenu(v);
-			} else {
-				activity.unregisterForContextMenu(v);
-			}
+//DBG			if (infos.isValid) {
+//				activity.registerForContextMenu(v);
+//			} else {
+//				activity.unregisterForContextMenu(v);
+//			}
 		}
 		return v;
 	}
