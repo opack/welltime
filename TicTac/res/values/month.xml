@@ -1,3 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Chaque valeur doit être dans l'ordre d'affichage du calendrier :
+    lundi en premier, dimanche à la fin. -->
+    <string-array name="days_short_names">
+        <item>L</item>
+        <item>M</item>
+        <item>M</item>
+        <item>J</item>
+        <item>V</item>
+        <item>S</item>
+        <item>D</item>
+    </string-array>
 </resources>

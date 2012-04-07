@@ -22,6 +22,11 @@ public class DateUtils {
 	public static final String FORMAT_DATE_DETAILS = "%A %d %B %Y";
 	
 	/**
+	 * Mois et année
+	 */
+	public static final String FORMAT_DATE_MONTH = "%B %Y";
+	
+	/**
 	 * Nombre de millisecondes dans une journée
 	 */
 	public static final long MS_IN_A_DAY = 86400000;		// 1000 * 3600 * 24

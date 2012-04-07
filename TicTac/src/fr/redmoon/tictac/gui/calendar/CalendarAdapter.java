@@ -1,9 +1,11 @@
 package fr.redmoon.tictac.gui.calendar;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.util.MonthDisplayHelper;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,33 +13,42 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import fr.redmoon.tictac.R;
+import fr.redmoon.tictac.bus.bean.DayBean;
 
 public class CalendarAdapter extends BaseAdapter {
-	static final int FIRST_DAY_OF_WEEK =0; // Sunday = 0, Monday = 1
+	private final Context mContext;
 
-
-	private Context mContext;
-
-    private java.util.Calendar month;
-    private Calendar selectedDate;
-    private ArrayList<String> items;
+	private final MonthDisplayHelper mHelper;
+    private final Calendar mCalendar;
+    private final Calendar mSelectedDate;
+    private SparseArray<DayBean> mDaysData;
+    public String[] days;
+    private final String[] mDaysShortNames;
     
-    public CalendarAdapter(Context c, Calendar monthCalendar) {
-    	month = monthCalendar;
-    	selectedDate = (Calendar)monthCalendar.clone();
-    	mContext = c;
-        month.set(Calendar.DAY_OF_MONTH, 1);
-        this.items = new ArrayList<String>();
+    public CalendarAdapter(final Context _context, final Calendar monthCalendar) {
+    	mContext = _context;
+    	mDaysShortNames = mContext.getResources().getStringArray(R.array.days_short_names);
+    	
+    	mHelper = new MonthDisplayHelper(
+    		monthCalendar.get(Calendar.YEAR), 
+    		monthCalendar.get(Calendar.MONTH), 
+    		Calendar.MONDAY);
+    	mSelectedDate = (Calendar)monthCalendar.clone();
+    	mCalendar = monthCalendar;    	
+        mCalendar.set(Calendar.DAY_OF_MONTH, 1);
+        
+        this.mDaysData = new SparseArray<DayBean>();
         refreshDays();
     }
     
-    public void setItems(ArrayList<String> items) {
-    	this.items = items;
+    public void setItems(final SparseArray<DayBean> items) {
+    	this.mDaysData = items;
     }
-    
 
     public int getCount() {
-        return days.length;
+    	// 6 lignes de 7 jours + 1 ligne d'entête + 1 colonne d'entete,
+    	// soit 7 lignes de 8 colonnes
+        return 56;
     }
 
     public Object getItem(int position) {
@@ -45,97 +56,135 @@ public class CalendarAdapter extends BaseAdapter {
     }
 
     public long getItemId(int position) {
-        return 0;
+        return position / 8;
     }
 
-    // create a new view for each item referenced by the Adapter
-    public View getView(int position, View convertView, ViewGroup parent) {
-        View v = convertView;
-    	TextView dayView;
-        if (convertView == null) {  // if it's not recycled, initialize some attributes
+    public View getView(final int position, final View convertView, final ViewGroup parent) {
+        // Récupération de la vue si possible, sinon inflate
+    	View v = convertView;
+    	// Si la vue n'est pas recyclée, on initialise son contenu
+        if (convertView == null) {
         	LayoutInflater vi = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             v = vi.inflate(R.layout.calendar_item, null);
-        	
         }
-        dayView = (TextView)v.findViewById(R.id.date);
         
-        // disable empty days from the beginning
-        if(days[position].equals("")) {
-        	dayView.setClickable(false);
-        	dayView.setFocusable(false);
-        }
-        else {
-        	// mark current day as focused
-        	if(month.get(Calendar.YEAR)== selectedDate.get(Calendar.YEAR) && month.get(Calendar.MONTH)== selectedDate.get(Calendar.MONTH) && days[position].equals(""+selectedDate.get(Calendar.DAY_OF_MONTH))) {
-        		v.setBackgroundResource(R.drawable.item_background_focused);
-        	}
-        	else {
-        		v.setBackgroundResource(R.drawable.list_item_background);
-        	}
-        }
-        dayView.setText(days[position]);
         
-        // create date string for comparison
-        String date = days[position];
-    	
-        if(date.length()==1) {
-    		date = "0"+date;
-    	}
-    	String monthStr = ""+(month.get(Calendar.MONTH)+1);
-    	if(monthStr.length()==1) {
-    		monthStr = "0"+monthStr;
-    	}
-       
-        // show icon if date is not empty and it exists in the items array
-        ImageView iw = (ImageView)v.findViewById(R.id.date_icon);
-        if(date.length()>0 && items!=null && items.contains(date)) {        	
-        	iw.setVisibility(View.VISIBLE);
+        // Détermine à quelle ligne et colonne appartient cette vue
+        // Une ligne contient 7 colonnes de jours + 1 colonne d'entête, soit 8 valeurs.
+    	final int row = position / 8;
+        final int col = position % 8;
+        
+        // Traitement de la vue appartenant à l'entête de ligne ou colonne
+        if (row == 0) {
+        	adaptRowHeaderView(col, v);
+        } else if (col == 0) {
+        	adaptColHeaderView(row, v);
         }
+        // Vue correspondant à un jour dans le calendrier
         else {
-        	iw.setVisibility(View.INVISIBLE);
+        	// Pour que le MonthDisplayHelper ne soit pas perdu, on décale le numéro de ligne et colonne
+        	// de façon à lui masquer le fait qu'on a ajouté une ligne et une colonne d'entête
+        	adaptDayView(row - 1, col - 1, v);
         }
         return v;
     }
     
-    public void refreshDays()
+    private void adaptRowHeaderView(final int col, final View view) {
+    	final TextView dayView = (TextView)view.findViewById(R.id.date);
+    	if (col == 0) {
+    		// La colonne 0 est celle où sont affichées les semaines. On n'aura
+    		// donc pas à écrire de nom de jour dessus. On vide la case
+    		dayView.setText("");
+	    	view.setBackgroundColor(R.color.app_background);
+    	} else {
+	    	dayView.setText(mDaysShortNames[col - 1]);
+	    	dayView.setTextColor(Color.WHITE);
+	    	view.setBackgroundResource(R.drawable.item_calendar_background_hdr);
+    	}
+	}
+
+	private void adaptColHeaderView(int row, View view) {
+		final TextView dayView = (TextView)view.findViewById(R.id.date);
+		if (row == 0) {
+    		// La ligne 0 est celle où sont affichées les noms des jours. On n'aura
+    		// donc pas à écrire de numéro de semaine dessus.
+			dayView.setText("");
+	    	view.setBackgroundColor(R.color.app_background);
+    	} else {
+	    	dayView.setText("S00");
+	    	dayView.setTextColor(Color.WHITE);
+			view.setBackgroundResource(R.drawable.item_calendar_background_hdr);
+    	}
+	}
+
+	/**
+     * Méthode appelée pour mettre à une jour une vue correspondant à un jour
+     * dans le mois
+     * @param row
+     * @param col
+     * @param dayView
+     */
+    private void adaptDayView(final int row, final int col, View view) {
+    	final int position = row * 7 + col;
+    	final TextView dayView = (TextView)view.findViewById(R.id.date);
+    	
+    	// Les jours du mois précédent/suivant sont affichés différemment
+        if(!mHelper.isWithinCurrentMonth(row, col)) {
+        	view.setBackgroundResource(R.drawable.item_calendar_background_out);
+        	dayView.setTextColor(Color.BLACK);
+        }
+    	// Mise en valeur du jour courant
+        else if (mCalendar.get(Calendar.YEAR) == mSelectedDate.get(Calendar.YEAR)
+        	&& mCalendar.get(Calendar.MONTH)== mSelectedDate.get(Calendar.MONTH)
+        	&& days[position].equals(String.valueOf(mSelectedDate.get(Calendar.DAY_OF_MONTH))) ) {
+    		view.setBackgroundResource(R.drawable.item_calendar_background_sel);
+    		dayView.setTextColor(Color.WHITE);
+    	}
+        // Affichage simple d'un jour standard
+        else {
+    		view.setBackgroundResource(R.drawable.list_item_calendar_background_std);
+    		dayView.setTextColor(Color.BLUE);
+        }
+        dayView.setText(days[position]);
+        
+        // Afficher une icone indiquant la présence d'une note
+        ImageView iw = (ImageView)view.findViewById(R.id.note);
+        final DayBean dayData = mDaysData.get(position);
+        if (dayData != null && dayData.note != null && !dayData.note.isEmpty()) {
+        	// Une note existe pour ce jour
+        	iw.setVisibility(View.VISIBLE);
+        } else {
+        	// Il n'y a pas de note pour ce jour
+        	iw.setVisibility(View.INVISIBLE);
+        }
+	}
+
+	public void refreshDays()
     {
     	// clear items
-    	items.clear();
+    	mDaysData.clear();
     	
-    	int lastDay = month.getActualMaximum(Calendar.DAY_OF_MONTH);
-        int firstDay = (int)month.get(Calendar.DAY_OF_WEEK);
-        
-        // figure size of the array
-        if(firstDay==1){
-        	days = new String[lastDay+(FIRST_DAY_OF_WEEK*6)];
-        }
-        else {
-        	days = new String[lastDay+firstDay-(FIRST_DAY_OF_WEEK+1)];
-        }
-        
-        int j=FIRST_DAY_OF_WEEK;
-        
-        // populate empty days before first real day
-        if(firstDay>1) {
-	        for(j=0;j<firstDay-FIRST_DAY_OF_WEEK;j++) {
-	        	days[j] = "";
-	        }
-        }
-	    else {
-	    	for(j=0;j<FIRST_DAY_OF_WEEK*6;j++) {
-	        	days[j] = "";
-	        }
-	    	j=FIRST_DAY_OF_WEEK*6+1; // sunday => 1, monday => 7
-	    }
-        
-        // populate days
-        int dayNumber = 1;
-        for(int i=j-1;i<days.length;i++) {
-        	days[i] = ""+dayNumber;
-        	dayNumber++;
-        }
+    	days = new String[42];// 6 lignes de 7 jours
+    	int[] row;
+    	int curDay = 0;
+    	for (int curRow = 0; curRow < 6; curRow++) {
+    		row = mHelper.getDigitsForRow(curRow);
+    		for (int dayNum : row) {
+    			days[curDay] = String.valueOf(dayNum);
+    			curDay++;
+    		}
+    	}
     }
 
-    // references to our items
-    public String[] days;
+	public void previousMonth() {
+		mHelper.previousMonth();
+	}
+
+	public void nextMonth() {
+		mHelper.nextMonth();
+	}
+
+	public MonthDisplayHelper getMonthDisplayHelper() {
+		return mHelper;
+	}
 }
