@@ -6,7 +6,6 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.format.Time;
 import android.view.ContextMenu;
@@ -17,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import fr.redmoon.tictac.TicTacActivity.OnDayDeletionListener;
 import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.bus.PreferenceKeys;
 import fr.redmoon.tictac.bus.PreferencesUtils;
@@ -25,17 +25,8 @@ import fr.redmoon.tictac.bus.bean.DayBean;
 import fr.redmoon.tictac.bus.bean.PreferencesBean;
 import fr.redmoon.tictac.gui.dialogs.WeekDialogDelegate;
 import fr.redmoon.tictac.gui.listadapter.WeekAdapter;
-import fr.redmoon.tictac.gui.widgets.WidgetProvider;
 
-public class WeekActivity extends TicTacActivity {
-	
-	public interface OnDayDeletionListener{
-		/**
-		 * Appelée lorsqu'un jour a été supprimé
-		 * @param date
-		 */
-		void onDeleteDay(long date);
-	}
+public class WeekActivity extends TicTacActivity implements OnDayDeletionListener {
 	
 	private WeekDialogDelegate mDialogDelegate;
 	
@@ -52,7 +43,6 @@ public class WeekActivity extends TicTacActivity {
 	// d'autres instanciations.
 	private ListView mLstDays;
 	private final List<String[]> mDaysArray = new ArrayList<String[]>();
-	private static List<OnDayDeletionListener> sDayDeletionListeners;
 	
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
@@ -81,6 +71,9 @@ public class WeekActivity extends TicTacActivity {
         mMonday = mToday; 	// On passe la date et non pas juste le bean pour
         					// s'assurer qu'une lecture des données en base
         					// sera effectuée afin d'initialiser le bean.
+        
+        // On veut être informé si la vue "Mois" supprime un jour
+        MonthActivity.registerDayDeletionListener(this);
     }
     
     @Override
@@ -108,6 +101,9 @@ public class WeekActivity extends TicTacActivity {
 		case R.id.menu_show_day:
 			promptShowDay();
 			return true;
+		case R.id.menu_show_month:
+			switchTab(MainActivity.TAB_MONTH_POS, mWorkDayBean.date, R.id.month_calendar);
+			return true;
 		}
 
 		return super.onMenuItemSelected(featureId, item);
@@ -128,13 +124,13 @@ public class WeekActivity extends TicTacActivity {
 		final DayBean day = mWeek.get(mSelectedDay);
 		switch (item.getItemId()) {
 		case R.id.menu_day_show_checkings:
-			showDayCheckings(day.date);
+			switchTab(MainActivity.TAB_DAY_POS, day.date, R.id.day_checkings);
 			return true;
 		case R.id.menu_day_show_details:
-			showDayDetails(day);
+			switchTab(MainActivity.TAB_DAY_POS, day.date, R.id.day_details);
 			return true;
 		case R.id.menu_day_delete:
-			deleteDay(day.date, mSelectedDay);
+			deleteDay(day.date);
 			return true;
 		}
 		return super.onContextItemSelected(item);
@@ -151,18 +147,6 @@ public class WeekActivity extends TicTacActivity {
 		mDialogDelegate.prepareDialog(id, dialog, args);
 	}
     
-	private void showDayDetails(final DayBean day) {
-		switchTab(0, day.date, R.id.day_details);
-	}
-
-	/**
-	 * Bascule vers l'activité "Jour" en affichant le jour sélectionné.
-	 * @param date
-	 */
-	private void showDayCheckings(final long date) {
-		switchTab(0, date, R.id.day_checkings);
-	}
-
 	public void showPrevious(final View btn) {
     	// On récupère en base le jour précédent le lundi actuellement affiché
     	mDb.fetchPreviousDay(mMonday, mWorkDayBean);
@@ -395,70 +379,15 @@ public class WeekActivity extends TicTacActivity {
 		return flex;
 	}
 	
-	/**
-	 * Affiche un message demandant la confirmation de la suppression,
-	 * puis supprime le jour indiqué le cas échéant.
-	 * @param date
-	 */
-	private void deleteDay(final long date, final int selectedDay) {
-		// Création des éléments de la boîte de dialogue
-		final CharSequence message = getString(R.string.dlg_msg_confirm_day_deletion, DateUtils.formatDateDDMM(date));
-		final DialogInterface.OnClickListener positiveListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-            	// Suppression du jour en base
-            	mDb.deleteDay(date);
-            	
-            	// Mise à jour de l'affichage
-            	mWeek.remove(selectedDay);
-            	if (!mWeek.isEmpty()) {
-            		// Il reste au moins un jour : on affiche la semaine correspondante.
-            		populateView(mWeek.get(0).date);
-            	} else {
-            		// La semaine est vide : on affiche la semaine précédente
-            		long previous = mDb.fetchPreviousDay(date);
-            		if (previous == -1) {
-            			// S'il n'y a pas de jour précédent, alors on affiche la semaine d'aujourd'hui.
-            			previous = mToday;
-            		}
-            		populateView(previous);
-            	}
-            	
-            	// Si on a supprimé le jour d'aujourd'hui, on met à jour le widget
-            	if (mToday == date) {
-            		WidgetProvider.updateClockinImage(WeekActivity.this);
-            	}
-            	
-            	// Si on a supprimé le jour actuellement affiché dans la vue "Jour", on l'en informe
-            	// pour qu'elle mette à jour son affichage
-            	fireOnDeleteDay(date);
-            }
-        };
-        final DialogInterface.OnClickListener negativeListener = new DialogInterface.OnClickListener() {
-        	@Override
-    		public void onClick(DialogInterface dialog, int id) {
-            	dialog.cancel();
-        	}
-        };
-        
-        // Affichage de la boîte de dialogue
-		showConfirmDialog(message, positiveListener, negativeListener);
-	}
-	
-	public static void registerDayDeletionListener(final OnDayDeletionListener listener) {
-		if (sDayDeletionListeners == null) {
-			sDayDeletionListeners = new ArrayList<OnDayDeletionListener>();
-		}
-		sDayDeletionListeners.add(listener);
-	}
-	
-	/**
-	 * Notifie les listeners qu'un jour a été supprimé
-	 * @param date
-	 */
-	private static void fireOnDeleteDay(final long date) {
-		for (OnDayDeletionListener listener : sDayDeletionListeners) {
-			listener.onDeleteDay(date);
+	@Override
+	public void onDeleteDay(final long deletedDate) {
+		// Si le jour supprimé est dans la semaine actuellement affichée,
+		// on rafraîchit la vue.
+		for (DayBean day : mWeek) {
+			if (day.date == deletedDate) {
+				populateView(deletedDate);
+				break;
+			}
 		}
 	}
 }

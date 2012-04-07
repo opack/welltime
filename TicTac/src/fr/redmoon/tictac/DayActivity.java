@@ -23,7 +23,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
-import fr.redmoon.tictac.WeekActivity.OnDayDeletionListener;
+import fr.redmoon.tictac.TicTacActivity.OnDayDeletionListener;
 import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.bus.TimeUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
@@ -80,8 +80,9 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
         // Affichage du jour courant
         mWorkDayBean.date = mToday;
         
-        // Ajout de l'activité actuelle comme écouteur de la suppression de jours
+        // On veut être informé si la vue "Semaine" ou "Mois" supprime un jour
         WeekActivity.registerDayDeletionListener(this);
+        MonthActivity.registerDayDeletionListener(this);
     }
     
     @Override
@@ -111,6 +112,9 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
 			return true;
 		case R.id.menu_day_show_week:
 			showWeek();
+			return true;
+		case R.id.menu_show_month:
+			switchTab(MainActivity.TAB_MONTH_POS, mWorkDayBean.date, R.id.month_calendar);
 			return true;
 		}
 
@@ -199,7 +203,7 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
 	 * @param date
 	 */
 	private void showWeek() {
-		switchTab(1, mWorkDayBean.date, R.id.week_days);
+		switchTab(MainActivity.TAB_WEEK_POS, mWorkDayBean.date, R.id.week_days);
 	}
     
     /**
