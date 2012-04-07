@@ -1,11 +1,9 @@
 package fr.redmoon.tictac;
 
-import java.util.Calendar;
+import java.util.ArrayList;
+import java.util.List;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.util.MonthDisplayHelper;
 import android.util.SparseArray;
 import android.view.View;
 import android.widget.AdapterView;
@@ -19,98 +17,78 @@ import fr.redmoon.tictac.gui.calendar.CalendarAdapter;
 
 public class MonthActivity extends TicTacActivity {
 	
-	public Calendar month;
-	public CalendarAdapter adapter;
-	public Handler handler;
+	public CalendarAdapter mAdapter;
 	public SparseArray<DayBean> items; // container to store some random calendar items
+	public List<DayBean> mMonthDays;
 
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
+	    mMonthDays = new ArrayList<DayBean>();
+	    items = new SparseArray<DayBean>();
+	    mAdapter = new CalendarAdapter(this, DateUtils.extractYear(mToday), DateUtils.extractMonth(mToday));
 	    
 	    // Création de l'interface graphique
         setContentView(R.layout.view);
         findViewById(R.id.lyt_btn_bar).setVisibility(View.GONE);
-        findViewById(R.id.img_note).setVisibility(View.INVISIBLE);
+        findViewById(R.id.img_note).setVisibility(View.GONE);
 	    
 	    // Initialisation du gestionnaire de sweep
         initSweep(
         	new int[]{R.id.month_calendar, R.id.month_details}, 
         	new int[]{R.layout.month_calendar, R.layout.month_details});
         
-	    month = Calendar.getInstance();
-	    onNewIntent(getIntent());
-
-	    items = new SparseArray<DayBean>();
-	    adapter = new CalendarAdapter(this, month);
-
+	    // Initialisation du GridView du calendrier
 	    GridView gridview = (GridView) findViewById(R.id.gridview);
-	    gridview.setAdapter(adapter);
-
-	    handler = new Handler();
-	    handler.post(calendarUpdater);
-
+	    gridview.setAdapter(mAdapter);
 		gridview.setOnItemClickListener(new OnItemClickListener() {
 		    public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 		    	TextView date = (TextView)v.findViewById(R.id.date);
 		        if(date instanceof TextView && !date.getText().equals("")) {
-		        	String day = date.getText().toString();
-		        	if(day.length()==1) {
-		        		day = "0"+day;
-		        	}
-		        	// return chosen date as string format 
+		        	final String day = date.getText().toString();
 		        	Toast.makeText(
 		        		MonthActivity.this, 
-		        		android.text.format.DateFormat.format("yyyy-MM", month)+"-"+day,
+		        		String.valueOf(DateUtils.getDayId(mAdapter.getYear(), mAdapter.getMonth(), Integer.parseInt(day))),
 		        		Toast.LENGTH_SHORT)
 		        	.show();
 		        }
 		    }
 		});
 		
-		populateView(-1);
+		// Affichage du mois courant. Inutile de passer des paramètres car l'adapteur
+		// vient juste d'être créé avec les infos (année, mois) du mois courant.
+		populateView();
 	}
-
-	public void onNewIntent(Intent intent) {
-		String date = intent.getStringExtra("date");
-		if (date != null) {
-			String[] dateArr = date.split("-"); // date format is yyyy-mm-dd
-			month.set(Integer.parseInt(dateArr[0]), Integer.parseInt(dateArr[1]), Integer.parseInt(dateArr[2]));
-		} else {
-			// Aucune date n'a été passée, on prend la date du jour
-			month.setTimeInMillis(System.currentTimeMillis());
-		}
-		
-	}
-
-	public Runnable calendarUpdater = new Runnable() {
-
-		@Override
-		public void run() {
-			items.clear();
-			// format random values. You can implement a dedicated class to provide real values
-			items.put(1, null);
-			DayBean dayNoNote = new DayBean();
-			items.put(2, dayNoNote);
-			DayBean dayWithNote = new DayBean();
-			dayWithNote.note = "DBG";
-			items.put(3, dayWithNote);
-			
-			
-			adapter.setItems(items);
-			adapter.notifyDataSetChanged();
-		}
-	};	
 
 	@Override
-	public void populateView(long day) {
-		// DBG day vaut -1 et est ignoré
+	public void populateView(final long date) {
+		final int year = DateUtils.extractYear(date);
+		final int month = DateUtils.extractMonth(date);
+		mAdapter.showMonth(year, month);
+		populateView();
+	}
+	
+	/**
+	 * Remplit la vue avec les données du mois courant dans l'adapter
+	 */
+	public void populateView() {
+		// Récupération des jours du mois demandé
+		final int year = mAdapter.getYear();
+		final int month = mAdapter.getMonth();
+		final long firstDay = DateUtils.getDayId(year, month, 1);
+		final long lastDay = DateUtils.getDayId(year, month, mAdapter.getNumberOfDaysInMonth());
+		mDb.fetchDays(firstDay, lastDay, mMonthDays);
 		
-		adapter.refreshDays();
-		adapter.notifyDataSetChanged();				
-		handler.post(calendarUpdater); // generate some random calendar items				
+		// Ajout des jours dans l'adapteur
+		items.clear();
+		for (DayBean day : mMonthDays) {
+			items.put(DateUtils.extractDayOfMonth(day.date), day);
+		}
+		
+		// Mise à jour de l'affichage
+		mAdapter.setItems(items);
+		mAdapter.notifyDataSetChanged();
 
-		final MonthDisplayHelper helper = adapter.getMonthDisplayHelper();
-		mWorkTime.set(1, helper.getMonth(), helper.getYear());
+		mWorkTime.set(1, month, year);
 		populateCommon(
 			mWorkTime.format(DateUtils.FORMAT_DATE_MONTH),
     		0,
@@ -122,8 +100,8 @@ public class MonthActivity extends TicTacActivity {
      * @param btn
      */
     public void showPrevious(final View btn) {
-    	adapter.previousMonth();
-    	populateView(-1);
+    	mAdapter.previousMonth();
+    	populateView();
     }
     
     /**
@@ -131,7 +109,7 @@ public class MonthActivity extends TicTacActivity {
      * @param btn
      */
     public void showNext(final View btn) {
-    	adapter.nextMonth();
-    	populateView(-1);
+    	mAdapter.nextMonth();
+    	populateView();
     }
 }
