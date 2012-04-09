@@ -9,7 +9,6 @@
     
     <!-- Menu principal -->
     <string name="menu_day_add_checking">Ajouter un pointage</string>
-    <string name="menu_day_show_week">Afficher la semaine</string>
     
     <!-- Menu contextuel -->
 	<string name="menu_checking_edit">Modifier le pointage</string>

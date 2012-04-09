@@ -28,7 +28,7 @@ public class DaysTableHelper extends TableHelper {
 	private static final String COL_NOTE = "note";
 	private static final int COL_NOTE_INDEX = 3;
 	
-	private final ContentValues mTempContentValues = new ContentValues();	
+	private final ContentValues mTempContentValues = new ContentValues();
 	
 	public DaysTableHelper() {
 		super(
@@ -166,7 +166,7 @@ public class DaysTableHelper extends TableHelper {
 		return false;
 	}
 
-	final private void fillContentValues(final DayBean day) {
+	private void fillContentValues(final DayBean day) {
 		mTempContentValues.clear();
 		mTempContentValues.put(COL_DATE, day.date);
 		mTempContentValues.put(COL_TYPE, day.type);

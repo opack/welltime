@@ -6,10 +6,10 @@ import java.util.List;
 import android.os.Bundle;
 import android.util.SparseArray;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
@@ -18,6 +18,7 @@ import android.widget.Toast;
 import fr.redmoon.tictac.TicTacActivity.OnDayDeletionListener;
 import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
+import fr.redmoon.tictac.gui.ViewSynchronizer;
 import fr.redmoon.tictac.gui.calendar.CalendarAdapter;
 
 public class MonthActivity extends TicTacActivity implements OnDayDeletionListener {
@@ -92,12 +93,24 @@ public class MonthActivity extends TicTacActivity implements OnDayDeletionListen
 	public boolean onContextItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.menu_day_show_checkings:
+			// Sauvegarde du jour affiché pour synchroniser les vues
+			ViewSynchronizer.getInstance().setCurrentDay(mSelectedDay);
+			
+			// Modification de l'onglet courant
 			switchTab(MainActivity.TAB_DAY_POS, mSelectedDay, R.id.day_checkings);
 			break;
 		case R.id.menu_day_show_details:
+			// Sauvegarde du jour affiché pour synchroniser les vues
+			ViewSynchronizer.getInstance().setCurrentDay(mSelectedDay);
+			
+			// Modification de l'onglet courant
 			switchTab(MainActivity.TAB_DAY_POS, mSelectedDay, R.id.day_details);
 			break;
 		case R.id.menu_day_show_week:
+			// Sauvegarde du jour affiché pour synchroniser les vues
+			ViewSynchronizer.getInstance().setCurrentDay(mSelectedDay);
+			
+			// Modification de l'onglet courant
 			switchTab(MainActivity.TAB_WEEK_POS, mSelectedDay, R.id.week_days);
 			break;
 		case R.id.menu_day_delete:
@@ -107,14 +120,6 @@ public class MonthActivity extends TicTacActivity implements OnDayDeletionListen
 		return super.onContextItemSelected(item);
 	}
 	
-	@Override
-    protected void onResume() {
-    	populateView(DateUtils.getDayId(mWorkTime)); 	// On passe la date et non pas juste le bean pour
-														// s'assurer qu'une lecture des données en base
-														// sera effectuée afin d'initialiser le bean.
-    	super.onResume();
-    }
-
 	@Override
 	public void populateView(final long date) {
 		final int year = DateUtils.extractYear(date);
@@ -158,6 +163,12 @@ public class MonthActivity extends TicTacActivity implements OnDayDeletionListen
     public void showPrevious(final View btn) {
     	mAdapter.previousMonth();
     	populateView();
+    	
+    	// Sauvegarde du jour courant dans le synchroniseur de vues pour accorder
+    	// toutes les vues sur le même jour
+    	// On fait bien ça après le popuplateView car mAdapter y aura été mis à jour.
+    	final long firstDayId = DateUtils.getDayId(mAdapter.getYear(), mAdapter.getMonth(), 1);
+    	ViewSynchronizer.getInstance().setCurrentDay(firstDayId);
     }
     
     /**
@@ -167,6 +178,12 @@ public class MonthActivity extends TicTacActivity implements OnDayDeletionListen
     public void showNext(final View btn) {
     	mAdapter.nextMonth();
     	populateView();
+    	
+    	// Sauvegarde du jour courant dans le synchroniseur de vues pour accorder
+    	// toutes les vues sur le même jour
+    	// On fait bien ça après le popuplateView car mAdapter y aura été mis à jour.
+    	final long firstDayId = DateUtils.getDayId(mAdapter.getYear(), mAdapter.getMonth(), 1);
+    	ViewSynchronizer.getInstance().setCurrentDay(firstDayId);
     }
     
     @Override

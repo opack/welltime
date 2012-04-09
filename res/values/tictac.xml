@@ -2,7 +2,7 @@
 <resources>
 	<!-- Propriétés de l'application -->
     <string name="app_name">TicTac</string>
-    <string name="app_version">beta (0.4.4)</string>
+    <string name="app_version">beta (0.4.5)</string>
     
     <!-- Titre des onglets -->
     <string name="tab_day">Jour</string>
@@ -13,7 +13,6 @@
     
     <!-- Menus communs -->
     <string name="menu_show_day">Aller au&#8230;</string>
-    <string name="menu_show_month">Afficher le mois</string>
     <string name="menu_preferences">Préférences</string>
     <string name="menu_day_show_details">Afficher les détails</string>    
     
@@ -21,6 +20,7 @@
     <string name="dlg_title_edit_day_type">Choisissez le nouveau type de jour :</string>
     <string name="dlg_title_edit_day_note">Saisissez une note :</string>
     <string name="dlg_title_first_launch">Premier lancement !</string>
+    <string name="dlg_title_edit_flex_time">Initialisez l\'horaire variable</string>
     <string name="dlg_msg_first_launch">Bienvenue dans TicTac !\nIl semble que ce soit la première fois que vous utilisez TicTac.\nVous allez être redirigé vers l\'écran de préférences qui vous permettra de définir toutes les plages horaires que doit prendre en compte TicTac.\nPas d\'inquiétude, des valeurs par défaut sont prédéfinies pour vous soulager un peu dans cette épreuve fastidieuse ;-)</string>
     <string name="btn_yes">Oui</string>
     <string name="btn_no">Non</string>
@@ -30,6 +30,8 @@
     <string name="btn_cancel">Annuler</string>
     <string name="period_chooser_start_title">Choisissez une date de début :</string>
     <string name="period_chooser_end_title">Choisissez une date de fin :</string>
+    <string name="date_title">Choisissez une date :</string>
+    <string name="time_title">Choisissez une heure :</string>
     
     <!-- Liste des types de jour -->
     <string-array name="dayTypesEntries">

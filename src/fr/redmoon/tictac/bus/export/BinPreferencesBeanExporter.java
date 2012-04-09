@@ -49,7 +49,7 @@ public class BinPreferencesBeanExporter extends FileExporter<PreferencesBean> {
 	}
 
 	@Override
-	protected String getFilename() {
+	public String getFilename() {
 		return mResources.getString(R.string.export_prefs_filename);
 	}
 }

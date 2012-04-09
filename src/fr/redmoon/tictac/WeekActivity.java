@@ -2,7 +2,6 @@ package fr.redmoon.tictac;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -20,11 +19,14 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import fr.redmoon.tictac.TicTacActivity.OnDayDeletionListener;
 import fr.redmoon.tictac.bus.DateUtils;
-import fr.redmoon.tictac.bus.PreferenceKeys;
-import fr.redmoon.tictac.bus.PreferencesUtils;
+import fr.redmoon.tictac.bus.FlexUtils;
 import fr.redmoon.tictac.bus.TimeUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
 import fr.redmoon.tictac.bus.bean.PreferencesBean;
+import fr.redmoon.tictac.bus.bean.WeekBean;
+import fr.redmoon.tictac.gui.ViewSynchronizer;
+import fr.redmoon.tictac.gui.dialogs.DialogArgs;
+import fr.redmoon.tictac.gui.dialogs.DialogTypes;
 import fr.redmoon.tictac.gui.dialogs.WeekDialogDelegate;
 import fr.redmoon.tictac.gui.listadapter.WeekAdapter;
 import fr.redmoon.tictac.gui.listadapter.WeekAdapterEntry;
@@ -33,7 +35,8 @@ public class WeekActivity extends TicTacActivity implements OnDayDeletionListene
 	
 	private WeekDialogDelegate mDialogDelegate;
 	
-	private List<DayBean> mWeek;
+	private List<DayBean> mWeekDays;
+	private WeekBean mWeekData;
 	private int mSelectedDay;
 	
 	private int mWeekWorked;
@@ -52,8 +55,9 @@ public class WeekActivity extends TicTacActivity implements OnDayDeletionListene
     	
     	mDialogDelegate = new WeekDialogDelegate(this);
 
-        // Création du bean de travail
-        mWeek = new ArrayList<DayBean>();
+        // Création des beans de travail
+        mWeekDays = new ArrayList<DayBean>();
+        mWeekData = new WeekBean();
         
         // Initialisation de l'affichage
         setContentView(R.layout.view);
@@ -80,14 +84,6 @@ public class WeekActivity extends TicTacActivity implements OnDayDeletionListene
     }
     
     @Override
-    protected void onResume() {
-    	populateView(mMonday); 	// On passe la date et non pas juste le bean pour
-								// s'assurer qu'une lecture des données en base
-								// sera effectuée afin d'initialiser le bean.
-    	super.onResume();
-    }
-    
-    @Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
 		MenuInflater inflater = getMenuInflater();
@@ -104,9 +100,6 @@ public class WeekActivity extends TicTacActivity implements OnDayDeletionListene
 		case R.id.menu_show_day:
 			promptShowDay();
 			return true;
-		case R.id.menu_show_month:
-			switchTab(MainActivity.TAB_MONTH_POS, mWorkDayBean.date, R.id.month_calendar);
-			return true;
 		}
 
 		return super.onMenuItemSelected(featureId, item);
@@ -122,7 +115,7 @@ public class WeekActivity extends TicTacActivity implements OnDayDeletionListene
 		mSelectedDay = (Integer)v.getTag();
 		
 		// Si le jour n'existe pas en base, on masque certaines options
-		final DayBean day = mWeek.get(mSelectedDay);
+		final DayBean day = mWeekDays.get(mSelectedDay);
 		if (!mDb.isDayExisting(day.date)) {
 			menu.findItem(R.id.menu_day_delete).setVisible(false);
 		}
@@ -130,12 +123,20 @@ public class WeekActivity extends TicTacActivity implements OnDayDeletionListene
 	
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
-		final DayBean day = mWeek.get(mSelectedDay);
+		final DayBean day = mWeekDays.get(mSelectedDay);
 		switch (item.getItemId()) {
 		case R.id.menu_day_show_checkings:
+			// Sauvegarde du jour affiché pour synchroniser les vues
+			ViewSynchronizer.getInstance().setCurrentDay(day.date);
+			
+			// Modification de l'onglet courant
 			switchTab(MainActivity.TAB_DAY_POS, day.date, R.id.day_checkings);
 			return true;
 		case R.id.menu_day_show_details:
+			// Sauvegarde du jour affiché pour synchroniser les vues
+			ViewSynchronizer.getInstance().setCurrentDay(day.date);
+			
+			// Modification de l'onglet courant
 			switchTab(MainActivity.TAB_DAY_POS, day.date, R.id.day_details);
 			return true;
 		case R.id.menu_day_delete:
@@ -159,10 +160,16 @@ public class WeekActivity extends TicTacActivity implements OnDayDeletionListene
 	public void showPrevious(final View btn) {
 		// On se place sur le lundi de la semaine, et on recule d'un jour
     	mWorkCal.set(DateUtils.extractYear(mMonday), DateUtils.extractMonth(mMonday), DateUtils.extractDayOfMonth(mMonday));
-    	mWorkCal.add(Calendar.DAY_OF_YEAR, -1);
+    	mWorkCal.add(Calendar.DAY_OF_YEAR, -7);
     	
     	// Maintenant on affiche la semaine de ce jour
     	populateView(DateUtils.getDayId(mWorkCal));
+    	
+    	// Sauvegarde du jour courant dans le synchroniseur de vues pour accorder
+    	// toutes les vues sur le même jour
+    	// On fait bien ça après le popuplateView car mMonday y aura été mis à jour
+    	// avec le nouveau lundi.
+    	ViewSynchronizer.getInstance().setCurrentDay(mMonday);
     }
     
     public void showNext(final View btn) {
@@ -172,6 +179,13 @@ public class WeekActivity extends TicTacActivity implements OnDayDeletionListene
     	
     	// Maintenant on affiche la semaine de ce jour
     	populateView(DateUtils.getDayId(mWorkCal));
+    	
+
+    	// Sauvegarde du jour courant dans le synchroniseur de vues pour accorder
+    	// toutes les vues sur le même jour.
+    	// On fait bien ça après le popuplateView car mMonday y aura été mis à jour
+    	// avec le nouveau lundi.
+    	ViewSynchronizer.getInstance().setCurrentDay(mMonday);
     }
     
     /**
@@ -192,11 +206,11 @@ public class WeekActivity extends TicTacActivity implements OnDayDeletionListene
     	// On récupère le jour en base
     	mMonday = DateUtils.getDayId(monday);
     	mSunday = DateUtils.getDayId(sunday);
-    	mDb.fetchDays(mMonday, mSunday, mWeek);
+    	mDb.fetchDays(mMonday, mSunday, mWeekDays);
 
     	// On conserve le jour de travail (notamment pour le sweep)
     	final Set<Long> daysById = new HashSet<Long>();
-    	for (DayBean day : mWeek) {
+    	for (DayBean day : mWeekDays) {
     		daysById.add(day.date);
     		
     		if (day.date == date) {
@@ -207,7 +221,7 @@ public class WeekActivity extends TicTacActivity implements OnDayDeletionListene
     	// Ajout de jours permettant de remplir les trous de la semaine
     	mWorkCal.set(monday.year, monday.month, monday.monthDay);
     	long dayId;
-    	for (int curDay = 0; curDay < 5; curDay++) {
+    	for (int curDay = 0; curDay < FlexUtils.NB_DAYS_IN_WEEK; curDay++) {
     		// Si le jour n'est pas en base, on en crée un faux
     		dayId = DateUtils.getDayId(mWorkCal);
     		if (!daysById.contains(dayId)) {
@@ -215,7 +229,11 @@ public class WeekActivity extends TicTacActivity implements OnDayDeletionListene
     			// "non travaillé".
     			DayBean fillin = new DayBean();
     			fillin.date = dayId;
-    			mWeek.add(curDay, fillin);
+    			mWeekDays.add(curDay, fillin);
+    			
+    			if (dayId == date) {
+        			mWorkDayBean = fillin;
+        		}
     		}
     		
     		// On passe au jour suivant
@@ -226,7 +244,7 @@ public class WeekActivity extends TicTacActivity implements OnDayDeletionListene
     	// populateCommon est appelée après populateDays car populateDays 
     	// parcours la liste des jours et initialise des variables de travail 
     	// qui nous permettront de ne pas parcourir cette liste deux fois.
-    	populateDays(monday, sunday, mWeek);
+    	populateDays(monday, sunday, mWeekDays);
     	populateCommon(monday, sunday);
     	populateDetails();
     }
@@ -299,116 +317,42 @@ public class WeekActivity extends TicTacActivity implements OnDayDeletionListene
      * de populateDays, qui doit donc être appelée avant.
      */
     private void populateDetails() {
-		if (!mWeek.isEmpty()) {
-			final DayBean firstDay = mWeek.get(0);
+		if (!mWeekDays.isEmpty()) {
+			final DayBean firstDay = mWeekDays.get(0);
 			DateUtils.fillTime(firstDay.date, mWorkTime);
 			mWorkTime.normalize(true);
 			
 			// Calcule le temps ecrêté
 			final int lost = Math.max(0, mWeekWorked - PreferencesBean.instance.weekMax);
 			
-			// Calcul du temps HV en début de semaine si la date d'init HV est antérieure à la date de début de la semaine
-	        String flexString = TimeUtils.UNKNOWN_TIME_STRING;
-	        final long mondayDate = DateUtils.getDayId(mWorkTime);
-	        if (PreferencesBean.instance.flexCurDate < mondayDate) {
-	        	final int flex = updateFlex(PreferencesBean.instance.flexInitDate, PreferencesBean.instance.flexInitTime, mondayDate);
-	        	flexString = TimeUtils.formatMinutes(flex);
-	        } else {
-	        	flexString = TimeUtils.formatMinutes(PreferencesBean.instance.flexCurTime);
-	        }
+			// Récupération du temps HV en début de semaine
+			mDb.fetchLastFlexTime(mMonday, mWeekData);
+			
+			// Calcul du nouvel HV en ajoutant le temps effectué cette semaine
+			// à l'HV en début de semaine
+			final FlexUtils flexUtils = new FlexUtils(mDb);
+			final int curWeekFlex = mWeekData.flexTime + flexUtils.computeWeekFlex(mWeekDays);
 			
 	        // Mise à jour des composants graphiques
-			setText(R.id.txt_week_flex_time, R.string.week_flex_time, DateUtils.formatDateDDMM(firstDay.date), flexString);
+			setText(R.id.btn_update_flex_time, R.string.week_monday_flex_time, DateUtils.formatDateDDMM(mWeekData.date), TimeUtils.formatMinutes(mWeekData.flexTime));
+			setText(R.id.txt_week_current_flex_time, R.string.week_current_flex_time, TimeUtils.formatMinutes(curWeekFlex));
 			setText(R.id.txt_week_work_time, R.string.week_work_time, TimeUtils.formatMinutes(mWeekWorked));
 			setText(R.id.txt_week_lost_time, R.string.week_lost_time, TimeUtils.formatMinutes(lost));
 		}
 	}
+    
+    public void updateFlexTime(final View btn) {
+    	final Bundle args = new Bundle();
+		args.putLong(DialogArgs.DATE, mMonday);
+		args.putInt(DialogArgs.TIME, mWeekData.flexTime);
+		showDialog(DialogTypes.DATETIMEPICKER_EDIT_FLEXTIME, args);
+    }
 
-	/**
-	 * Met à jour l'HV en le calculant entre la date d'HV initiale
-	 * et le jour courant.
-	 * @return
-	 */
-	private int updateFlex(final long initialDay, final int initialTime, final long endDay) {
-		// On récupère le lundi de la semaine courante. C'est la date à laquelle l'HV doit
-		// être à jour.
-		TimeUtils.parseDate(endDay, mWorkTime);
-		DateUtils.getDateOfDayOfWeek(mWorkTime, Time.MONDAY, mWorkTime);
-		final long currentMonday = DateUtils.getDayId(mWorkTime);
-		
-		// On se place sur le lundi. L'HV est considéré à la semaine à partir du lundi.
-		// C'est inutile de chercher le lundi ici puisque calculateWeekFlex le fera de toutes
-		// façon, mais comme on est obligés d'avoir un Time pour initialiser notre Calendar,
-		// autant le faire sur un lundi.
-		TimeUtils.parseDate(initialDay, mWorkTime);
-		DateUtils.getDateOfDayOfWeek(mWorkTime, Time.MONDAY, mWorkTime);
-		final Calendar calendar = new GregorianCalendar(mWorkTime.year, mWorkTime.month, mWorkTime.monthDay); // On sauvegarde le lundi pour passer facilement d'une semaine à l'autre
-
-		long curDate = DateUtils.getDayId(calendar);
-		int flexCurTime = initialTime;
-		while (curDate < currentMonday) {
-			// On calcule l'H.V. de la semaine et on l'ajoute au total
-			flexCurTime += computeWeekFlex(curDate);
-			
-			// On passe à la semaine suivante
-			calendar.add(Calendar.DAY_OF_MONTH, 7);
-			curDate = DateUtils.getDayId(calendar);
-		}
-		
-		// On borne le temps additionnel
-		flexCurTime = Math.max(flexCurTime, PreferencesBean.instance.flexMin);
-		flexCurTime = Math.min(flexCurTime, PreferencesBean.instance.flexMax);
-		
-		// On enregistre le temps additionnel et la date à laquelle il a été calculé
-		PreferencesBean.instance.flexCurDate = currentMonday;
-		PreferencesUtils.savePreference(this, PreferenceKeys.flexCurDate.getKey(), PreferencesBean.instance.flexCurDate);
-		PreferencesBean.instance.flexCurTime = flexCurTime;
-		PreferencesUtils.savePreference(this, PreferenceKeys.flexCurTime.getKey(), PreferencesBean.instance.flexCurTime);
-		
-		return flexCurTime;
-	}
-	
-	/**
-	 * Retourne le temps total effectué au cours de la semaine contenant le jour indiqué.
-	 * @param aDay
-	 * @return
-	 */
-	private int computeWeekFlex(final long aDay) {
-		// On récupère le lundi correspondant au jour indiqué
-		TimeUtils.parseDate(aDay, mWorkTime);
-		DateUtils.getDateOfDayOfWeek(mWorkTime, Time.MONDAY, mWorkTime);
-		final long firstDay = DateUtils.getDayId(mWorkTime);
-		
-		// On prend le dernier jour de la semaine, donc 6 jours plus tard.
-		// On fait un min pour dire : si le dimanche trouvé est après ajourd'hui, alors on prend plutôt la date d'aujourd'hui.
-		// On peut penser que ça ne sert à rien car aujourd'hui sera toujours le dernier jour. En réalité c'est faux car on
-		// pourra pointer en avance des jours de vacances par exemple.
-		DateUtils.getDateOfDayOfWeek(mWorkTime, Time.SUNDAY, mWorkTime);
-		final long lastDay = Math.min(mToday, DateUtils.getDayId(mWorkTime));
-		
-		// On récupère les jours de la semaine
-		final List<DayBean> days = new ArrayList<DayBean>();
-		mDb.fetchDays(firstDay, lastDay, days);
-
-		// On calcule le temps effectué.
-		int flex = 0;
-		int dayTotal = 0;
-		for (final DayBean day : days) {
-			dayTotal = TimeUtils.computeTotal(day);
-			if (dayTotal > PreferencesBean.instance.dayMax) {
-				dayTotal = PreferencesBean.instance.dayMax;
-			}
-			flex += dayTotal - PreferencesBean.instance.dayMin;
-		}
-		
-		return flex;
-	}
-	
 	@Override
 	public void onDeleteDay(final long deletedDate) {
 		// Si le jour supprimé est dans la semaine actuellement affichée,
 		// on rafraîchit la vue.
-		for (DayBean day : mWeek) {
+		for (DayBean day : mWeekDays) {
 			if (day.date == deletedDate) {
 				populateView(deletedDate);
 				break;

@@ -10,6 +10,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 import fr.redmoon.tictac.R;
 import fr.redmoon.tictac.bus.DateUtils;
+import fr.redmoon.tictac.bus.FlexUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
 import fr.redmoon.tictac.db.DbAdapter;
 
@@ -37,7 +38,8 @@ public class PeriodCheckinListener extends AbsPeriodChooserListener {
 		while (curDate <= lastDay) {
 			// On vérifie s'il s'agit d'un jour travaillé dans la semaine
 			if (DateUtils.isWorkingWeekDay(calendar)) {
-				// On crée ce jour en base s'il n'existe pas
+				// On crée ce jour en base s'il n'existe pas, sinon on le
+				// met à jour
 				if (mDb.isDayExisting(curDate)) {
 					if (mDb.updateDayType(curDate, dayType)) {
 						nbDaysUpdated++;
@@ -48,6 +50,13 @@ public class PeriodCheckinListener extends AbsPeriodChooserListener {
 					mDb.createDay(dayToCreate);
 					if (dayToCreate.isValid) {
 						nbDaysCreated++;
+						
+						// Si aucun enregistrement pour cette semaine existe, on
+				    	// en crée un et on met à jour le temps HV depuis le
+				    	// dernier enregistrement avant cette date jusqu'au dernier
+				    	// jour en base.
+				    	final FlexUtils flexUtils = new FlexUtils(mDb);
+				    	flexUtils.updateFlexIfNeeded(dayToCreate.date);
 					}
 				}
 			}

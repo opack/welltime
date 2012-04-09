@@ -3,7 +3,8 @@
     <!-- Vue semaine -->
     <string name="current_week">S%1$d : %2$s - %3$s</string>
     <string name="week_stats_none">Aucun jour travaillé cette semaine.</string>
-    <string name="week_flex_time">HV au %1$s : %2$s</string>
+    <string name="week_monday_flex_time">HV au %1$s : %2$s</string>
+    <string name="week_current_flex_time">HV actuel : %1$s</string>
     <string name="week_work_time">Temps travaillé : %1$s</string>
     <string name="week_lost_time">Temps perdu : %1$s</string>
 

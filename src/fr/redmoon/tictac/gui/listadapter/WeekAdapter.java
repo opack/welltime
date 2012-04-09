@@ -51,13 +51,6 @@ public class WeekAdapter extends ArrayAdapter<WeekAdapterEntry> {
 			
 			// Définition de la couleur de fond
 			v.setBackgroundColor(infos.bkColor);
-			
-			// Si le jour est valide, alors on active le menu contextuel
-//DBG			if (infos.isValid) {
-//				activity.registerForContextMenu(v);
-//			} else {
-//				activity.unregisterForContextMenu(v);
-//			}
 		}
 		return v;
 	}

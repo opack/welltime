@@ -17,6 +17,7 @@ public abstract class FileExporter<DataType> {
 	protected final Activity mActivity;
 	protected final Resources mResources;
 	protected DataType mData;
+	protected String mRootDir;
 	
 	public FileExporter(final Activity activity){
 		mActivity = activity;
@@ -74,6 +75,7 @@ public abstract class FileExporter<DataType> {
 					mResources.getString(R.string.error_mkdir_failed, rootDirName),
 					Toast.LENGTH_LONG).show();
 			}
+			mRootDir = root.getAbsolutePath();
 			
 			// Ecriture du fichier
 			final File file = new File(root, getFilename());
@@ -89,7 +91,11 @@ public abstract class FileExporter<DataType> {
 	
 	protected abstract boolean performExport(final File file) throws IOException;
 	
-	protected abstract String getFilename();
+	public abstract String getFilename();
+
+	public String getRootDir() {
+		return mRootDir;
+	}
 
 	private void sendMail(
 			final Context context,
