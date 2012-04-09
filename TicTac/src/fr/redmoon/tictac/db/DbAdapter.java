@@ -8,10 +8,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import fr.redmoon.tictac.bus.bean.DayBean;
+import fr.redmoon.tictac.bus.bean.WeekBean;
 
 public class DbAdapter {
 	private static final String DATABASE_NAME = "TicTac.db";
-	private static final int DATABASE_VERSION = 2;
+	private static final int DATABASE_VERSION = 3;
 	private static final String LOG_TAG = "TicTac (DB)";
 	
 	private final Context mCtx;
@@ -20,6 +21,7 @@ public class DbAdapter {
 
 	private DaysTableHelper days;
 	private CheckingsTableHelper checkings;
+	private WeeksTableHelper weeks;
 	
 	private static class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -37,6 +39,7 @@ public class DbAdapter {
 
         @Override
         public void onUpgrade(final SQLiteDatabase db, final int oldVersion, final int newVersion) {
+    		// Il faut tout casser et tout recréer
             Log.w(LOG_TAG, "Upgrading database from version " + oldVersion + " to " + newVersion + ", which will destroy all old data");
             dbAdapter.dropTables(db);
             onCreate(db);
@@ -67,6 +70,7 @@ public class DbAdapter {
     	// Ils doivent être créés AVANT le DatabaseHelper, car
     	// celui-ci les utilise pour connaître et créer la structure
     	// des tables.
+    	weeks = new WeeksTableHelper();
         days = new DaysTableHelper();
         checkings = new CheckingsTableHelper();
     	
@@ -76,6 +80,7 @@ public class DbAdapter {
         
         // On dispose à présent d'un accès à la base. On le passe
         // aux objets manipulant les tables.
+        weeks.setDB(mDb);
         days.setDB(mDb);
         checkings.setDB(mDb);
         
@@ -96,6 +101,7 @@ public class DbAdapter {
 	public void createTables(final SQLiteDatabase db) {
 		days.createTable(db);
 		checkings.createTable(db);
+		weeks.createTable(db);
 	}
 	
 	/**
@@ -105,6 +111,7 @@ public class DbAdapter {
 	public void dropTables(final SQLiteDatabase db) {
     	days.dropTable(db);
     	checkings.dropTable(db);
+    	weeks.dropTable(db);
 	}
 	
 	public void createDay(final DayBean day) {
@@ -122,6 +129,10 @@ public class DbAdapter {
 		// Création du pointage
 		return checkings.createRecord(dayId, time);
 	}
+	
+	public boolean createFlexTime(final long dayId, final int time) {
+		return weeks.createRecord(dayId, time);
+	}
 
 	public void fetchDay(final long id, final DayBean beanToFill) {
 		beanToFill.isValid = days.getDayById(id, beanToFill);
@@ -130,6 +141,33 @@ public class DbAdapter {
 		} else {
 			beanToFill.emptyDayData();
 		}
+	}
+	
+	public void fetchWeeks(final long firstDay, final long lastDay, final List<WeekBean> listToFill) {
+		listToFill.clear();
+		
+		// Récupération des jours en bases
+		weeks.getWeeksBetween(firstDay, lastDay, listToFill);
+		
+		// Récupération des pointages des jours
+		for (WeekBean week : listToFill) {
+			if (!week.isValid) {
+				listToFill.remove(week);
+			}
+		}
+	}
+	
+	public int fetchFlexTime(final long dayId) {
+		return weeks.fetchFlexTime(dayId);
+	}
+	
+	/**
+	 * Retourne l'HV au jour sélectionné, ou le plus récent avant ce jour
+	 * si aucun n'existe pour le jour indiqué
+	 * @param dayId
+	 */
+	public void fetchLastFlexTime(final long dayId, final WeekBean weekData) {
+		weeks.fetchLastFlexTime(dayId, weekData);
 	}
 	
 	public void fetchPreviousDay(final long date, final DayBean beanToFill) {
@@ -208,8 +246,20 @@ public class DbAdapter {
 		return checkings.updateRecord(date, oldTime, newTime);
 	}
 	
+	public boolean updateFlexTime(final long date, final int flexTime) {
+		if (!weeks.exists(date)) {
+			return createFlexTime(date, flexTime);
+		} else {
+			return weeks.updateRecord(date, flexTime);
+		}
+	}
+	
 	public boolean deleteChecking(final long date, final int checking) {
 		return checkings.delete(date, checking);
+	}
+	
+	public boolean deleteFlexTime(final long date) {
+		return weeks.delete(date);
 	}
 
 	public boolean deleteDay(final long dayId) {
@@ -227,5 +277,17 @@ public class DbAdapter {
 	
 	public boolean isCheckingExisting(final long date, final int time) {
 		return checkings.exists(date, time);
+	}
+	
+	public boolean isWeekExisting(final long date) {
+		return weeks.exists(date);
+	}
+
+	public void updateWeek(final WeekBean week) {
+		week.isValid = weeks.updateRecord(week);
+	}
+
+	public void createWeek(WeekBean week) {
+		week.isValid = weeks.createRecord(week);
 	}
 }

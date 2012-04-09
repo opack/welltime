@@ -20,14 +20,6 @@
     <string name="pref_maximum">Maximum</string>
     <string name="pref_maximum_summary">Temps au-dessus duquel vous êtes écrêté.</string>
     
-    <!-- Ecran "Initialisation de l'horaire variable" -->
-    <string name="pref_initflex">Initialisation de l\'horaire variable</string>
-	<string name="pref_initflex_summary">Choisissez la valeur initiale de l\'horaire variable et la date à laquelle cet valeur s\'applique.</string>
-	<string name="pref_initflexdate">Date</string>
-	<string name="pref_initflexdate_summary">Jour au début duquel l\'horaire variable avait la valeur indiquée.</string>
-	<string name="pref_initflextime">Temps</string>
-	<string name="pref_initflextime_summary">Valeur d\'horaire variable au jour indiqué précédemment.</string>
-	
 	<!-- Ecran "Types de jour" -->
 	<string name="pref_daytype_time">Durée</string>
 	<string name="pref_daytype_color">Couleur</string>

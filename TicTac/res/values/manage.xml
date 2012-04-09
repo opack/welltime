@@ -5,11 +5,12 @@
         <item>Exporter les données</item>
         <item>Ecrire les données dans un fichier CSV sur la carte SD.</item>
     </string-array>
-    <string name="export_days_filename_pattern">TicTac - Horaires du %1$d au %2$d.csv</string>
-    <string name="export_days_success">L\'export des jours du %1$s au %2$s a été correctement réalisé.</string>
-    <string name="export_days_fail">L\'export des données a échoué.</string>
-    <string name="export_days_no_data">Il n\'y a aucun jour dans cette période.</string>
-    <string name="export_title">Export des pointages sur la période</string>
+    <string name="export_infos_filename_pattern">TicTac - Export du %1$d au %2$d.properties</string>
+    <string name="export_days_filename_pattern">TicTac - Export du %1$d au %2$d.d.csv</string>
+    <string name="export_weeks_filename_pattern">TicTac - Export du %1$d au %2$d.w.csv</string>
+    <string name="export_data_success">L\'export des données du %1$s au %2$s a été correctement réalisé.</string>
+    <string name="export_data_fail">L\'export des données a échoué.</string>
+    <string name="export_data_title">Export des données sur la période</string>
     
     <!-- Opération import des données -->
     <string-array name="import_data">
@@ -18,6 +19,9 @@
     </string-array>
 	<string name="import_filechooser_title">Choisissez le fichier à importer :</string>
 	<string name="import_days_results">Import terminé.\n%1$d jour(s) créé(s).\n%2$d jour(s) mis à jour.</string>
+	<string name="import_days_canceled">Import annulé par l\'utilisateur.\n%1$d jour(s) créé(s).\n%2$d jour(s) mis à jour.</string>
+	<string name="import_file_not_found">Le fichier %1$s est introuvable. L\'import est abandonné.</string>
+	<string name="import_io_exception">Le fichier %1$s n\'a pas pu être lu. L\'import est abandonné.</string>
 	
 	<!-- Opération export des préférences -->
 	<string-array name="export_prefs">

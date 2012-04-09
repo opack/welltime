@@ -21,9 +21,13 @@ public class CsvDayBeanExporter extends FileExporter<List<DayBean>> {
 	private final static String HEADER_TOTAL = "TOTAL";
 	private final static String HEADER_TYPE = "TYPE";
 	private final static String HEADER_CHECKING = "POINTAGE";
+	private final long mStartDate;
+	private final long mEndDate;
 	
-	public CsvDayBeanExporter(final Activity activity) {
+	public CsvDayBeanExporter(final Activity activity, final long exportStartDate, final long exportEndDate) {
 		super(activity);
+		mStartDate = exportStartDate;
+		mEndDate = exportEndDate;
 	}
 	
 	@Override
@@ -108,9 +112,7 @@ public class CsvDayBeanExporter extends FileExporter<List<DayBean>> {
 	}
 
 	@Override
-	protected String getFilename() {
-		final long startDate = mData.get(0).date;
-		final long endDate = mData.get(mData.size() - 1).date;
-		return mResources.getString(R.string.export_days_filename_pattern, startDate, endDate);
+	public String getFilename() {
+		return mResources.getString(R.string.export_days_filename_pattern, mStartDate, mEndDate);
 	}
 }

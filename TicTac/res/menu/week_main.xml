@@ -7,8 +7,4 @@
     <item android:id="@+id/menu_show_day"
         android:title="@string/menu_show_day"
         android:icon="@drawable/ic_menu_more" />
-    
-    <item android:id="@+id/menu_show_month"
-        android:title="@string/menu_show_month"
-        android:icon="@drawable/ic_tab_months_grey" />
 </menu>

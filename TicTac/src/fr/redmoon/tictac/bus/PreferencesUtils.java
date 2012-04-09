@@ -36,17 +36,6 @@ public class PreferencesUtils {
 		PreferencesBean.instance.flexMin = TimeUtils.parseMinutes(prefs.getString(PreferenceKeys.flexMin.getKey(), "00:00"));
 		PreferencesBean.instance.flexMax = TimeUtils.parseMinutes(prefs.getString(PreferenceKeys.flexMax.getKey(), "07:00"));
 		
-	// Initialisation de l'horaire variable
-		final long today = DateUtils.getCurrentDayId();
-		// Date et horaires initiaux
-		PreferencesBean.instance.flexInitDate = Long.parseLong(prefs.getString(PreferenceKeys.flexInitDate.getKey(), String.valueOf(today)));
-		PreferencesBean.instance.flexInitTime = TimeUtils.parseMinutes(prefs.getString(PreferenceKeys.flexInitTime.getKey(), "00:00"));
-		
-		// Date et horaires courants. Ces infos ne sont pas gérées par le système "automatique" d'Android.
-		// C'est pourquoi leur récupération ne passe pas par un parseString.
-		PreferencesBean.instance.flexCurDate = prefs.getLong(PreferenceKeys.flexCurDate.getKey(), today);
-		PreferencesBean.instance.flexCurTime = prefs.getInt(PreferenceKeys.flexCurTime.getKey(), 0);
-		
 	// Types de jour
 		// Normal
 		PreferencesBean.instance.dayTypeNormalTime = TimeUtils.parseMinutes(prefs.getString(PreferenceKeys.dayTypeNormalTime.getKey(), "00:00"));
@@ -131,16 +120,6 @@ public class PreferencesUtils {
 		// Horaire variable
 		editor.putString(PreferenceKeys.flexMin.getKey(), TimeUtils.formatMinutes(PreferencesBean.instance.flexMin));
 		editor.putString(PreferenceKeys.flexMax.getKey(), TimeUtils.formatMinutes(PreferencesBean.instance.flexMax));
-		
-	// Initialisation de l'horaire variable
-		// Date et horaires initiaux
-		editor.putString(PreferenceKeys.flexInitDate.getKey(), String.valueOf(PreferencesBean.instance.flexInitDate));
-		editor.putString(PreferenceKeys.flexInitTime.getKey(), TimeUtils.formatMinutes(PreferencesBean.instance.flexInitTime));
-		
-		// Date et horaires courants. Ces infos ne sont pas gérées par le système "automatique" d'Android.
-		// C'est pourquoi leur récupération ne passe pas par un parseString.
-		editor.putLong(PreferenceKeys.flexCurDate.getKey(), PreferencesBean.instance.flexCurDate);
-		editor.putInt(PreferenceKeys.flexCurTime.getKey(), PreferencesBean.instance.flexCurTime);
 		
 	// Types de jour
 		// Normal

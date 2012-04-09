@@ -10,17 +10,25 @@
 		android:id="@+id/txt_week_work_time"
 		android:layout_width="fill_parent"
     	android:layout_height="wrap_content"
-    	android:textSize="24sp" />
-    
-    <TextView
-		android:id="@+id/txt_week_flex_time"
-		android:layout_width="fill_parent"
-    	android:layout_height="wrap_content"
-    	android:textSize="24sp" />
+    	android:textSize="18sp" />
     
     <TextView
 		android:id="@+id/txt_week_lost_time"
 		android:layout_width="fill_parent"
     	android:layout_height="wrap_content"
-    	android:textSize="24sp" />
+    	android:textSize="18sp" />
+    
+    <Button 
+        android:id="@+id/btn_update_flex_time"
+        android:layout_width="fill_parent"
+    	android:layout_height="wrap_content" 
+    	android:textSize="18sp"
+    	android:onClick="updateFlexTime" />
+    
+    <TextView
+		android:id="@+id/txt_week_current_flex_time"
+		android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:textSize="18sp" />
+    
 </LinearLayout>

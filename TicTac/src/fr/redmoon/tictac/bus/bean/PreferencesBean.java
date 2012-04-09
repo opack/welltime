@@ -39,20 +39,6 @@ public class PreferencesBean implements Serializable{
 	public int flexMin;	// minutes
 	public int flexMax;	// minutes
 	
-// Initialisation de l'horaire variable
-	// Date initiale
-	public long flexInitDate;
-	
-	// Horaire
-	public int flexInitTime;	// minutes
-	
-	// Date jusqu'à laquelle l'HV a été calculé
-	public long flexCurDate;
-	
-	// HV calculé
-	public int flexCurTime;	// minutes
-	
-	
 // Types de jour
 	// Normal
 	public int dayTypeNormalTime;	// minutes
@@ -139,12 +125,6 @@ public class PreferencesBean implements Serializable{
 		weekMax = otherPrefs.weekMax;
 		flexMin = otherPrefs.flexMin;
 		flexMax = otherPrefs.flexMax;
-
-		// Initialisation de l'horaire variable
-		flexInitDate = otherPrefs.flexInitDate;
-		flexInitTime = otherPrefs.flexInitTime;
-		flexCurDate = otherPrefs.flexCurDate;
-		flexCurTime = otherPrefs.flexCurTime;
 
 		// Types de jour
 		dayTypeNormalTime = otherPrefs.dayTypeNormalTime;

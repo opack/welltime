@@ -21,6 +21,7 @@ import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.bus.TimeUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
 import fr.redmoon.tictac.db.DbAdapter;
+import fr.redmoon.tictac.gui.ViewSynchronizer;
 import fr.redmoon.tictac.gui.dialogs.DialogArgs;
 import fr.redmoon.tictac.gui.dialogs.DialogTypes;
 import fr.redmoon.tictac.gui.sweep.Direction;
@@ -66,6 +67,7 @@ public abstract class TicTacActivity extends Activity {
 	protected DayBean mWorkDayBean;
 	protected Calendar mWorkCal;
 
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
@@ -79,6 +81,20 @@ public abstract class TicTacActivity extends Activity {
         // Récupération de la date du jour
         mToday = DateUtils.getCurrentDayId(mWorkTime);
         mWorkCal = new GregorianCalendar(DateUtils.extractYear(mToday), DateUtils.extractMonth(mToday), DateUtils.extractDayOfMonth(mToday));
+    }
+	
+	@Override
+    protected void onResume() {
+    	// Récupération de la date affichée à l'onglet précédent
+		long currentDate = ViewSynchronizer.getInstance().getCurrentDay();
+		if (currentDate == -1) {
+			currentDate = mToday;
+		}
+		
+		// Affichage des données de cette date.
+    	populateView(currentDate);
+    	    	
+    	super.onResume();
     }
 	
 	@Override

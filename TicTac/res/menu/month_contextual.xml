@@ -8,7 +8,7 @@
         android:title="@string/menu_day_show_details" />
      </group>
     <item android:id="@+id/menu_day_show_week"
-        android:title="@string/menu_day_show_week" />
+        android:title="@string/menu_month_show_week" />
     
     <item android:id="@+id/menu_day_delete"
         android:title="@string/menu_day_delete" />

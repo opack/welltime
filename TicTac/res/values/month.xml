@@ -11,4 +11,7 @@
         <item>S</item>
         <item>D</item>
     </string-array>
+    
+    <!-- Menu contextuel -->
+    <string name="menu_month_show_week">Afficher la semaine</string>
 </resources>

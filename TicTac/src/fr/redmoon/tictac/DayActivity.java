@@ -26,9 +26,11 @@ import android.widget.Spinner;
 import android.widget.Toast;
 import fr.redmoon.tictac.TicTacActivity.OnDayDeletionListener;
 import fr.redmoon.tictac.bus.DateUtils;
+import fr.redmoon.tictac.bus.FlexUtils;
 import fr.redmoon.tictac.bus.TimeUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
 import fr.redmoon.tictac.bus.bean.PreferencesBean;
+import fr.redmoon.tictac.gui.ViewSynchronizer;
 import fr.redmoon.tictac.gui.dialogs.DayDialogDelegate;
 import fr.redmoon.tictac.gui.listadapter.DayAdapter;
 import fr.redmoon.tictac.gui.widgets.WidgetProvider;
@@ -87,14 +89,6 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
     }
     
     @Override
-    protected void onResume() {
-    	populateView(mWorkDayBean.date); 	// On passe la date et non pas juste le bean pour
-											// s'assurer qu'une lecture des données en base
-											// sera effectuée afin d'initialiser le bean.
-    	super.onResume();
-    }
-    
-    @Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
 		MenuInflater inflater = getMenuInflater();
@@ -110,12 +104,6 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
 			return true;
 		case R.id.menu_show_day:
 			promptShowDay();
-			return true;
-		case R.id.menu_day_show_week:
-			showWeek();
-			return true;
-		case R.id.menu_show_month:
-			switchTab(MainActivity.TAB_MONTH_POS, mWorkDayBean.date, R.id.month_calendar);
 			return true;
 		}
 
@@ -178,6 +166,13 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
 		    		mDb.updateDay(mWorkDayBean);
 		    	} else {
 		    		mDb.createDay(mWorkDayBean);
+		    	
+			    	// Si aucun enregistrement pour cette semaine existe, on
+			    	// en crée un et on met à jour le temps HV depuis le
+			    	// dernier enregistrement avant cette date jusqu'au dernier
+			    	// jour en base.
+			    	final FlexUtils flexUtils = new FlexUtils(mDb);
+			    	flexUtils.updateFlexIfNeeded(mWorkDayBean.date);
 		    	}
 		    	
 		    	// Rafraîchissement de l'interface
@@ -200,14 +195,6 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
     }
     
     /**
-	 * Bascule vers l'activité "Semaine" en affichant la semaine du jour courant.
-	 * @param date
-	 */
-	private void showWeek() {
-		switchTab(MainActivity.TAB_WEEK_POS, mWorkDayBean.date, R.id.week_days);
-	}
-    
-    /**
      * Affiche le jour précédant le jour courant.
      * @param btn
      */
@@ -221,12 +208,17 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
     		mWorkCal.add(Calendar.DAY_OF_YEAR, -1);
     	} else {
     		// On est dimanche ou lundi, et on ne peut pas avancer d'un seul jour sinon on tombe le
-    		// week-end. On va donc reculer d'assez de jours pour tomber sur le vendredi.
-    		mWorkCal.add(Calendar.DAY_OF_YEAR, Calendar.FRIDAY - dayOfWeek);
+    		// week-end. On va donc se placer sur le vendredi puis reculer le 7 jours
+    		mWorkCal.add(Calendar.DAY_OF_YEAR, Calendar.FRIDAY - dayOfWeek - 7);
     	}
     	
     	// Maintenant on affiche la semaine de ce jour
-    	populateView(DateUtils.getDayId(mWorkCal));
+    	final long dayId = DateUtils.getDayId(mWorkCal);
+    	populateView(dayId);
+    	
+    	// Sauvegarde du jour courant dans le synchroniseur de vues pour accorder
+    	// toutes les vues sur le même jour
+    	ViewSynchronizer.getInstance().setCurrentDay(dayId);
     }
     
     /**
@@ -248,7 +240,12 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
     	}
     	
     	// Maintenant on affiche la semaine de ce jour
+    	final long dayId = DateUtils.getDayId(mWorkCal);
     	populateView(DateUtils.getDayId(mWorkCal));
+    	
+    	// Sauvegarde du jour courant dans le synchroniseur de vues pour accorder
+    	// toutes les vues sur le même jour
+    	ViewSynchronizer.getInstance().setCurrentDay(dayId);
     }
     
     /**

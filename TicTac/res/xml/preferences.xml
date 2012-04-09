@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:timepickerex="http://schemas.android.com/apk/res/fr.redmoon.tictac"
 	android:title="@string/pref_title">
 
 	<!-- Limites -->
@@ -14,17 +13,6 @@
 	        android:targetPackage="fr.redmoon.tictac"
 	        android:targetClass="fr.redmoon.tictac.PreferencesActivity"
 	        android:data="preferences://limits" />
-	</PreferenceScreen>
-	
-	<!-- Initialisation de l'horaire variable -->
-	<PreferenceScreen
-		android:title="@string/pref_initflex"
-		android:summary="@string/pref_initflex_summary">
-		<intent
-		    android:action="android.intent.action.VIEW"
-	        android:targetPackage="fr.redmoon.tictac"
-	        android:targetClass="fr.redmoon.tictac.PreferencesActivity"
-	        android:data="preferences://flex" />
 	</PreferenceScreen>
 	
 	<!-- Types de jour -->

@@ -1,20 +1,24 @@
 package fr.redmoon.tictac;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -28,82 +32,21 @@ import android.widget.Toast;
 import fr.redmoon.tictac.bus.PreferencesUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
 import fr.redmoon.tictac.bus.bean.PreferencesBean;
+import fr.redmoon.tictac.bus.bean.WeekBean;
 import fr.redmoon.tictac.bus.export.BinPreferencesBeanExporter;
 import fr.redmoon.tictac.bus.export.BinPreferencesBeanImporter;
 import fr.redmoon.tictac.bus.export.CsvDayBeanImporter;
+import fr.redmoon.tictac.bus.export.CsvWeekBeanImporter;
 import fr.redmoon.tictac.bus.export.FileExporter;
 import fr.redmoon.tictac.bus.export.FileImporter;
 import fr.redmoon.tictac.db.DbAdapter;
+import fr.redmoon.tictac.gui.DbInserterThread;
+import fr.redmoon.tictac.gui.ProgressDialogHandler;
 import fr.redmoon.tictac.gui.dialogs.listeners.PeriodCheckinListener;
 import fr.redmoon.tictac.gui.dialogs.listeners.PeriodExporterListener;
 import fr.redmoon.tictac.gui.listadapter.ManageAdapter;
 
 public class ManageActivity extends ListActivity {
-	/** Nested class that performs progress calculations (counting) */
-    class DbInserterThread extends Thread {
-    	private final List<DayBean> mDays;
-        private Handler mHandler;
-        private final static int STATE_DONE = 0;
-        private final static int STATE_RUNNING = 1;
-        private int mState;
-        private Iterator<DayBean> mDayIterator;
-        private int nbDaysUpdated = 0;
-        private int nbDaysCreated = 0;
-       
-        DbInserterThread(final Handler handler, final List<DayBean> days) {
-            mHandler = handler;
-            mDays = days;
-            
-            mState = STATE_DONE;
-            
-            mDayIterator = days.iterator();
-            nbDaysUpdated = 0;
-            nbDaysCreated = 0;
-        }
-       
-        public void run() {
-            mState = STATE_RUNNING;   
-            while (mState == STATE_RUNNING) {
-            	int newState = DbInserterThread.STATE_RUNNING;
-            	if (mDayIterator.hasNext()) {
-            		// Il reste des jours à écrire : on écrit le suivant
-	            	final DayBean day = mDayIterator.next();
-					if (mDb.isDayExisting(day.date)) {
-						mDb.updateDay(day);
-						if (day.isValid) {
-							nbDaysUpdated++;
-						}
-					} else {
-						mDb.createDay(day);
-						if (day.isValid) {
-							nbDaysCreated++;
-						}
-	    			}
-            	} else {
-            		// On a lu tous les jours : on arrête le thread
-            		newState = DbInserterThread.STATE_DONE;
-            	}
-            	
-            	// Mise à jour de la barre de progression
-                final Message msg = mHandler.obtainMessage();
-                msg.what = newState;
-                msg.arg1 = nbDaysCreated;
-                msg.arg2 = nbDaysUpdated;
-                mHandler.sendMessage(msg);
-            }
-        }
-        
-        /* sets the current state for the thread,
-         * used to stop the thread */
-        public void setState(int state) {
-            mState = state;
-        }
-
-		public int getMax() {
-			return mDays.size();
-		}
-    }
-	
 	private final static int POS_EXPORT_DATA = 0;
 	private final static int POS_IMPORT_DATA = 1;
 	private final static int POS_EXPORT_PREFS = 2;
@@ -113,34 +56,13 @@ public class ManageActivity extends ListActivity {
 	private static final int PROGRESS_DIALOG = 0;
 	private static final int PERIOD_CHECKIN_DIALOG = 1;
 	private static final int PERIOD_EXPORT_DIALOG = 2;
+	
+	private ProgressDialogHandler progressHandler;
 	private DbInserterThread progressThread;
 	private ProgressDialog progressDialog;
 	
 	private DbAdapter mDb;
 	
-	// Define the Handler that receives messages from the thread and update the progress
-    final Handler handler = new Handler() {
-        public void handleMessage(Message msg) {
-        	final int nbDaysCreated = msg.arg1;
-        	final int nbDaysUpdated = msg.arg2;
-        	if (msg.what == DbInserterThread.STATE_RUNNING) {
-        		final int total = nbDaysCreated + nbDaysUpdated;
-	            progressDialog.setProgress(total);
-        	} else if (msg.what == DbInserterThread.STATE_DONE) {
-                dismissDialog(PROGRESS_DIALOG);
-                progressThread.setState(DbInserterThread.STATE_DONE);
-                Toast.makeText(
-        				ManageActivity.this,
-        				getString(
-        					R.string.import_days_results,
-        					nbDaysCreated, 
-        					nbDaysUpdated),
-        				Toast.LENGTH_LONG)
-        			.show();
-            }
-        }
-    };
-    
 	/** Called when the activity is first created. */
 	public void onCreate(Bundle icicle) {
 		super.onCreate(icicle);
@@ -185,7 +107,20 @@ public class ManageActivity extends ListActivity {
 	private Dialog createProgressDialog() {
 		progressDialog = new ProgressDialog(this);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressDialog.setProgressNumberFormat("%1d sur %2d");
         progressDialog.setMessage("Import des jours en cours...");
+        progressDialog.setOnDismissListener(new OnDismissListener() {
+			@Override
+			public void onDismiss(DialogInterface dialog) {
+				if (progressThread != null && progressThread.isRunning()) {
+					progressThread.setState(DbInserterThread.STATE_CANCEL);
+				}
+			}
+		});
+        
+        // On profite de cette étape pour créer le handler
+        progressHandler = new ProgressDialogHandler(this, progressDialog, PROGRESS_DIALOG);
+        progressThread.setHandler(progressHandler);
         return progressDialog;
 	}
 
@@ -239,7 +174,7 @@ public class ManageActivity extends ListActivity {
         adb.setView(dialogView);
         
         //On donne un titre à l'AlertDialog
-        adb.setTitle(R.string.export_title);
+        adb.setTitle(R.string.export_data_title);
  
         //On modifie l'icône de l'AlertDialog pour le fun ;)
         //adb.setIcon(android.R.drawable.ic_dialog_alert);
@@ -265,7 +200,8 @@ public class ManageActivity extends ListActivity {
         switch(id) {
         case PROGRESS_DIALOG:
             progressDialog.setProgress(0);
-            progressDialog.setMax(progressThread.getMax());
+            progressDialog.setSecondaryProgress(0);
+            progressDialog.setMax(100);
             progressThread.start();
             break;
         }
@@ -346,7 +282,7 @@ public class ManageActivity extends ListActivity {
 	}
 	
 	private void importDataPhase1() {
-		requestFileChooserActivity(CsvDayBeanImporter.MIME_TYPE, POS_IMPORT_DATA);
+		requestFileChooserActivity(PeriodExporterListener.MIME_TYPE, POS_IMPORT_DATA);
 	}
 	
 	private void importPrefsPhase1() {
@@ -359,16 +295,68 @@ public class ManageActivity extends ListActivity {
 	 * @param filename
 	 */
 	private void importDataPhase2(final String filename){
-		// Lit les données dans le fichier CSV
-		final List<DayBean> days = new ArrayList<DayBean>();
-		final FileImporter<List<DayBean>> importer = new CsvDayBeanImporter(this);
-		if (importer.importData(filename, days)) {
-			// Ecrit ces données dans la base en utilisant un Thread et une belle
-			// boîte de dialogue avec une barre de progression pour montrer où on
-			// en est.
-			progressThread = new DbInserterThread(handler, days);
-			showDialog(PROGRESS_DIALOG);
+		// Ouverture du fichier properties pour récupérer le nom des fichiers à importer
+		final Properties importData = new Properties();
+		Reader read = null;
+		try {
+			read = new FileReader(filename);
+			importData.load(read);
+		} catch (FileNotFoundException e) {
+			Toast.makeText(
+					this, 
+					getString(R.string.import_file_not_found, filename),
+					Toast.LENGTH_LONG)
+				.show();
+		} catch (IOException e) {
+			Toast.makeText(
+					this, 
+					getString(R.string.import_io_exception, filename),
+					Toast.LENGTH_LONG)
+				.show();
+		} finally {
+			try {
+				read.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
+		// Récupération du répertoire courant
+		final File infosFile = new File(filename);
+		final String dir = infosFile.getParent() + "/";
+		final String daysCsv = dir + importData.getProperty(PeriodExporterListener.PROPERTY_DAYS_CSV);
+		final String weeksCsv = dir + importData.getProperty(PeriodExporterListener.PROPERTY_WEEKS_CSV);	
+		
+		// Lit les jours dans le fichier CSV
+		final List<DayBean> days = new ArrayList<DayBean>();
+		final FileImporter<List<DayBean>> daysImporter = new CsvDayBeanImporter(this);
+		if (!daysImporter.importData(daysCsv, days)) {
+			Toast.makeText(
+					this, 
+					getString(R.string.import_io_exception, daysCsv),
+					Toast.LENGTH_LONG)
+				.show();
+		}
+		
+		// Lit les semaines dans le fichier CSV
+		final List<WeekBean> weeks = new ArrayList<WeekBean>();
+		final FileImporter<List<WeekBean>> weeksImporter = new CsvWeekBeanImporter(this);
+		if (!weeksImporter.importData(weeksCsv, weeks)) {
+			Toast.makeText(
+					this, 
+					getString(R.string.import_io_exception, weeksCsv),
+					Toast.LENGTH_LONG)
+				.show();
+		}
+		
+		// Ecrit ces données dans la base en utilisant un Thread et une belle
+		// boîte de dialogue avec une barre de progression pour montrer où on
+		// en est.
+		progressThread = new DbInserterThread(days, weeks, mDb);
+		// Si le handler existe déjà (c'est le cas si la boîte de dialogue a déjà été créée
+		// via createDialog) alors on l'assigne ici. Sinon, ce sera fait lors de la création
+		// de la boîte de dialogue.
+		progressThread.setHandler(progressHandler);
+		showDialog(PROGRESS_DIALOG);
 	}
 	
 	/**
