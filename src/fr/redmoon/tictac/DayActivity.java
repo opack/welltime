@@ -26,6 +26,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 import fr.redmoon.tictac.TicTacActivity.OnDayDeletionListener;
 import fr.redmoon.tictac.bus.DateUtils;
+import fr.redmoon.tictac.bus.DayTypes;
 import fr.redmoon.tictac.bus.FlexUtils;
 import fr.redmoon.tictac.bus.TimeUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
@@ -165,6 +166,10 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
 		    	if (mWorkDayBean.isValid) {
 		    		mDb.updateDay(mWorkDayBean);
 		    	} else {
+		    		// Le jour sera créé. On vient d'ajouter un pointage, donc c'est
+		    		// un jour de type "normal"
+		    		mWorkDayBean.type = DayTypes.normal.ordinal();
+		    		
 		    		mDb.createDay(mWorkDayBean);
 		    	
 			    	// Si aucun enregistrement pour cette semaine existe, on
