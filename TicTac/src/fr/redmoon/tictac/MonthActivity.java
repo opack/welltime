@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.SparseArray;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,9 +21,12 @@ import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
 import fr.redmoon.tictac.gui.ViewSynchronizer;
 import fr.redmoon.tictac.gui.calendar.CalendarAdapter;
+import fr.redmoon.tictac.gui.dialogs.AbsDialogDelegate;
+import fr.redmoon.tictac.gui.dialogs.MonthDialogDelegate;
 
 public class MonthActivity extends TicTacActivity implements OnDayDeletionListener {
 	
+	protected AbsDialogDelegate mDialogDelegate;
 	private CalendarAdapter mAdapter;
 	private SparseArray<DayBean> items;
 	private List<DayBean> mMonthDays;
@@ -32,6 +36,9 @@ public class MonthActivity extends TicTacActivity implements OnDayDeletionListen
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
+	    
+	    setDialogDelegate(new MonthDialogDelegate(this));
+	    
 	    mMonthDays = new ArrayList<DayBean>();
 	    items = new SparseArray<DayBean>();
 	    mAdapter = new CalendarAdapter(this, DateUtils.extractYear(mToday), DateUtils.extractMonth(mToday));
@@ -73,6 +80,28 @@ public class MonthActivity extends TicTacActivity implements OnDayDeletionListen
 	}
 	
 	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		super.onCreateOptionsMenu(menu);
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.week_main, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onMenuItemSelected(int featureId, MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.menu_week_add_day:
+			promptAddDay();
+			return true;
+		case R.id.menu_show_day:
+			promptShowDay();
+			return true;
+		}
+
+		return super.onMenuItemSelected(featureId, item);
+	}
+	
+	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
 		MenuInflater inflater = getMenuInflater();
@@ -84,7 +113,6 @@ public class MonthActivity extends TicTacActivity implements OnDayDeletionListen
 		// Si le jour n'existe pas en base, on masque certaines options
 		if (!mDb.isDayExisting(mSelectedDay)) {
 			menu.findItem(R.id.menu_day_show_checkings).setVisible(false);
-			menu.findItem(R.id.menu_day_show_details).setVisible(false);
 			menu.findItem(R.id.menu_day_delete).setVisible(false);
 		}
 	}

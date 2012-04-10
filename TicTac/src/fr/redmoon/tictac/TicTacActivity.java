@@ -7,6 +7,7 @@ import java.util.List;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import fr.redmoon.tictac.bus.TimeUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
 import fr.redmoon.tictac.db.DbAdapter;
 import fr.redmoon.tictac.gui.ViewSynchronizer;
+import fr.redmoon.tictac.gui.dialogs.AbsDialogDelegate;
 import fr.redmoon.tictac.gui.dialogs.DialogArgs;
 import fr.redmoon.tictac.gui.dialogs.DialogTypes;
 import fr.redmoon.tictac.gui.sweep.Direction;
@@ -67,6 +69,8 @@ public abstract class TicTacActivity extends Activity {
 	protected DayBean mWorkDayBean;
 	protected Calendar mWorkCal;
 
+	protected AbsDialogDelegate mDialogDelegate;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,7 +110,22 @@ public abstract class TicTacActivity extends Activity {
     public DbAdapter getDbAdapter() {
 		return mDb;
 	}
-
+    
+    @Override
+	protected Dialog onCreateDialog(final int id) {
+		return mDialogDelegate.createDialog(id);
+	}
+	
+	@Override
+	protected void onPrepareDialog(final int id, final Dialog dialog, final Bundle args) {
+		super.onPrepareDialog(id, dialog, args);
+		mDialogDelegate.prepareDialog(id, dialog, args);
+	}
+	
+	protected void setDialogDelegate(final AbsDialogDelegate dialogDelegate) {
+		mDialogDelegate = dialogDelegate;
+	}
+	
 //  @Override
 //	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 //		super.onCreateContextMenu(menu, v, menuInfo);

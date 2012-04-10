@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
@@ -38,7 +37,6 @@ import fr.redmoon.tictac.gui.widgets.WidgetProvider;
 
 public class DayActivity extends TicTacActivity implements OnDayDeletionListener {
 	private int mCheckingToEdit;
-	private DayDialogDelegate mDialogDelegate;
 	
 	// Ci-dessous suivent les objets instanciés une unique fois pour des raisons de performance.
 	// On les crée au démarrage de l'application et on les réutilise avec des màj pour éviter
@@ -50,7 +48,7 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        mDialogDelegate = new DayDialogDelegate(this);
+        setDialogDelegate(new DayDialogDelegate(this));
         
         // Création de l'interface graphique
         setContentView(R.layout.view);
@@ -132,17 +130,6 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
 			return true;
 		}
 		return super.onContextItemSelected(item);
-	}
-	
-	@Override
-	protected Dialog onCreateDialog(final int id) {
-		return mDialogDelegate.createDialog(id);
-	}
-	
-	@Override
-	protected void onPrepareDialog(final int id, final Dialog dialog, final Bundle args) {
-		super.onPrepareDialog(id, dialog, args);
-		mDialogDelegate.prepareDialog(id, dialog, args);
 	}
 	
     /**
