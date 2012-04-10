@@ -7,6 +7,7 @@ import android.os.IBinder;
 import android.text.format.Time;
 import android.widget.Toast;
 import fr.redmoon.tictac.bus.DateUtils;
+import fr.redmoon.tictac.bus.DayTypes;
 import fr.redmoon.tictac.bus.FlexUtils;
 import fr.redmoon.tictac.bus.TimeUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
@@ -63,6 +64,10 @@ public class AddCheckingService extends Service {
 	    	if (day.isValid) {
 	    		db.updateDay(day);
 	    	} else {
+	    		// Le jour sera créé. On vient d'ajouter un pointage, donc c'est
+	    		// un jour de type "normal"
+	    		day.type = DayTypes.normal.ordinal();
+	    		
 	    		db.createDay(day);
 	    		
 	    		// Si aucun enregistrement pour cette semaine existe, on
