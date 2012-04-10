@@ -18,7 +18,7 @@ import fr.redmoon.tictac.gui.dialogs.listeners.ShowDayListener;
 import fr.redmoon.tictac.gui.dialogs.listeners.UpdateCheckingListener;
 import fr.redmoon.tictac.gui.dialogs.listeners.UpdateExtraListener;
 
-public class DayDialogDelegate {
+public class DayDialogDelegate extends AbsDialogDelegate {
 	/**
 	 * Listeners pour les boîtes de dialogue
 	 */
@@ -28,19 +28,18 @@ public class DayDialogDelegate {
 	private EditNoteListener mEditNoteListener;
 	private ShowDayListener mShowDayListener;
 	
-	private final TicTacActivity mActivity;
-	
-	public DayDialogDelegate(final TicTacActivity _activity) {
-		mActivity = _activity;
+	public DayDialogDelegate(final TicTacActivity activity) {
+		super(activity);
 		
 		// Préparation des listeners pour les boîtes de dialogue
-        mAddCheckingListener = new AddCheckingListener(_activity);
-        mUpdateCheckingListener = new UpdateCheckingListener(_activity);
-        mUpdateExtraListener = new UpdateExtraListener(_activity);
-        mEditNoteListener = new EditNoteListener(_activity);
-        mShowDayListener = new ShowDayListener(_activity);
+        mAddCheckingListener = new AddCheckingListener(mActivity);
+        mUpdateCheckingListener = new UpdateCheckingListener(mActivity);
+        mUpdateExtraListener = new UpdateExtraListener(mActivity);
+        mEditNoteListener = new EditNoteListener(mActivity);
+        mShowDayListener = new ShowDayListener(mActivity);
 	}
 	
+	@Override
 	public Dialog createDialog(final int id) {
 		switch (id) {
     	case DialogTypes.TIMEPICKER_ADD_CHECKING:
@@ -58,6 +57,7 @@ public class DayDialogDelegate {
 		return null;
 	}
 	
+	@Override
 	public void prepareDialog(final int id, final Dialog dialog, final Bundle args) {
 		switch (id) {
 			case DialogTypes.TIMEPICKER_ADD_CHECKING:

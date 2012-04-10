@@ -19,7 +19,7 @@ import fr.redmoon.tictac.gui.dialogs.listeners.AddDayListener;
 import fr.redmoon.tictac.gui.dialogs.listeners.EditFlexTimeListener;
 import fr.redmoon.tictac.gui.dialogs.listeners.ShowDayListener;
 
-public class WeekDialogDelegate {
+public class WeekDialogDelegate extends AbsDialogDelegate {
 	private final CharSequence NEGATIVE_SIGN = "-";
 	private final CharSequence POSITIVE_SIGN = "+";
 	
@@ -30,17 +30,16 @@ public class WeekDialogDelegate {
 	private ShowDayListener mShowDayListener;
 	private EditFlexTimeListener mEditFlexTimeListener;
 	
-	private final TicTacActivity mActivity;
-	
-	public WeekDialogDelegate(final TicTacActivity _activity) {
-		mActivity = _activity;
+	public WeekDialogDelegate(final TicTacActivity activity) {
+		super(activity);
 		
 		// Préparation des listeners pour les boîtes de dialogue
-        mAddDayListener = new AddDayListener(_activity);
-        mShowDayListener = new ShowDayListener(_activity);
-        mEditFlexTimeListener = new EditFlexTimeListener(_activity);
+        mAddDayListener = new AddDayListener(mActivity);
+        mShowDayListener = new ShowDayListener(mActivity);
+        mEditFlexTimeListener = new EditFlexTimeListener(mActivity);
 	}
 	
+	@Override
 	public Dialog createDialog(final int id) {
 		final long today = mActivity.getToday();
 		switch (id) {
@@ -54,6 +53,7 @@ public class WeekDialogDelegate {
 		return null;
 	}
 	
+	@Override
 	public void prepareDialog(final int id, final Dialog dialog, final Bundle args) {
 		final long date = args.getLong(DialogArgs.DATE);
 		switch (id) {

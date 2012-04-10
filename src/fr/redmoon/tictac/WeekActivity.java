@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import android.app.Dialog;
 import android.os.Bundle;
 import android.text.format.Time;
 import android.view.ContextMenu;
@@ -33,8 +32,6 @@ import fr.redmoon.tictac.gui.listadapter.WeekAdapterEntry;
 
 public class WeekActivity extends TicTacActivity implements OnDayDeletionListener {
 	
-	private WeekDialogDelegate mDialogDelegate;
-	
 	private List<DayBean> mWeekDays;
 	private WeekBean mWeekData;
 	private int mSelectedDay;
@@ -53,7 +50,7 @@ public class WeekActivity extends TicTacActivity implements OnDayDeletionListene
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
     	
-    	mDialogDelegate = new WeekDialogDelegate(this);
+    	setDialogDelegate(new WeekDialogDelegate(this));
 
         // Création des beans de travail
         mWeekDays = new ArrayList<DayBean>();
@@ -117,6 +114,7 @@ public class WeekActivity extends TicTacActivity implements OnDayDeletionListene
 		// Si le jour n'existe pas en base, on masque certaines options
 		final DayBean day = mWeekDays.get(mSelectedDay);
 		if (!mDb.isDayExisting(day.date)) {
+			menu.findItem(R.id.menu_day_show_checkings).setVisible(false);
 			menu.findItem(R.id.menu_day_delete).setVisible(false);
 		}
 	}
@@ -146,17 +144,6 @@ public class WeekActivity extends TicTacActivity implements OnDayDeletionListene
 		return super.onContextItemSelected(item);
 	}
 	
-	@Override
-	protected Dialog onCreateDialog(final int id) {
-		return mDialogDelegate.createDialog(id);
-	}
-	
-	@Override
-	protected void onPrepareDialog(final int id, final Dialog dialog, final Bundle args) {
-		super.onPrepareDialog(id, dialog, args);
-		mDialogDelegate.prepareDialog(id, dialog, args);
-	}
-    
 	public void showPrevious(final View btn) {
 		// On se place sur le lundi de la semaine, et on recule d'un jour
     	mWorkCal.set(DateUtils.extractYear(mMonday), DateUtils.extractMonth(mMonday), DateUtils.extractDayOfMonth(mMonday));
