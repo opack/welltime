@@ -157,7 +157,7 @@ public class TimeUtils {
 				}
 					
 				// Si la sortie est après le début réglementaire de la pause repas, alors on calcule l'heure de retour théorique.
-				if (out >= lunchStart) {
+				if (minLunchEnd == -1 && out >= lunchStart) {
 					minLunchEnd = out + lunchMin;
 				}
 				
