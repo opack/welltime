@@ -15,6 +15,7 @@ import android.widget.TimePicker;
 import fr.redmoon.tictac.R;
 import fr.redmoon.tictac.TicTacActivity;
 import fr.redmoon.tictac.bus.DateUtils;
+import fr.redmoon.tictac.bus.TimeUtils;
 import fr.redmoon.tictac.gui.dialogs.listeners.AddDayListener;
 import fr.redmoon.tictac.gui.dialogs.listeners.EditFlexTimeListener;
 import fr.redmoon.tictac.gui.dialogs.listeners.ShowDayListener;
@@ -64,6 +65,11 @@ public class WeekDialogDelegate extends AbsDialogDelegate {
 				break;
 			case DialogTypes.DATETIMEPICKER_EDIT_FLEXTIME:
 				int time = args.getInt(DialogArgs.TIME);
+				// Si le temps est inconnu, alors on initialise la boîte de dialogue à 0
+				if (time == TimeUtils.UNKNOWN_TIME) {
+					time = 0;
+				}
+				
 				mEditFlexTimeListener.prepare(date, time);
 				final DatePicker datePicker = (DatePicker)dialog.findViewById(R.id.date);
 				datePicker.updateDate(DateUtils.extractYear(date), DateUtils.extractMonth(date), DateUtils.extractDayOfMonth(date));
@@ -107,17 +113,15 @@ public class WeekDialogDelegate extends AbsDialogDelegate {
 		btnSign.setText(POSITIVE_SIGN);
 		btnSign.setTag(1);
 		btnSign.setOnClickListener(new OnClickListener() {
-			boolean isNegative = false;
 			@Override
 			public void onClick(View v) {
-				if (isNegative) {
+				if ((Integer)btnSign.getTag() == -1) {
 					btnSign.setText(POSITIVE_SIGN);
 					btnSign.setTag(1);
 				} else {
 					btnSign.setText(NEGATIVE_SIGN);
 					btnSign.setTag(-1);
 				}
-				isNegative = !isNegative;
 			}
 		});
 		

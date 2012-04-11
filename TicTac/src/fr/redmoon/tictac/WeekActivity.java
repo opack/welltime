@@ -318,7 +318,7 @@ public class WeekActivity extends TicTacActivity implements OnDayDeletionListene
 			// Calcul du nouvel HV en ajoutant le temps effectué cette semaine
 			// à l'HV en début de semaine
 			final FlexUtils flexUtils = new FlexUtils(mDb);
-			final int curWeekFlex = mWeekData.flexTime + flexUtils.computeWeekFlex(mWeekDays);
+			final int curWeekFlex = flexUtils.computeFlexTime(mWeekWorked, mWeekData.flexTime);
 			
 	        // Mise à jour des composants graphiques
 			setText(R.id.btn_update_flex_time, R.string.week_monday_flex_time, DateUtils.formatDateDDMM(mWeekData.date), TimeUtils.formatMinutes(mWeekData.flexTime));

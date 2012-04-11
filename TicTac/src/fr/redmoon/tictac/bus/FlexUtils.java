@@ -46,13 +46,17 @@ public class FlexUtils {
 
 		// Récupération des jours entre cette date et le prochain dimanche
 		mDb.fetchDays(firstDay, lastDay, days);
+		int curWeekTotal = 0;
 		while (!days.isEmpty()){
 			// Calcul de l'HV accumulé au cours de ces jours
-			flex += computeWeekFlex(days);
+			curWeekTotal = computeWeekTotal(days);
 			
 			// Si la semaine contient moins de 5 jours, alors les autres jours
 			// sont considérés comme des jours de type "non travaillé"
-			flex -= computeWeekNotWorkedTime(days.size());			
+			curWeekTotal -= computeWeekNotWorkedTime(days.size());		
+			
+			// On calcule l'HV
+			flex = computeFlexTime(curWeekTotal, flex);
 			
 			// Calcul du prochain lundi et dimanche qui serviront de bornes
 			calendar.add(Calendar.DAY_OF_YEAR, 1);
@@ -66,6 +70,32 @@ public class FlexUtils {
 			// Récupération des jours entre cette date et le prochain dimanche
 			mDb.fetchDays(firstDay, lastDay, days);
 		}
+	}
+
+	/**
+	 * Retourne le nouvel HV en ajoutant à l'HV initial le temps effectué
+	 * au cours de la semaine.
+	 * Le temps de travail de la semaine et l'HV sont bornés avec les
+	 * valeurs des préférences.
+	 * @param weekWorked
+	 * @param initialFlex
+	 * @return
+	 */
+	public int computeFlexTime(final int weekWorked, final int initialFlex) {
+		// Borne à 41h le temps travaillé
+		int weekCounted = Math.min(weekWorked, PreferencesBean.instance.weekMax);
+		
+		// Calcul du temps supplémentaire pour la semaine
+		int curWeekFlex = weekCounted - PreferencesBean.instance.weekMin;
+		
+		// Ajout du temps supplémentaire au temps initial pour avoir l'HV en fin de semaine
+		int newFlex = initialFlex + curWeekFlex;
+		
+		// Borne l'HV
+		newFlex = Math.min(newFlex, PreferencesBean.instance.flexMax);
+		newFlex = Math.max(newFlex, PreferencesBean.instance.flexMin);
+		
+		return newFlex;
 	}
 
 	/**
@@ -102,7 +132,8 @@ public class FlexUtils {
 	}
 	
 	/**
-	 * Retourne le temps total effectué au cours de la semaine contenant le jour indiqué.
+	 * Retourne le temps total effectué en plus du temps minimum 
+	 * au cours de la semaine contenant le jour indiqué.
 	 * @param aDay
 	 * @return
 	 */
@@ -123,26 +154,22 @@ public class FlexUtils {
 		final List<DayBean> days = new ArrayList<DayBean>();
 		mDb.fetchDays(firstDay, lastDay, days);
 		
-		return computeWeekFlex(days);
+		return computeWeekTotal(days) - PreferencesBean.instance.weekMin;
 	}
 
 	/**
-	 * Retourne le temps total effectué au cours de la semaine dont les jours sont
-	 * passés en paramètre
+	 * Retourne le temps total effectué au cours de la semaine dont les jours 
+	 * sont passés en paramètre.
 	 * @param aDay
 	 * @return
 	 */
-	public int computeWeekFlex(final List<DayBean> days) {
-		int flex = 0;
-		int dayTotal = 0;
+	public int computeWeekTotal(final List<DayBean> days) {
+		int weekTotal = 0;
 		for (final DayBean day : days) {
-			dayTotal = TimeUtils.computeTotal(day);
-			if (dayTotal > PreferencesBean.instance.dayMax) {
-				dayTotal = PreferencesBean.instance.dayMax;
-			}
-			flex += dayTotal - PreferencesBean.instance.dayMin;
+			weekTotal += TimeUtils.computeTotal(day);
 		}
 		
-		return flex;
+		// Calcul le temps supplémentaire effectué
+		return weekTotal;
 	}
 }
