@@ -2,8 +2,8 @@ package fr.redmoon.tictac.gui.dialogs.listeners;
 
 import fr.redmoon.tictac.TicTacActivity;
 
-public class UpdateExtraListener extends TimeSetListener {
-    	public UpdateExtraListener(final TicTacActivity activity) {
+public class EditExtraListener extends TimeSetListener {
+    	public EditExtraListener(final TicTacActivity activity) {
     		super(activity);
 		}
     	

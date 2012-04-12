@@ -229,4 +229,28 @@ public class DateUtils {
 		final int dayId = calendar.get(Calendar.DAY_OF_WEEK);
 		return Calendar.MONDAY <= dayId && dayId <= Calendar.FRIDAY;
 	}
+
+	/**
+	 * Retourne true si le jour spécifié fait partie de la semaine d'aujourd'hui.
+	 * @param date
+	 * @return
+	 */
+	public static boolean isInTodaysWeek(final long date) {
+		final Time today = new Time();
+		today.setToNow();
+		today.normalize(true);
+		
+		final Time passedDate = new Time();
+		passedDate.set(
+			extractDayOfMonth(date), 
+			extractMonth(date), 
+			extractYear(date));
+		passedDate.normalize(true);
+		
+		// On est dans la même semaine si on est dans la même année
+		// et que le numéro de semaine est identique
+		return
+			today.year == passedDate.year
+			&& today.getWeekNumber() == passedDate.getWeekNumber();
+	}
 }
