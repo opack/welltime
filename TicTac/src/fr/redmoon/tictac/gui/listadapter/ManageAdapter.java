@@ -26,7 +26,7 @@ public class ManageAdapter extends ArrayAdapter<String[]> {
 		if (v == null) {
 			final Activity activity = (Activity)getContext();
 			final LayoutInflater vi = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			v = vi.inflate(R.layout.manage_item, null);
+			v = vi.inflate(R.layout.lst_itm_manage_operation, null);
 		}
 		
 		final String[] data = items[position];

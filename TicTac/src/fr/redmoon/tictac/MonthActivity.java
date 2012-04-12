@@ -45,14 +45,14 @@ public class MonthActivity extends TicTacActivity implements OnDayDeletionListen
 	    mSelectedDay = -1;
 	    
 	    // Création de l'interface graphique
-        setContentView(R.layout.view);
+        setContentView(R.layout.view_common_frame);
         findViewById(R.id.lyt_btn_bar).setVisibility(View.INVISIBLE);
         findViewById(R.id.img_note).setVisibility(View.GONE);
 	    
 	    // Initialisation du gestionnaire de sweep
         initSweep(
         	new int[]{R.id.month_calendar, R.id.month_details}, 
-        	new int[]{R.layout.month_calendar, R.layout.month_details});
+        	new int[]{R.layout.view_month_calendar, R.layout.view_month_details});
         
 	    // Initialisation du GridView du calendrier
 	    GridView gridview = (GridView) findViewById(R.id.gridview);

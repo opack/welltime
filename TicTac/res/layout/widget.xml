@@ -5,12 +5,14 @@
 	android:layout_height="wrap_content"
 	android:orientation="vertical" >
 	              
-	<ImageButton
+	<ImageView
 		android:id="@+id/btn_checkin"
 		android:layout_width="64sp"
 		android:layout_height="64sp"
 		android:layout_gravity="center_vertical"
-		android:src="@drawable/clockin" />
+		android:adjustViewBounds="true"
+		android:src="@drawable/clock_blue"
+		android:clickable="true" />
 		
 	<!-- TextView
 		android:layout_margin="4dip"
