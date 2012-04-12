@@ -29,7 +29,7 @@ public class DayAdapter extends ArrayAdapter<String[]> {
 		if (v == null) {
 			final Activity activity = (Activity)getContext();
 			final LayoutInflater vi = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			v = vi.inflate(R.layout.day_item, null);
+			v = vi.inflate(R.layout.lst_itm_day_checking, null);
 			
 			// Ajout de la vue comme étant intéressée par les évènements de menu contextuel 
 			activity.registerForContextMenu(v.findViewById(R.id.clockin_time));

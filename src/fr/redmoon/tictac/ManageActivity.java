@@ -81,7 +81,7 @@ public class ManageActivity extends ListActivity {
 				resources.getStringArray(R.array.period_checkin)
 		};
 		
-		this.setListAdapter(new ManageAdapter(this, R.layout.manage_item, operations));
+		this.setListAdapter(new ManageAdapter(this, R.layout.lst_itm_manage_operation, operations));
 	}
 	
 	@Override
@@ -127,7 +127,7 @@ public class ManageActivity extends ListActivity {
 	private Dialog createPeriodCheckinDialog() {
 		//On instancie notre layout en tant que View
         LayoutInflater factory = LayoutInflater.from(this);
-        final View dialogView = factory.inflate(R.layout.period_checkin, null);
+        final View dialogView = factory.inflate(R.layout.dlg_period_checkin, null);
  
         //Création de l'AlertDialog
         AlertDialog.Builder adb = new AlertDialog.Builder(this);
@@ -165,7 +165,7 @@ public class ManageActivity extends ListActivity {
 	private Dialog createPeriodExportDialog() {
 		//On instancie notre layout en tant que View
         LayoutInflater factory = LayoutInflater.from(this);
-        final View dialogView = factory.inflate(R.layout.period_chooser, null);
+        final View dialogView = factory.inflate(R.layout.dlg_period_chooser, null);
  
         //Création de l'AlertDialog
         AlertDialog.Builder adb = new AlertDialog.Builder(this);

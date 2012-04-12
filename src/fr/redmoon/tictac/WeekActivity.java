@@ -57,17 +57,17 @@ public class WeekActivity extends TicTacActivity implements OnDayDeletionListene
         mWeekData = new WeekBean();
         
         // Initialisation de l'affichage
-        setContentView(R.layout.view);
+        setContentView(R.layout.view_common_frame);
         findViewById(R.id.btn_checkin).setVisibility(View.INVISIBLE);
         findViewById(R.id.img_note).setVisibility(View.INVISIBLE);
         
         // Initialisation du gestionnaire de sweep
         initSweep(
             	new int[]{R.id.week_days, R.id.week_details},
-            	new int[]{R.layout.week_days, R.layout.week_details});
+            	new int[]{R.layout.view_week_days, R.layout.view_week_details});
         
         // Création de l'adapteur affichant les jours. Pour l'instant aucun jour.
-        final ListAdapter adapter = new WeekAdapter(this, R.layout.week_item, mDaysArray);
+        final ListAdapter adapter = new WeekAdapter(this, R.layout.lst_itm_week_day, mDaysArray);
         mLstDays = (ListView)findViewById(R.id.list);
         mLstDays.setAdapter(adapter);
         

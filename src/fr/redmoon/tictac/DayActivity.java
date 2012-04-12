@@ -51,12 +51,12 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
         setDialogDelegate(new DayDialogDelegate(this));
         
         // Création de l'interface graphique
-        setContentView(R.layout.view);
+        setContentView(R.layout.view_common_frame);
         
         // Initialisation du gestionnaire de sweep
         initSweep(
         	new int[]{R.id.day_checkings, R.id.day_details},
-        	new int[]{R.layout.day_checkings, R.layout.day_details});
+        	new int[]{R.layout.view_day_checkings, R.layout.view_day_details});
         
         // Remplissage de la liste des jours dans le détail
         final Spinner spinner = (Spinner)findViewById(R.id.day_type);
@@ -75,7 +75,7 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
  	    });
         
         // Création de l'adapteur affichant les pointages. Pour l'instant, aucun pointage.
-        final ListAdapter adapter = new DayAdapter(this, R.layout.day_item, mCheckingsArray);
+        final ListAdapter adapter = new DayAdapter(this, R.layout.lst_itm_day_checking, mCheckingsArray);
         mLstCheckings = (ListView)findViewById(R.id.list);
         mLstCheckings.setAdapter(adapter);
         

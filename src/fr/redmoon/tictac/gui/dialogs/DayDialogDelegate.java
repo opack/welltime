@@ -92,7 +92,7 @@ public class DayDialogDelegate extends AbsDialogDelegate {
 	protected Dialog createEditNoteDialog() {
 		//On instancie notre layout en tant que View
 		LayoutInflater factory = LayoutInflater.from(mActivity);
-        final View dialogView = factory.inflate(R.layout.text_input, null);
+        final View dialogView = factory.inflate(R.layout.dlg_text_input, null);
         
         //Création de l'AlertDialog
         AlertDialog.Builder adb = new AlertDialog.Builder(mActivity);
