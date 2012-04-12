@@ -387,6 +387,13 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
             	// Suppression du jour en base
             	mDb.deleteChecking(date, time);
             	
+            	// Si le pointage n'est pas au cours de la semaine courante,
+    			// alors on met à jour l'HV des semaines qui suivent ce jour
+    			if (!DateUtils.isInTodaysWeek(date)) {
+    				final FlexUtils flexUtils = new FlexUtils(mDb);
+    				flexUtils.updateFlex(date);
+    			}
+            	
             	// Mise à jour de l'affichage
         		populateView(date);
             	

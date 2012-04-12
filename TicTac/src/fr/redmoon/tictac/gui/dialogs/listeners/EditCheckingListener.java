@@ -2,13 +2,14 @@ package fr.redmoon.tictac.gui.dialogs.listeners;
 
 import fr.redmoon.tictac.TicTacActivity;
 import fr.redmoon.tictac.bus.DateUtils;
+import fr.redmoon.tictac.bus.FlexUtils;
 import fr.redmoon.tictac.bus.TimeUtils;
 import fr.redmoon.tictac.gui.widgets.WidgetProvider;
 
-public class UpdateCheckingListener extends TimeSetListener {
+public class EditCheckingListener extends TimeSetListener {
 		private int mOldCheckingValue;
 		
-    	public UpdateCheckingListener(final TicTacActivity activity) {
+    	public EditCheckingListener(final TicTacActivity activity) {
     		super(activity);
 		}
     	
@@ -20,16 +21,24 @@ public class UpdateCheckingListener extends TimeSetListener {
 		@Override
     	public void onTimeSet(final int newTime) {
 			boolean dbUpdated = false;
-			
+
+			// Si on a choisit un pointage valide et qu'il n'existe
+			// pas encore, on le crée et on supprime l'ancien.
 			if (newTime != 0
 			&& !mDb.isCheckingExisting(mDate, newTime)) {
-				// Si on a choisit un pointage valide et qu'il n'existe
-				// pas encore, on le crée et on supprime l'ancien.
 				dbUpdated = mDb.createChecking(mDate, newTime);
 			}
+			
+			// On souhaite supprimer l'ancien pointage s'il est différent du nouveau
 			if (mOldCheckingValue != TimeUtils.UNKNOWN_TIME && mOldCheckingValue != newTime) {
-				// On souhaite supprimer l'ancien pointage s'il est différent du nouveau
 				dbUpdated = mDb.deleteChecking(mDate, mOldCheckingValue);
+			}
+			
+			// Si le pointage n'est pas au cours de la semaine courante,
+			// alors on met à jour l'HV des semaines qui suivent ce jour
+			if (!DateUtils.isInTodaysWeek(mDate)) {
+				final FlexUtils flexUtils = new FlexUtils(mDb);
+				flexUtils.updateFlex(mDate);
 			}
 			
 			// Mise à jour de l'affichage

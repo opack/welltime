@@ -4,6 +4,7 @@ import android.widget.Toast;
 import fr.redmoon.tictac.R;
 import fr.redmoon.tictac.TicTacActivity;
 import fr.redmoon.tictac.bus.DateUtils;
+import fr.redmoon.tictac.bus.FlexUtils;
 import fr.redmoon.tictac.gui.widgets.WidgetProvider;
 
 public class AddCheckingListener extends TimeSetListener {
@@ -26,7 +27,7 @@ public class AddCheckingListener extends TimeSetListener {
 			
 			// Mise à jour de la base de données
 			if (mDb.isCheckingExisting(mDate, selectedTime)) {
-				// Le jour existe déjà : affichage d'un message
+				// Le pointage existe déjà : affichage d'un message
 				Toast.makeText(
 					mActivity,
 					mActivity.getString(R.string.error_checking_already_exists),
@@ -35,6 +36,13 @@ public class AddCheckingListener extends TimeSetListener {
 			} else {
 				// Création du nouveau pointage
 				dbUpdated = mDb.createChecking(mDate, selectedTime);
+				
+				// Si le pointage n'est pas au cours de la semaine courante,
+    			// alors on met à jour l'HV des semaines qui suivent ce jour
+    			if (!DateUtils.isInTodaysWeek(mDate)) {
+    				final FlexUtils flexUtils = new FlexUtils(mDb);
+    				flexUtils.updateFlex(mDate);
+    			}
 			}
 			
 			// Mise à jour de l'affichage

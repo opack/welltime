@@ -15,16 +15,16 @@ import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.gui.dialogs.listeners.AddCheckingListener;
 import fr.redmoon.tictac.gui.dialogs.listeners.EditNoteListener;
 import fr.redmoon.tictac.gui.dialogs.listeners.ShowDayListener;
-import fr.redmoon.tictac.gui.dialogs.listeners.UpdateCheckingListener;
-import fr.redmoon.tictac.gui.dialogs.listeners.UpdateExtraListener;
+import fr.redmoon.tictac.gui.dialogs.listeners.EditCheckingListener;
+import fr.redmoon.tictac.gui.dialogs.listeners.EditExtraListener;
 
 public class DayDialogDelegate extends AbsDialogDelegate {
 	/**
 	 * Listeners pour les boîtes de dialogue
 	 */
 	private AddCheckingListener mAddCheckingListener;
-	private UpdateCheckingListener mUpdateCheckingListener;
-	private UpdateExtraListener mUpdateExtraListener;
+	private EditCheckingListener mUpdateCheckingListener;
+	private EditExtraListener mUpdateExtraListener;
 	private EditNoteListener mEditNoteListener;
 	private ShowDayListener mShowDayListener;
 	
@@ -33,8 +33,8 @@ public class DayDialogDelegate extends AbsDialogDelegate {
 		
 		// Préparation des listeners pour les boîtes de dialogue
         mAddCheckingListener = new AddCheckingListener(mActivity);
-        mUpdateCheckingListener = new UpdateCheckingListener(mActivity);
-        mUpdateExtraListener = new UpdateExtraListener(mActivity);
+        mUpdateCheckingListener = new EditCheckingListener(mActivity);
+        mUpdateExtraListener = new EditExtraListener(mActivity);
         mEditNoteListener = new EditNoteListener(mActivity);
         mShowDayListener = new ShowDayListener(mActivity);
 	}
