@@ -6,6 +6,7 @@ import java.util.GregorianCalendar;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 import fr.redmoon.tictac.R;
@@ -16,10 +17,12 @@ import fr.redmoon.tictac.db.DbAdapter;
 
 public class PeriodCheckinListener extends AbsPeriodChooserListener {
 	private final Spinner mDayType;
+	private final EditText mNote;
 	
-	public PeriodCheckinListener(final Activity _activity, final DbAdapter _db, final DatePicker _date1, final DatePicker _date2, final Spinner _dayType) {
+	public PeriodCheckinListener(final Activity _activity, final DbAdapter _db, final DatePicker _date1, final DatePicker _date2, final Spinner _dayType, final EditText _note) {
 		super(_activity, _db, _date1, _date2);
 		mDayType = _dayType;
+		mNote = _note;
 	}
 	
 	@Override
@@ -31,6 +34,7 @@ public class PeriodCheckinListener extends AbsPeriodChooserListener {
 		final Calendar calendar = new GregorianCalendar(mDate1.getYear(), mDate1.getMonth(), mDate1.getDayOfMonth());
 		final long lastDay = DateUtils.getDayId(mDate2.getYear(), mDate2.getMonth(), mDate2.getDayOfMonth());
 		final int dayType = mDayType.getSelectedItemPosition();
+		final String note = mNote.getText().toString();
 		
 		// Parcours des jours
 		long curDate = DateUtils.getDayId(calendar);
@@ -47,6 +51,7 @@ public class PeriodCheckinListener extends AbsPeriodChooserListener {
 				} else {
 					dayToCreate.date = curDate;
 					dayToCreate.type = dayType;
+					dayToCreate.note = note;
 					mDb.createDay(dayToCreate);
 					if (dayToCreate.isValid) {
 						nbDaysCreated++;
