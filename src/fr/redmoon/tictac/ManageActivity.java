@@ -26,6 +26,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -152,7 +153,8 @@ public class ManageActivity extends ListActivity {
         		mDb,
         		(DatePicker)dialogView.findViewById(R.id.date1),
         		(DatePicker)dialogView.findViewById(R.id.date2),
-        		(Spinner)dialogView.findViewById(R.id.day_type))
+        		(Spinner)dialogView.findViewById(R.id.day_type),
+        		(EditText)dialogView.findViewById(R.id.note))
         );
  
         //On crée un bouton "Annuler" à notre AlertDialog et on lui affecte un évènement
