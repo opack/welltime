@@ -135,7 +135,7 @@ public class DbAdapter {
 	}
 
 	public void fetchDay(final long id, final DayBean beanToFill) {
-		beanToFill.isValid = days.getDayById(id, beanToFill);
+		days.getDayById(id, beanToFill);
 		if (beanToFill.isValid) {
 			checkings.fetchCheckings(beanToFill);
 		} else {

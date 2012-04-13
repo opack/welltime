@@ -37,31 +37,30 @@ public class PeriodCheckinListener extends AbsPeriodChooserListener {
 		final String note = mNote.getText().toString();
 		
 		// Parcours des jours
-		long curDate = DateUtils.getDayId(calendar);
-		final DayBean dayToCreate = new DayBean();
+		final long firstDay = DateUtils.getDayId(calendar);
+		long curDate = firstDay;
+		final DayBean dayData = new DayBean();
 		while (curDate <= lastDay) {
 			// On vérifie s'il s'agit d'un jour travaillé dans la semaine
 			if (DateUtils.isWorkingWeekDay(calendar)) {
+				// On prépare le jour à créer ou mettre à jour
+				mDb.fetchDay(curDate, dayData);
+				dayData.type = dayType;
+				if (note != null) {
+					dayData.note = note;
+				}
+				
 				// On crée ce jour en base s'il n'existe pas, sinon on le
 				// met à jour
-				if (mDb.isDayExisting(curDate)) {
-					if (mDb.updateDayType(curDate, dayType)) {
+				if (dayData.isValid) {
+					mDb.updateDay(dayData);
+					if (dayData.isValid) {
 						nbDaysUpdated++;
 					}
 				} else {
-					dayToCreate.date = curDate;
-					dayToCreate.type = dayType;
-					dayToCreate.note = note;
-					mDb.createDay(dayToCreate);
-					if (dayToCreate.isValid) {
+					mDb.createDay(dayData);
+					if (dayData.isValid) {
 						nbDaysCreated++;
-						
-						// Si aucun enregistrement pour cette semaine existe, on
-				    	// en crée un et on met à jour le temps HV depuis le
-				    	// dernier enregistrement avant cette date jusqu'au dernier
-				    	// jour en base.
-				    	final FlexUtils flexUtils = new FlexUtils(mDb);
-				    	flexUtils.updateFlexIfNeeded(dayToCreate.date);
 					}
 				}
 			}
@@ -70,6 +69,12 @@ public class PeriodCheckinListener extends AbsPeriodChooserListener {
 			calendar.add(Calendar.DAY_OF_YEAR, 1);
 			curDate = DateUtils.getDayId(calendar);
 		}
+		
+		// On met à jour le temps HV depuis le 
+    	// dernier enregistrement avant cette date jusqu'au dernier
+    	// jour en base.
+    	final FlexUtils flexUtils = new FlexUtils(mDb);
+    	flexUtils.updateFlexIfNeeded(firstDay);
 		
 		// Affichage des résultats
 		Toast.makeText(
