@@ -54,9 +54,14 @@ public class DaysTableHelper extends TableHelper {
 	
 	public boolean getDayById(final long id, final DayBean beanToFill) {
 		final Cursor day = fetch(id);
-		final boolean exists = fillBean(day, beanToFill);
+		beanToFill.isValid = fillBean(day, beanToFill);
+		if (!beanToFill.isValid) {
+			// Le jour n'est pas valide mais on va quand même conserver
+			// la date qui n'existe pas en base.
+			beanToFill.date = id;
+		}
 		day.close();
-		return exists;
+		return beanToFill.isValid;
 	}
 	
 	public boolean getNextDay(final long date, final DayBean beanToFill) {
