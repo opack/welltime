@@ -13,7 +13,6 @@ import android.widget.TabHost;
 import android.widget.TextView;
 import fr.redmoon.tictac.bus.PreferencesUtils;
 import fr.redmoon.tictac.bus.bean.PreferencesBean;
-import fr.redmoon.tictac.gui.sweep.Direction;
 
 public class MainActivity extends TabActivity {
 	public static final int TAB_DAY_POS = 0;
@@ -101,13 +100,13 @@ public class MainActivity extends TabActivity {
 	 * Modifie l'onglet affiché
 	 * @param tabIndexToSwitchTo
 	 * @param date
-	 * @param viewId Si spécifié (supérieur à 0), le viewFlipper flip vers la vue indiquée
+	 * @param pageId Si spécifié (supérieur à 0), le viewFlipper flip vers la vue indiquée
 	 */
-	public void switchTab(final int tabIndexToSwitchTo, final long date, final int viewId){
+	public void switchTab(final int tabIndexToSwitchTo, final long date, final int pageId){
 		tabHost.setCurrentTab(tabIndexToSwitchTo);
 		final TicTacActivity a = (TicTacActivity)getCurrentActivity();
-		if (viewId > 0) {
-			a.switchDetailsView(Direction.left, viewId);
+		if (pageId > -1) {
+			a.switchPage(pageId);
 		}
 		a.populateView(date);		
 	}

@@ -45,16 +45,11 @@
 		android:layout_height="24sp"
 		android:src="@drawable/note" />
 	
-    <ViewFlipper
-	   	android:id="@+id/view_flipper"
-	   	android:layout_width="fill_parent" 
-	   	android:layout_height="wrap_content"
-	   	android:layout_weight="3"
-	   	android:paddingTop="6sp" >
-    
-	    <!-- Des layouts seront inflatés à l'exécution -->
-	    
-	</ViewFlipper>
+	<android.support.v4.view.ViewPager
+	    android:id="@+id/view_pager"
+	    android:layout_width="fill_parent" 
+	   	android:layout_height="0dip"
+	   	android:layout_weight="3" />
 	
     <TableLayout
 	    android:layout_width="fill_parent"

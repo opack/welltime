@@ -11,13 +11,11 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.view.ViewPager;
 import android.text.format.Time;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.ViewFlipper;
 import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.bus.TimeUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
@@ -26,9 +24,7 @@ import fr.redmoon.tictac.gui.ViewSynchronizer;
 import fr.redmoon.tictac.gui.dialogs.AbsDialogDelegate;
 import fr.redmoon.tictac.gui.dialogs.DialogArgs;
 import fr.redmoon.tictac.gui.dialogs.DialogTypes;
-import fr.redmoon.tictac.gui.sweep.Direction;
-import fr.redmoon.tictac.gui.sweep.ViewFlipperManager;
-import fr.redmoon.tictac.gui.sweep.ViewSwitcherGestureListener;
+import fr.redmoon.tictac.gui.listadapter.TicTacPagerAdapter;
 import fr.redmoon.tictac.gui.widgets.WidgetProvider;
 
 /**
@@ -48,19 +44,6 @@ public abstract class TicTacActivity extends Activity {
 	}
 	private static List<OnDayDeletionListener> sDayDeletionListeners;
 	
-	/**
-	 * Temps minimum entre deux flips de vue (changement de jour...)
-	 */
-	private static final int MIN_VIEW_FLIP_INTERVAL = 1000;
-	
-	// Objets chargés de gérer "physiquement" la bascule d'une vue à l'autre
-	protected ViewFlipperManager mViewFlipperManager;
-	private ViewSwitcherGestureListener mGestureListener;
-	private GestureDetector mGestureDetector;
-	protected View mCurrentView; // Vue actuellement affichée
-	private long mLastViewFlipTime; // Heure du dernier changement de vue, pour éviter des changements trop rapprochés.
-	private int[] mFlipViews;// Vues qu'on doit flipper, la seconde étant la vue de détails à inflater.
-	
 	protected long mToday = -1;
 	protected final Time mWorkTime = new Time();
 	
@@ -70,6 +53,9 @@ public abstract class TicTacActivity extends Activity {
 	protected Calendar mWorkCal;
 
 	protected AbsDialogDelegate mDialogDelegate;
+	
+	private ViewPager mPager;
+	private View[] mPages;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -126,126 +112,33 @@ public abstract class TicTacActivity extends Activity {
 		mDialogDelegate = dialogDelegate;
 	}
 	
-//  @Override
-//	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-//		super.onCreateContextMenu(menu, v, menuInfo);
-//		MenuInflater inflater = getMenuInflater();
-//		inflater.inflate(R.menu.day_contextual, menu);
-//	}
-//	
-//	@Override
-//	public boolean onContextItemSelected(MenuItem item) {
-//		switch (item.getItemId()) {
-//		case R.id.menu_checking_edit:
-//			
-//			return true;
-//		case R.id.menu_checking_delete:
-//			deleteChecking(mContextMenuDayDate);
-//			return true;
-//		}
-//		return super.onContextItemSelected(item);
-//	}
-    
-	/**
-	 * Initialise le gestionnaire de flip.
-	 * @param flipViewsIds Identifiants des vues qu'on va switcher
-	 * @param layoutsToInflate Identifiants des layouts qu'on va inflater
-	 */
-	protected void initSweep(final int[] flipViewsIds, final int[] layoutsToInflate) {
-		// Création de la vue de détail
-		final ViewFlipper flipper = (ViewFlipper)findViewById(R.id.view_flipper);
-		for (int layout : layoutsToInflate) {
-			View details = View.inflate(this, layout, null);
-			flipper.addView(details);
-		}
-		
-    	// Création du détecteur de gestes
-    	mGestureListener = new ViewSwitcherGestureListener();
-    	mGestureDetector = new GestureDetector(mGestureListener);
-    	
-    	// Création du gestionnaire de ViewFlipper
-    	mFlipViews = flipViewsIds;
-    	mViewFlipperManager = new ViewFlipperManager(
-    		this,
-    		mFlipViews
-    	);
-    	
-    	mLastViewFlipTime = 0;
-    	mCurrentView = findViewById(flipViewsIds[0]);
-    }
+	protected void initPages(View... pages) {
+		mPages = pages;
+		final TicTacPagerAdapter adapter = new TicTacPagerAdapter(pages);
+		mPager = (ViewPager) findViewById(R.id.view_pager);
+        mPager.setAdapter(adapter);
+	}
 	
-	@Override
-    public boolean dispatchTouchEvent(MotionEvent event) {
-    	boolean eventConsumed = false;
-		final long now = System.currentTimeMillis();
-		if (now - mLastViewFlipTime > MIN_VIEW_FLIP_INTERVAL) {
-			mGestureListener.resetLastDirection();
-			mGestureDetector.onTouchEvent(event);
-			Direction lastDirection = mGestureListener.getLastDirection();
-			eventConsumed = lastDirection == Direction.left || lastDirection == Direction.right; 
-			if (eventConsumed) {
-				switchDetailsView(lastDirection);
-				mLastViewFlipTime = now;
-				return true;
-			}
-		}
-		// Si on n'a pas géré l'évènement, on le laisse continuer son chemin
-		super.dispatchTouchEvent(event);
-		return true;
-    };
-    
+	public int getCurrentPage() {
+		return mPager.getCurrentItem();
+	}
+	
+	public View getPage(final int pageId) {
+		//return mPager.getChildAt(pageId);
+		return mPages[pageId];
+	}
+	
     /**
 	 * Gère le changement de vue suite à un sweep. On affiche soit le détail
 	 * des pointages, soit celui du jour.
 	 * @param lastDirection
-	 * @param viewId
+	 * @param pageId
 	 */
-	final protected void switchDetailsView(final Direction lastDirection, final int viewId) {
-		if (viewId > 0) {
-			// Une vue est spécifiée : on va switchée vers celle-là
-			mCurrentView = findViewById(viewId);
-		} else {
-			// Aucune vue spécifiée : on switch vers l'autre
-			switch (lastDirection) {
-				// Qu'on glisse vers la gauche ou la droite, on va switcher
-				// entre les détails et les pointages
-				case left:
-				case right:
-					pointToNextDisplay();
-					break;
-				default:
-					return;
-			}
-		}
+	final protected void switchPage(final int pageId) {
+		mPager.setCurrentItem(pageId);
 		
 		// Affichage des données
 		populateView(mWorkDayBean.date);
-		mViewFlipperManager.flipView(lastDirection, mCurrentView.getId());
-	}
-	
-	final protected void switchDetailsView(final Direction lastDirection) {
-		switch (lastDirection) {
-			// Qu'on glisse vers la gauche ou la droite, on va switcher
-			// entre les détails et les pointages
-			case left:
-			case right:
-				pointToNextDisplay();
-				break;
-			default:
-				return;
-		}
-		
-		// Affichage des données
-		populateView(mWorkDayBean.date);
-		mViewFlipperManager.flipView(lastDirection, mCurrentView.getId());
-	}
-	
-	final private void pointToNextDisplay() {
-		if (mCurrentView.getId() == mFlipViews[0]) {
-			mCurrentView = findViewById(mFlipViews[1]);
-		} else {
-			mCurrentView = findViewById(mFlipViews[0]);
-		}
 	}
 	
     /**
@@ -258,9 +151,9 @@ public abstract class TicTacActivity extends Activity {
 	 * Modifie l'onglet actuellement affiché
 	 * @param indexTabToSwitchTo
 	 */
-	protected void switchTab(final int tabIndexToSwitchTo, final long date, final int viewId){
+	protected void switchTab(final int tabIndexToSwitchTo, final long date, final int pageId){
         MainActivity mainActivity = (MainActivity)this.getParent();
-        mainActivity.switchTab(tabIndexToSwitchTo, date, viewId);
+        mainActivity.switchTab(tabIndexToSwitchTo, date, pageId);
 	}
 
 	/**
@@ -363,8 +256,8 @@ public abstract class TicTacActivity extends Activity {
 	 * @param stringId Identifiant d'une chaine possédant des paramètres
 	 * @param texts
 	 */
-	protected void setText(final int viewId, final int stringId, final Object... texts) {
-		setText(viewId, getString(stringId, texts));
+	protected void setText(final View container, final int viewId, final int stringId, final Object... texts) {
+		setText(container, viewId, getString(stringId, texts));
 	}
 	
 	/**
@@ -372,8 +265,8 @@ public abstract class TicTacActivity extends Activity {
 	 * @param viewId
 	 * @param text
 	 */
-	protected void setText(final int viewId, final String text) {
-		final TextView label = (TextView)findViewById(viewId);
+	protected void setText(final View container, final int viewId, final String text) {
+		final TextView label = (TextView)container.findViewById(viewId);
 		label.setText(text);
 	}
 	

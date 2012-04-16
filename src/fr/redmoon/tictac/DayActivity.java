@@ -38,6 +38,9 @@ import fr.redmoon.tictac.gui.listadapter.DayAdapter;
 import fr.redmoon.tictac.gui.widgets.WidgetProvider;
 
 public class DayActivity extends TicTacActivity implements OnDayDeletionListener {
+	public static final int PAGE_CHECKINGS = 0;
+	public static final int PAGE_DETAILS = 1;
+
 	private int mCheckingToEdit;
 	
 	// Ci-dessous suivent les objets instanciés une unique fois pour des raisons de performance.
@@ -55,13 +58,14 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
         // Création de l'interface graphique
         setContentView(R.layout.view_common_frame);
         
-        // Initialisation du gestionnaire de sweep
-        initSweep(
-        	new int[]{R.id.day_checkings, R.id.day_details},
-        	new int[]{R.layout.view_day_checkings, R.layout.view_day_details});
+        // Initialisation du gestionnaire de pages
+        final View pageCheckings = View.inflate(this, R.layout.view_day_checkings, null);
+        final View pageDetails = View.inflate(this, R.layout.view_day_details, null);
+        initPages(pageCheckings, pageDetails);
+        
         
         // Remplissage de la liste des jours dans le détail
-        final Spinner spinner = (Spinner)findViewById(R.id.day_type);
+        final Spinner spinner = (Spinner)pageDetails.findViewById(R.id.day_morning_type);
  	    final ArrayAdapter<CharSequence> dayTypeAdapter = ArrayAdapter.createFromResource(this, R.array.dayTypesEntries, android.R.layout.simple_spinner_item);
  	    dayTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
  	    spinner.setAdapter(dayTypeAdapter);
@@ -78,7 +82,7 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
         
         // Création de l'adapteur affichant les pointages. Pour l'instant, aucun pointage.
         final ListAdapter adapter = new DayAdapter(this, R.layout.lst_itm_day_checking, mCheckingsArray);
-        mLstCheckings = (ListView)findViewById(R.id.list);
+        mLstCheckings = (ListView)pageCheckings.findViewById(R.id.list);
         mLstCheckings.setAdapter(adapter);
         
         // Affichage du jour courant
@@ -266,8 +270,8 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
      */
     private void populateView(final DayBean day) {
     	populateCommon(day);
-    	populateCheckings(day);
-    	populateDetails(day);
+		populateCheckings(day);
+		populateDetails(day);
     }
     
     /**
@@ -366,12 +370,15 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
 		total = workTime - lost;
 	
 		// Mise à jour des composants graphiques
-		final Spinner spinner = (Spinner)findViewById(R.id.day_type);
-		spinner.setSelection(day.type);
-		setText(R.id.day_work_time, TimeUtils.formatMinutes(workTime));
-		setText(R.id.day_extra_time, TimeUtils.formatTime(day.extra));
-		setText(R.id.day_lost_time, TimeUtils.formatMinutes(lost));
-		final EditText note = (EditText)findViewById(R.id.day_note);
+		final View pageDetails = getPage(PAGE_DETAILS);
+		final Spinner spnMorning = (Spinner)pageDetails.findViewById(R.id.day_morning_type);
+		spnMorning.setSelection(day.type);
+		final Spinner spnAfternoon = (Spinner)pageDetails.findViewById(R.id.day_afternoon_type);
+		spnAfternoon.setSelection(day.type);
+		setText(pageDetails, R.id.day_work_time, TimeUtils.formatMinutes(workTime));
+		setText(pageDetails, R.id.day_extra_time, TimeUtils.formatTime(day.extra));
+		setText(pageDetails, R.id.day_lost_time, TimeUtils.formatMinutes(lost));
+		final EditText note = (EditText)pageDetails.findViewById(R.id.day_note);
 		note.setText(day.note);
     }
     

@@ -1,4 +1,4 @@
-package fr.redmoon.tictac.gui.calendar;
+package fr.redmoon.tictac.gui.listadapter;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -6,7 +6,6 @@ import java.util.GregorianCalendar;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.text.format.Time;
 import android.util.MonthDisplayHelper;
 import android.util.SparseArray;
@@ -18,7 +17,7 @@ import android.widget.TextView;
 import fr.redmoon.tictac.R;
 import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
-import fr.redmoon.tictac.gui.DayBiColorDrawableHelper;
+import fr.redmoon.tictac.bus.bean.PreferencesBean;
 
 public class CalendarAdapter extends BaseAdapter {
 	private final Activity mActivity;
@@ -67,6 +66,7 @@ public class CalendarAdapter extends BaseAdapter {
         	LayoutInflater vi = (LayoutInflater)mActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             v = vi.inflate(R.layout.lst_itm_calendar_day, null);
         }
+        
         
         // Détermine à quelle ligne et colonne appartient cette vue
         // Une ligne contient 7 colonnes de jours + 1 colonne d'entête, soit 8 valeurs.
@@ -184,8 +184,8 @@ public class CalendarAdapter extends BaseAdapter {
 	        dayLabel.setTextColor(mActivity.getResources().getColor(R.color.calendar_day_standard));
 	        // Coloration du fond avec la couleur du type de jour
 	        if (dayData != null) {
-	        	Drawable background = DayBiColorDrawableHelper.getInstance().getDrawableForDayTypes(dayData.type, dayData.type);
-	            view.setBackgroundDrawable(background);
+	        	final int dayColor = PreferencesBean.getColorByDayType(dayData.type);
+	        	view.setBackgroundColor(dayColor);
 	        } else {
 	        	view.setBackgroundColor(mActivity.getResources().getColor(R.color.calendar_day_not_worked));
 	        }
