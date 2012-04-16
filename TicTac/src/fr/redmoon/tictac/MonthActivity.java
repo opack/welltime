@@ -20,11 +20,13 @@ import fr.redmoon.tictac.TicTacActivity.OnDayDeletionListener;
 import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
 import fr.redmoon.tictac.gui.ViewSynchronizer;
-import fr.redmoon.tictac.gui.calendar.CalendarAdapter;
 import fr.redmoon.tictac.gui.dialogs.AbsDialogDelegate;
 import fr.redmoon.tictac.gui.dialogs.MonthDialogDelegate;
+import fr.redmoon.tictac.gui.listadapter.CalendarAdapter;
 
 public class MonthActivity extends TicTacActivity implements OnDayDeletionListener {
+	public static final int PAGE_CALENDAR = 0;
+	public static final int PAGE_DETAILS = 1;
 	
 	protected AbsDialogDelegate mDialogDelegate;
 	private CalendarAdapter mAdapter;
@@ -49,13 +51,13 @@ public class MonthActivity extends TicTacActivity implements OnDayDeletionListen
         findViewById(R.id.lyt_btn_bar).setVisibility(View.INVISIBLE);
         findViewById(R.id.img_note).setVisibility(View.GONE);
 	    
-	    // Initialisation du gestionnaire de sweep
-        initSweep(
-        	new int[]{R.id.month_calendar, R.id.month_details}, 
-        	new int[]{R.layout.view_month_calendar, R.layout.view_month_details});
+        // Initialisation du gestionnaire de pages
+        final View pageCalendar = View.inflate(this, R.layout.view_month_calendar, null);
+        final View pageDetails = View.inflate(this, R.layout.view_month_details, null);
+        initPages(pageCalendar, pageDetails);
         
 	    // Initialisation du GridView du calendrier
-	    GridView gridview = (GridView) findViewById(R.id.gridview);
+	    GridView gridview = (GridView)pageCalendar.findViewById(R.id.gridview);
 	    gridview.setAdapter(mAdapter);
 		gridview.setOnItemClickListener(new OnItemClickListener() {
 		    public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
@@ -125,21 +127,21 @@ public class MonthActivity extends TicTacActivity implements OnDayDeletionListen
 			ViewSynchronizer.getInstance().setCurrentDay(mSelectedDay);
 			
 			// Modification de l'onglet courant
-			switchTab(MainActivity.TAB_DAY_POS, mSelectedDay, R.id.day_checkings);
+			switchTab(MainActivity.TAB_DAY_POS, mSelectedDay, DayActivity.PAGE_CHECKINGS);
 			break;
 		case R.id.menu_day_show_details:
 			// Sauvegarde du jour affiché pour synchroniser les vues
 			ViewSynchronizer.getInstance().setCurrentDay(mSelectedDay);
 			
 			// Modification de l'onglet courant
-			switchTab(MainActivity.TAB_DAY_POS, mSelectedDay, R.id.day_details);
+			switchTab(MainActivity.TAB_DAY_POS, mSelectedDay, DayActivity.PAGE_DETAILS);
 			break;
 		case R.id.menu_day_show_week:
 			// Sauvegarde du jour affiché pour synchroniser les vues
 			ViewSynchronizer.getInstance().setCurrentDay(mSelectedDay);
 			
 			// Modification de l'onglet courant
-			switchTab(MainActivity.TAB_WEEK_POS, mSelectedDay, R.id.week_days);
+			switchTab(MainActivity.TAB_WEEK_POS, mSelectedDay, WeekActivity.PAGE_DAYS);
 			break;
 		case R.id.menu_day_delete:
 			deleteDay(mSelectedDay);

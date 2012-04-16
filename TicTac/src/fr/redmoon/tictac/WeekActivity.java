@@ -31,6 +31,8 @@ import fr.redmoon.tictac.gui.listadapter.WeekAdapter;
 import fr.redmoon.tictac.gui.listadapter.WeekAdapterEntry;
 
 public class WeekActivity extends TicTacActivity implements OnDayDeletionListener {
+	public static final int PAGE_DAYS = 0;
+	public static final int PAGE_DETAILS = 1;
 	
 	private List<DayBean> mWeekDays;
 	private WeekBean mWeekData;
@@ -61,14 +63,14 @@ public class WeekActivity extends TicTacActivity implements OnDayDeletionListene
         findViewById(R.id.btn_checkin).setVisibility(View.INVISIBLE);
         findViewById(R.id.img_note).setVisibility(View.INVISIBLE);
         
-        // Initialisation du gestionnaire de sweep
-        initSweep(
-            	new int[]{R.id.week_days, R.id.week_details},
-            	new int[]{R.layout.view_week_days, R.layout.view_week_details});
+        // Initialisation du gestionnaire de pages
+        final View pageDays = View.inflate(this, R.layout.view_week_days, null);
+        final View pageDetails = View.inflate(this, R.layout.view_week_details, null);
+        initPages(pageDays, pageDetails);
         
         // Création de l'adapteur affichant les jours. Pour l'instant aucun jour.
         final ListAdapter adapter = new WeekAdapter(this, R.layout.lst_itm_week_day, mDaysArray);
-        mLstDays = (ListView)findViewById(R.id.list);
+        mLstDays = (ListView)pageDays.findViewById(R.id.list);
         mLstDays.setAdapter(adapter);
         
         // Affichage du jour courant
@@ -128,14 +130,14 @@ public class WeekActivity extends TicTacActivity implements OnDayDeletionListene
 			ViewSynchronizer.getInstance().setCurrentDay(day.date);
 			
 			// Modification de l'onglet courant
-			switchTab(MainActivity.TAB_DAY_POS, day.date, R.id.day_checkings);
+			switchTab(MainActivity.TAB_DAY_POS, day.date, DayActivity.PAGE_CHECKINGS);
 			return true;
 		case R.id.menu_day_show_details:
 			// Sauvegarde du jour affiché pour synchroniser les vues
 			ViewSynchronizer.getInstance().setCurrentDay(day.date);
 			
 			// Modification de l'onglet courant
-			switchTab(MainActivity.TAB_DAY_POS, day.date, R.id.day_details);
+			switchTab(MainActivity.TAB_DAY_POS, day.date, DayActivity.PAGE_DETAILS);
 			return true;
 		case R.id.menu_day_delete:
 			deleteDay(day.date);
@@ -233,7 +235,7 @@ public class WeekActivity extends TicTacActivity implements OnDayDeletionListene
     	// qui nous permettront de ne pas parcourir cette liste deux fois.
     	populateDays(monday, sunday, mWeekDays);
     	populateCommon(monday, sunday);
-    	populateDetails();
+		populateDetails();
     }
     
     /**
@@ -305,28 +307,31 @@ public class WeekActivity extends TicTacActivity implements OnDayDeletionListene
      * de populateDays, qui doit donc être appelée avant.
      */
     private void populateDetails() {
-		if (!mWeekDays.isEmpty()) {
-			final DayBean firstDay = mWeekDays.get(0);
-			DateUtils.fillTime(firstDay.date, mWorkTime);
-			mWorkTime.normalize(true);
-			
-			// Calcule le temps ecrêté
-			final int lost = Math.max(0, mWeekWorked - PreferencesBean.instance.weekMax);
-			
-			// Récupération du temps HV en début de semaine
-			mDb.fetchLastFlexTime(mMonday, mWeekData);
-			
-			// Calcul du nouvel HV en ajoutant le temps effectué cette semaine
-			// à l'HV en début de semaine
-			final FlexUtils flexUtils = new FlexUtils(mDb);
-			final int curWeekFlex = flexUtils.computeFlexTime(mWeekWorked, mWeekData.flexTime);
-			
-	        // Mise à jour des composants graphiques
-			setText(R.id.btn_update_flex_time, R.string.week_monday_flex_time, DateUtils.formatDateDDMM(mWeekData.date), TimeUtils.formatMinutes(mWeekData.flexTime));
-			setText(R.id.txt_week_current_flex_time, R.string.week_current_flex_time, TimeUtils.formatMinutes(curWeekFlex));
-			setText(R.id.txt_week_work_time, R.string.week_work_time, TimeUtils.formatMinutes(mWeekWorked));
-			setText(R.id.txt_week_lost_time, R.string.week_lost_time, TimeUtils.formatMinutes(lost));
+		if (mWeekDays.isEmpty()) {
+			return;
 		}
+		
+		final DayBean firstDay = mWeekDays.get(0);
+		DateUtils.fillTime(firstDay.date, mWorkTime);
+		mWorkTime.normalize(true);
+		
+		// Calcule le temps ecrêté
+		final int lost = Math.max(0, mWeekWorked - PreferencesBean.instance.weekMax);
+		
+		// Récupération du temps HV en début de semaine
+		mDb.fetchLastFlexTime(mMonday, mWeekData);
+		
+		// Calcul du nouvel HV en ajoutant le temps effectué cette semaine
+		// à l'HV en début de semaine
+		final FlexUtils flexUtils = new FlexUtils(mDb);
+		final int curWeekFlex = flexUtils.computeFlexTime(mWeekWorked, mWeekData.flexTime);
+		
+        // Mise à jour des composants graphiques
+		final View pageDetails = getPage(PAGE_DETAILS);
+		setText(pageDetails, R.id.btn_update_flex_time, R.string.week_monday_flex_time, DateUtils.formatDateDDMM(mWeekData.date), TimeUtils.formatMinutes(mWeekData.flexTime));
+		setText(pageDetails, R.id.txt_week_current_flex_time, R.string.week_current_flex_time, TimeUtils.formatMinutes(curWeekFlex));
+		setText(pageDetails, R.id.txt_week_work_time, R.string.week_work_time, TimeUtils.formatMinutes(mWeekWorked));
+		setText(pageDetails, R.id.txt_week_lost_time, R.string.week_lost_time, TimeUtils.formatMinutes(lost));
 	}
     
     public void updateFlexTime(final View btn) {
