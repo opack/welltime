@@ -290,7 +290,8 @@ public class WeekActivity extends TicTacActivity implements OnDayDeletionListene
 			}
     		
     		// Sauvegarde de la couleur de fond de ce jour
-            dayInfos.bkColor = PreferencesBean.getColorByDayType(day.type);
+            dayInfos.morningDayType = day.type;
+            dayInfos.afternoonDayType = day.type;
     	}
     	
         // Affichage des jours.
