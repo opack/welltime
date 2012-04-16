@@ -7,6 +7,7 @@ import java.util.List;
 import android.content.DialogInterface;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -30,6 +31,7 @@ import fr.redmoon.tictac.bus.FlexUtils;
 import fr.redmoon.tictac.bus.TimeUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
 import fr.redmoon.tictac.bus.bean.PreferencesBean;
+import fr.redmoon.tictac.gui.DayBiColorDrawableHelper;
 import fr.redmoon.tictac.gui.ViewSynchronizer;
 import fr.redmoon.tictac.gui.dialogs.DayDialogDelegate;
 import fr.redmoon.tictac.gui.listadapter.DayAdapter;
@@ -297,9 +299,9 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
     		image.setColorFilter(new ColorMatrixColorFilter(cm));
         }
         
-        // On colore le fond de l'écran avec la couleur du type de jour
-        final int dayColor = PreferencesBean.getColorByDayType(day.type);
-        findViewById(R.id.txt_current).setBackgroundColor(dayColor);
+        // On colore le fond de la date avec la couleur du type de jour
+        Drawable background = DayBiColorDrawableHelper.getInstance().getDrawableForDayTypes(day.type, day.type);
+        findViewById(R.id.txt_current).setBackgroundDrawable(background);
         
         // Masquage de l'image indiquant la présence d'une note si
         // aucune note n'est disponible.

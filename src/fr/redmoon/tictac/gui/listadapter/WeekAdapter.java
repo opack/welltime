@@ -4,12 +4,14 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import fr.redmoon.tictac.R;
+import fr.redmoon.tictac.gui.DayBiColorDrawableHelper;
 
 public class WeekAdapter extends ArrayAdapter<WeekAdapterEntry> {
 	private List<WeekAdapterEntry> items;
@@ -50,7 +52,8 @@ public class WeekAdapter extends ArrayAdapter<WeekAdapterEntry> {
 			}
 			
 			// Définition de la couleur de fond
-			v.setBackgroundColor(infos.bkColor);
+			Drawable background = DayBiColorDrawableHelper.getInstance().getDrawableForDayTypes(infos.morningDayType, infos.afternoonDayType);
+	        v.setBackgroundDrawable(background);
 		}
 		return v;
 	}
