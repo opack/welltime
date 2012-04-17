@@ -64,7 +64,7 @@ public class CalendarAdapter extends BaseAdapter {
     	// Si la vue n'est pas recyclée, on initialise son contenu
         if (convertView == null) {
         	LayoutInflater vi = (LayoutInflater)mActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            v = vi.inflate(R.layout.lst_itm_calendar_day, null);
+            v = vi.inflate(R.layout.itm_calendar_day, null);
         }
         
         

@@ -82,7 +82,7 @@ public class ManageActivity extends ListActivity {
 				resources.getStringArray(R.array.period_checkin)
 		};
 		
-		this.setListAdapter(new ManageAdapter(this, R.layout.lst_itm_manage_operation, operations));
+		this.setListAdapter(new ManageAdapter(this, R.layout.itm_manage_operation, operations));
 	}
 	
 	@Override
