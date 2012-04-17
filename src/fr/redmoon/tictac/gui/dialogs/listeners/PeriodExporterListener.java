@@ -1,12 +1,10 @@
 package fr.redmoon.tictac.gui.dialogs.listeners;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 
 import android.app.Activity;
 import android.content.DialogInterface;
@@ -19,12 +17,13 @@ import fr.redmoon.tictac.bus.bean.WeekBean;
 import fr.redmoon.tictac.bus.export.CsvDayBeanExporter;
 import fr.redmoon.tictac.bus.export.CsvWeekBeanExporter;
 import fr.redmoon.tictac.bus.export.FileExporter;
+import fr.redmoon.tictac.bus.export.ZipCompress;
 import fr.redmoon.tictac.db.DbAdapter;
 
 public class PeriodExporterListener extends AbsPeriodChooserListener {
-	public static final String PROPERTY_DAYS_CSV = "days.csv";
-	public static final String PROPERTY_WEEKS_CSV = "weeks.csv";
-	public static final String MIME_TYPE = "text/plain";
+	public static final String FILE_DAYS_CSV = "days.csv";
+	public static final String FILE_WEEKS_CSV = "weeks.csv";
+	public static final String MIME_TYPE = "application/zip";
 	
 	private String mRootDir;
 	private String mDaysFilename;
@@ -40,31 +39,27 @@ public class PeriodExporterListener extends AbsPeriodChooserListener {
 		final long firstDay = DateUtils.getDayId(mDate1.getYear(), mDate1.getMonth(), mDate1.getDayOfMonth());
 		final long lastDay = DateUtils.getDayId(mDate2.getYear(), mDate2.getMonth(), mDate2.getDayOfMonth());
 		
-		// Export des jours
+		// Export des jours et des semaines
 		final boolean resExportDays = exportDays(firstDay, lastDay);
-		
-		// Export des jours
 		final boolean resExportSemaines = exportWeeks(firstDay, lastDay);
 		
-		// Création du fichier properties qui permettra l'import de ces deux fichiers
-		final Properties exportInfos = new Properties();
-		exportInfos.setProperty(PROPERTY_DAYS_CSV, mDaysFilename);
-		exportInfos.setProperty(PROPERTY_WEEKS_CSV, mWeeksFilename);
-		// Choix du nom et de l'emplacement (au même endroit que les autres)		
-		final String filename = mActivity.getString(R.string.export_infos_filename_pattern, firstDay, lastDay);
-		final File infosFile = new File(mRootDir, filename);
-		// Ecriture du fichier
-		boolean resExportInfos = true;
-		try {
-			final OutputStream outInfos = new FileOutputStream(infosFile);
-			exportInfos.save(outInfos, "");
-		} catch (FileNotFoundException e) {
-			resExportInfos = false;
-		}
+		// Compression des fichiers dans un zip
+		final Map<String, String> files = new HashMap<String, String>();
+		files.put(mRootDir + "/" + mDaysFilename, FILE_DAYS_CSV);
+		files.put(mRootDir + "/" + mWeeksFilename, FILE_WEEKS_CSV);
+		final String zipFilename = mActivity.getString(R.string.export_zip_filename_pattern, firstDay, lastDay);
+		final ZipCompress zip = new ZipCompress(files, mRootDir + "/" + zipFilename);
+		zip.zip();
+		
+		// Suppression des fichiers source
+		final File exportedDaysCsvFile = new File(mRootDir, mDaysFilename);
+		exportedDaysCsvFile.delete();
+		final File exportedWeeksCsvFile = new File(mRootDir, mWeeksFilename);
+		exportedWeeksCsvFile.delete();
 		
 		// Affichage du résultat
 		String message = "";
-		if (resExportDays && resExportSemaines && resExportInfos) {
+		if (resExportDays && resExportSemaines) {
 			message = mActivity.getString(
 				R.string.export_data_success,
 				DateUtils.formatDateDDMMYYYY(firstDay),

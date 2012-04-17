@@ -54,6 +54,10 @@ public abstract class FileImporter<DataType> {
 	}
 	
 	public boolean importData(final String filename, final DataType readData) {
+		return importData(new File(filename), readData);
+	}
+	
+	public boolean importData(final File source, final DataType readData) {
 		// Vérifie l'accessibilité de la carte SD
 		if (!checkSDCardReadable()) {
 			return false;
@@ -63,9 +67,7 @@ public abstract class FileImporter<DataType> {
 		
 		// Lecture des données depuis le fichier
 		try {
-			// Lecture du fichier
-			final File file = new File(filename);
-			performImport(file);
+			performImport(source);
 		} catch (IOException e) {
 			e.printStackTrace();
 			Toast.makeText(mActivity, e.getMessage(), Toast.LENGTH_LONG).show();

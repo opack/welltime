@@ -1,13 +1,8 @@
 package fr.redmoon.tictac;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -40,6 +35,7 @@ import fr.redmoon.tictac.bus.export.CsvDayBeanImporter;
 import fr.redmoon.tictac.bus.export.CsvWeekBeanImporter;
 import fr.redmoon.tictac.bus.export.FileExporter;
 import fr.redmoon.tictac.bus.export.FileImporter;
+import fr.redmoon.tictac.bus.export.ZipDecompress;
 import fr.redmoon.tictac.db.DbAdapter;
 import fr.redmoon.tictac.gui.DbInserterThread;
 import fr.redmoon.tictac.gui.ProgressDialogHandler;
@@ -297,44 +293,23 @@ public class ManageActivity extends ListActivity {
 	 * @param filename
 	 */
 	private void importDataPhase2(final String filename){
-		// Ouverture du fichier properties pour récupérer le nom des fichiers à importer
-		final Properties importData = new Properties();
-		Reader read = null;
-		try {
-			read = new FileReader(filename);
-			importData.load(read);
-		} catch (FileNotFoundException e) {
-			Toast.makeText(
-					this, 
-					getString(R.string.import_file_not_found, filename),
-					Toast.LENGTH_LONG)
-				.show();
-		} catch (IOException e) {
-			Toast.makeText(
-					this, 
-					getString(R.string.import_io_exception, filename),
-					Toast.LENGTH_LONG)
-				.show();
-		} finally {
-			try {
-				read.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		// Récupération du répertoire courant
-		final File infosFile = new File(filename);
-		final String dir = infosFile.getParent() + "/";
-		final String daysCsv = dir + importData.getProperty(PeriodExporterListener.PROPERTY_DAYS_CSV);
-		final String weeksCsv = dir + importData.getProperty(PeriodExporterListener.PROPERTY_WEEKS_CSV);	
+		// Décompression des données dans un répertoire temporaire
+		final long timestamp = System.currentTimeMillis();
+		final File zipFile = new File(filename);
+		final String dir = zipFile.getParent() + "/" + timestamp + "/"; // Ajout d'un timestamp pour éviter d'écrire sur des fichiers existants 
+		ZipDecompress d = new ZipDecompress(filename, dir); 
+		d.unzip(); 
+				
+		final File unzippedDaysCsvFile = new File(dir, PeriodExporterListener.FILE_DAYS_CSV);
+		final File unzippedWeeksCsvFile = new File(dir, PeriodExporterListener.FILE_WEEKS_CSV);
 		
 		// Lit les jours dans le fichier CSV
 		final List<DayBean> days = new ArrayList<DayBean>();
 		final FileImporter<List<DayBean>> daysImporter = new CsvDayBeanImporter(this);
-		if (!daysImporter.importData(daysCsv, days)) {
+		if (!daysImporter.importData(unzippedDaysCsvFile, days)) {
 			Toast.makeText(
 					this, 
-					getString(R.string.import_io_exception, daysCsv),
+					getString(R.string.import_io_exception, unzippedDaysCsvFile.getAbsolutePath()),
 					Toast.LENGTH_LONG)
 				.show();
 		}
@@ -342,13 +317,19 @@ public class ManageActivity extends ListActivity {
 		// Lit les semaines dans le fichier CSV
 		final List<WeekBean> weeks = new ArrayList<WeekBean>();
 		final FileImporter<List<WeekBean>> weeksImporter = new CsvWeekBeanImporter(this);
-		if (!weeksImporter.importData(weeksCsv, weeks)) {
+		if (!weeksImporter.importData(unzippedWeeksCsvFile, weeks)) {
 			Toast.makeText(
 					this, 
-					getString(R.string.import_io_exception, weeksCsv),
+					getString(R.string.import_io_exception, unzippedWeeksCsvFile.getAbsolutePath()),
 					Toast.LENGTH_LONG)
 				.show();
 		}
+		
+		// Suppression des fichiers et du repertoire temporaires
+		unzippedDaysCsvFile.delete();
+		unzippedWeeksCsvFile.delete();
+		final File unzipDirectory = new File(dir);
+		unzipDirectory.delete();
 		
 		// Ecrit ces données dans la base en utilisant un Thread et une belle
 		// boîte de dialogue avec une barre de progression pour montrer où on
