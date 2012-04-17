@@ -45,7 +45,8 @@ public class PeriodCheckinListener extends AbsPeriodChooserListener {
 			if (DateUtils.isWorkingWeekDay(calendar)) {
 				// On prépare le jour à créer ou mettre à jour
 				mDb.fetchDay(curDate, dayData);
-				dayData.type = dayType;
+				dayData.typeMorning = dayType;
+				dayData.typeAfternoon = dayType;
 				if (note != null) {
 					dayData.note = note;
 				}

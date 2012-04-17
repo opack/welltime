@@ -5,7 +5,6 @@ import java.util.Calendar;
 import java.util.List;
 
 import android.content.DialogInterface;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
@@ -68,20 +67,35 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
         
         
         // Remplissage de la liste des jours dans le détail
-        final Spinner spinner = (Spinner)pageDetails.findViewById(R.id.day_morning_type);
- 	    final ArrayAdapter<CharSequence> dayTypeAdapter = ArrayAdapter.createFromResource(this, R.array.dayTypesEntries, android.R.layout.simple_spinner_item);
+        Spinner spinner = (Spinner)pageDetails.findViewById(R.id.day_morning_type);
+ 	    ArrayAdapter<CharSequence> dayTypeAdapter = ArrayAdapter.createFromResource(this, R.array.dayTypesEntries, android.R.layout.simple_spinner_item);
  	    dayTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
  	    spinner.setAdapter(dayTypeAdapter);
  	    spinner.setOnItemSelectedListener(new OnItemSelectedListener(){
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-				updateDayType(pos);
+				updateMorningDayType(pos);
 			}
 
 			@Override
 			public void onNothingSelected(AdapterView<?> arg0) {
 			}
  	    });
+ 	    
+ 	    spinner = (Spinner)pageDetails.findViewById(R.id.day_afternoon_type);
+	    dayTypeAdapter = ArrayAdapter.createFromResource(this, R.array.dayTypesEntries, android.R.layout.simple_spinner_item);
+	    dayTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+	    spinner.setAdapter(dayTypeAdapter);
+	    spinner.setOnItemSelectedListener(new OnItemSelectedListener(){
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+				updateAfternoonDayType(pos);
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> arg0) {
+			}
+	    });
         
         // Création de l'adapteur affichant les pointages. Pour l'instant, aucun pointage.
         final ListAdapter adapter = new DayAdapter(this, R.layout.itm_day_checking, mCheckingsArray);
@@ -164,7 +178,8 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
 		    	} else {
 		    		// Le jour sera créé. On vient d'ajouter un pointage, donc c'est
 		    		// un jour de type "normal"
-		    		mWorkDayBean.type = DayTypes.normal.ordinal();
+		    		mWorkDayBean.typeMorning = DayTypes.normal.ordinal();
+		    		mWorkDayBean.typeAfternoon = DayTypes.normal.ordinal();
 		    		
 		    		mDb.createDay(mWorkDayBean);
 		    	
@@ -313,7 +328,7 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
         }
         
         // On colore le fond de la date avec la couleur du type de jour
-        Drawable background = DayBiColorDrawableHelper.getInstance().getDrawableForDayTypes(day.type, day.type);
+        final Drawable background = DayBiColorDrawableHelper.getInstance().getDrawableForDayTypes(day.typeMorning, day.typeAfternoon);
         findViewById(R.id.txt_current).setBackgroundDrawable(background);
     }
     
@@ -373,9 +388,9 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
 		// Mise à jour des composants graphiques
 		final View pageDetails = getPage(PAGE_DETAILS);
 		final Spinner spnMorning = (Spinner)pageDetails.findViewById(R.id.day_morning_type);
-		spnMorning.setSelection(day.type);
+		spnMorning.setSelection(day.typeMorning);
 		final Spinner spnAfternoon = (Spinner)pageDetails.findViewById(R.id.day_afternoon_type);
-		spnAfternoon.setSelection(day.type);
+		spnAfternoon.setSelection(day.typeAfternoon);
 		setText(pageDetails, R.id.day_work_time, TimeUtils.formatMinutes(workTime));
 		setText(pageDetails, R.id.day_extra_time, TimeUtils.formatTime(day.extra));
 		setText(pageDetails, R.id.day_lost_time, TimeUtils.formatMinutes(lost));
@@ -428,8 +443,16 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
 		promptEditExtraTime(mWorkDayBean.date, mWorkDayBean.extra);
 	}
 	
-	public void updateDayType(final int dayType) {
-		if (mDb.updateDayType(mWorkDayBean.date, dayType)) {
+	public void updateMorningDayType(final int type) {
+		updateDayType(type, mWorkDayBean.typeAfternoon);
+	}
+	
+	public void updateAfternoonDayType(final int type) {
+		updateDayType(mWorkDayBean.typeMorning, type);
+	}
+	
+	public void updateDayType(final int typeMorning, final int typeAfternoon) {
+		if (mDb.updateDayType(mWorkDayBean.date, typeMorning, typeAfternoon)) {
 			// Mise à jour de l'affichage
 			populateView(mWorkDayBean.date);
 		}

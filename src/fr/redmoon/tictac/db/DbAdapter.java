@@ -12,7 +12,7 @@ import fr.redmoon.tictac.bus.bean.WeekBean;
 
 public class DbAdapter {
 	private static final String DATABASE_NAME = "TicTac.db";
-	private static final int DATABASE_VERSION = 3;
+	private static final int DATABASE_VERSION = 4;
 	private static final String LOG_TAG = "TicTac (DB)";
 	
 	private final Context mCtx;
@@ -220,14 +220,15 @@ public class DbAdapter {
 		}
 	}
 	
-	public boolean updateDayType(final long date, final int type) {
+	public boolean updateDayType(final long date, final int typeMorning, final int typeAfternoon) {
 		if (!days.exists(date)) {
 			final DayBean day = new DayBean();
 			day.date = date;
-			day.type = type;
+			day.typeMorning = typeMorning;
+			day.typeAfternoon = typeAfternoon;
 			return days.createRecord(day);
 		} else {
-			return days.updateType(date, type);
+			return days.updateType(date, typeMorning, typeAfternoon);
 		}
 	}
 	

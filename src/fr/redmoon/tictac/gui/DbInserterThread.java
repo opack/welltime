@@ -126,10 +126,6 @@ public class DbInserterThread extends Thread {
 					nbDaysUpdated++;
 				}
 			} else {
-				// Le jour sera créé. On vient d'ajouter un pointage, donc c'est
-	    		// un jour de type "normal"
-	    		day.type = DayTypes.normal.ordinal();
-	    		
 				mDb.createDay(day);
 				if (day.isValid) {
 					nbDaysCreated++;

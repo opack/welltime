@@ -7,7 +7,8 @@ import fr.redmoon.tictac.bus.DayTypes;
 
 public class DayBean {
 	public long date;
-	public int type;
+	public int typeMorning;
+	public int typeAfternoon;
 	public int extra;
 	public String note;
 	public List<Integer> checkings;
@@ -20,7 +21,8 @@ public class DayBean {
 
 	public void reset() {
 		date = 0;
-		type = DayTypes.not_worked.ordinal();
+		typeMorning = DayTypes.not_worked.ordinal();
+		typeAfternoon = DayTypes.not_worked.ordinal();
 		extra = 0;
 		note = null;
 		checkings.clear();

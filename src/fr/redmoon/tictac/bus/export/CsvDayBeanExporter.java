@@ -19,7 +19,8 @@ public class CsvDayBeanExporter extends FileExporter<List<DayBean>> {
 	private final static String HEADER_EXTRA = "EXTRA";
 	private final static String HEADER_NOTE = "NOTE";
 	private final static String HEADER_TOTAL = "TOTAL";
-	private final static String HEADER_TYPE = "TYPE";
+	private final static String HEADER_TYPE_MORNING = "TYPE MATIN";
+	private final static String HEADER_TYPE_AFTERNOON = "TYPE APREM";
 	private final static String HEADER_CHECKING = "POINTAGE";
 	private final long mStartDate;
 	private final long mEndDate;
@@ -68,7 +69,8 @@ public class CsvDayBeanExporter extends FileExporter<List<DayBean>> {
 		csv.append(HEADER_DATE).append(CSV_SEPARATOR);
 		csv.append(HEADER_EXTRA).append(CSV_SEPARATOR);
 		csv.append(HEADER_TOTAL).append(CSV_SEPARATOR);
-		csv.append(HEADER_TYPE).append(CSV_SEPARATOR);
+		csv.append(HEADER_TYPE_MORNING).append(CSV_SEPARATOR);
+		csv.append(HEADER_TYPE_AFTERNOON).append(CSV_SEPARATOR);
 		csv.append(HEADER_NOTE).append(CSV_SEPARATOR);
 		
 		// Ajout des pointages
@@ -91,7 +93,8 @@ public class CsvDayBeanExporter extends FileExporter<List<DayBean>> {
 		csv.append(DateUtils.formatDateDDMMYYYY(day.date)).append(CSV_SEPARATOR);
 		csv.append(TimeUtils.formatTime(day.extra)).append(CSV_SEPARATOR);
 		csv.append(TimeUtils.formatMinutes(total)).append(CSV_SEPARATOR);
-		csv.append(dayTypes[day.type]).append(CSV_SEPARATOR);
+		csv.append(dayTypes[day.typeMorning]).append(CSV_SEPARATOR);
+		csv.append(dayTypes[day.typeAfternoon]).append(CSV_SEPARATOR);
 		
 		// S'il n'y a pas de note, on met un espace pour que l'import fonctionne.
 		String note = day.note;
