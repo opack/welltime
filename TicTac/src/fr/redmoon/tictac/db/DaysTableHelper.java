@@ -16,17 +16,21 @@ public class DaysTableHelper extends TableHelper {
 	private static final String COL_DATE = "date";
 	private static final int COL_DATE_INDEX = 0;
 	
-	// Type de la journée : normale, CP, RTT...
-	private static final String COL_TYPE = "type";
-	private static final int COL_TYPE_INDEX = 1;
+	// Type de la matinée : normale, CP, RTT...
+	private static final String COL_TYPE_MORNING = "typeMorning";
+	private static final int COL_TYPE_MORNING_INDEX = 1;
+	
+	// Type de la matinée : normale, CP, RTT...
+	private static final String COL_TYPE_AFTERNOON = "typeAfternoon";
+	private static final int COL_TYPE_AFTERNOON_INDEX = 2;
 	
 	// Temps supplémentaire à ajouter au jour, en minutes.
 	private static final String COL_EXTRA = "extra";
-	private static final int COL_EXTRA_INDEX = 2;
+	private static final int COL_EXTRA_INDEX = 3;
 	
 	// Note textuelle associée au jour
 	private static final String COL_NOTE = "note";
-	private static final int COL_NOTE_INDEX = 3;
+	private static final int COL_NOTE_INDEX = 4;
 	
 	private final ContentValues mTempContentValues = new ContentValues();
 	
@@ -35,10 +39,12 @@ public class DaysTableHelper extends TableHelper {
 			TABLE_NAME,
 			new String[]{
 				COL_DATE,
-				COL_TYPE,
+				COL_TYPE_MORNING,
+				COL_TYPE_AFTERNOON,
 				COL_EXTRA,
 				COL_NOTE},
 			new String[]{
+				SQLiteUtils.DATATYPE_INTEGER,
 				SQLiteUtils.DATATYPE_INTEGER,
 				SQLiteUtils.DATATYPE_INTEGER,
 				SQLiteUtils.DATATYPE_INTEGER,
@@ -46,6 +52,7 @@ public class DaysTableHelper extends TableHelper {
 			},
 			new String[]{
 				SQLiteUtils.CONSTRAINT_PRIMARY_KEY,
+				SQLiteUtils.CONSTRAINT_DEFAULT + DayTypes.normal.ordinal(),
 				SQLiteUtils.CONSTRAINT_DEFAULT + DayTypes.normal.ordinal(),
 				SQLiteUtils.CONSTRAINT_DEFAULT + "0",
 				SQLiteUtils.CONSTRAINT_NONE
@@ -144,9 +151,10 @@ public class DaysTableHelper extends TableHelper {
 		return updateRecord(dayId, mTempContentValues);
 	}
 	
-	public boolean updateType(final long dayId, final int type) {
+	public boolean updateType(final long dayId, final int typeMorning, final int typeAfternoon) {
 		mTempContentValues.clear();
-		mTempContentValues.put(COL_TYPE, type);
+		mTempContentValues.put(COL_TYPE_MORNING, typeMorning);
+		mTempContentValues.put(COL_TYPE_AFTERNOON, typeAfternoon);
 		return updateRecord(dayId, mTempContentValues);
 	}
 	
@@ -160,13 +168,15 @@ public class DaysTableHelper extends TableHelper {
 		// Comme il y a des données en base, on les lit
 		if (data.getCount() > 0) {
 			beanToFill.date = data.getLong(COL_DATE_INDEX);
-			beanToFill.type = data.getInt(COL_TYPE_INDEX);
+			beanToFill.typeMorning = data.getInt(COL_TYPE_MORNING_INDEX);
+			beanToFill.typeAfternoon = data.getInt(COL_TYPE_AFTERNOON_INDEX);
 			beanToFill.extra = data.getInt(COL_EXTRA_INDEX);
 			beanToFill.note = data.getString(COL_NOTE_INDEX);
 			return true;
 		} else {
 			// Le jour n'est pas renseigné en base
-			beanToFill.type = DayTypes.not_worked.ordinal();
+			beanToFill.typeMorning = DayTypes.not_worked.ordinal();
+			beanToFill.typeAfternoon = DayTypes.not_worked.ordinal();
 		}
 		return false;
 	}
@@ -174,7 +184,8 @@ public class DaysTableHelper extends TableHelper {
 	private void fillContentValues(final DayBean day) {
 		mTempContentValues.clear();
 		mTempContentValues.put(COL_DATE, day.date);
-		mTempContentValues.put(COL_TYPE, day.type);
+		mTempContentValues.put(COL_TYPE_MORNING, day.typeMorning);
+		mTempContentValues.put(COL_TYPE_AFTERNOON, day.typeAfternoon);
 		mTempContentValues.put(COL_EXTRA, day.extra);
 		mTempContentValues.put(COL_NOTE, day.note);
 	}

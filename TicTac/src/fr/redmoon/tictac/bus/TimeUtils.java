@@ -166,8 +166,9 @@ public class TimeUtils {
 			}
 		}
 		
-		// On ajoute le temps correspondant au type du jour
-		total += PreferencesBean.getTimeByDayType(day.type);
+		// On ajoute le temps correspondant au type des 2 demies journées
+		total += PreferencesBean.getTimeByDayType(day.typeMorning) / 2;
+		total += PreferencesBean.getTimeByDayType(day.typeAfternoon) / 2;
 		
 		if (addExtraAndClip) {
 			// On ajoute ensuite le temps additionnel.

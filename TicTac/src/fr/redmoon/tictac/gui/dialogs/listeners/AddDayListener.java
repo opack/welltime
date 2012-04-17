@@ -18,7 +18,8 @@ public class AddDayListener extends DateSetListener {
 			if (!mDb.isDayExisting(newDate)) {
 				final DayBean day = new DayBean();
 				day.date = newDate;
-				day.type = DayTypes.normal.ordinal();
+				day.typeMorning = DayTypes.normal.ordinal();
+				day.typeAfternoon = DayTypes.normal.ordinal();
 				mDb.createDay(day);
 				dbUpdated = day.isValid;
 				

@@ -291,8 +291,8 @@ public class WeekActivity extends TicTacActivity implements OnDayDeletionListene
 			}
     		
     		// Sauvegarde de la couleur de fond de ce jour
-            dayInfos.morningDayType = day.type;
-            dayInfos.afternoonDayType = day.type;
+            dayInfos.morningDayType = day.typeMorning;
+            dayInfos.afternoonDayType = day.typeAfternoon;
     	}
     	
         // Affichage des jours.

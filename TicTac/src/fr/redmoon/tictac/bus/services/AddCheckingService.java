@@ -66,7 +66,8 @@ public class AddCheckingService extends Service {
 	    	} else {
 	    		// Le jour sera créé. On vient d'ajouter un pointage, donc c'est
 	    		// un jour de type "normal"
-	    		day.type = DayTypes.normal.ordinal();
+	    		day.typeMorning = DayTypes.normal.ordinal();
+	    		day.typeAfternoon = DayTypes.normal.ordinal();
 	    		
 	    		db.createDay(day);
 	    		

@@ -52,7 +52,7 @@ public class WeekAdapter extends ArrayAdapter<WeekAdapterEntry> {
 			}
 			
 			// Définition de la couleur de fond
-			Drawable background = DayBiColorDrawableHelper.getInstance().getDrawableForDayTypes(infos.morningDayType, infos.afternoonDayType);
+			final Drawable background = DayBiColorDrawableHelper.getInstance().getDrawableForDayTypes(infos.morningDayType, infos.afternoonDayType);
 	        v.setBackgroundDrawable(background);
 		}
 		return v;
