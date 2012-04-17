@@ -5,7 +5,6 @@ import java.util.List;
 
 import android.os.Handler;
 import android.os.Message;
-import fr.redmoon.tictac.bus.DayTypes;
 import fr.redmoon.tictac.bus.bean.DayBean;
 import fr.redmoon.tictac.bus.bean.WeekBean;
 import fr.redmoon.tictac.db.DbAdapter;

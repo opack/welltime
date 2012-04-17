@@ -5,6 +5,7 @@
         <item>Exporter les données</item>
         <item>Ecrire les données dans un fichier CSV sur la carte SD.</item>
     </string-array>
+    <string name="export_zip_filename_pattern">TicTac - Export du %1$d au %2$d.zip</string>
     <string name="export_infos_filename_pattern">TicTac - Export du %1$d au %2$d.properties</string>
     <string name="export_days_filename_pattern">TicTac - Export du %1$d au %2$d.d.csv</string>
     <string name="export_weeks_filename_pattern">TicTac - Export du %1$d au %2$d.w.csv</string>
