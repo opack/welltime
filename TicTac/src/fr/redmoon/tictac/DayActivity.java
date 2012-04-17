@@ -5,6 +5,8 @@ import java.util.Calendar;
 import java.util.List;
 
 import android.content.DialogInterface;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.drawable.Drawable;
@@ -23,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 import fr.redmoon.tictac.TicTacActivity.OnDayDeletionListener;
 import fr.redmoon.tictac.bus.DateUtils;
@@ -81,7 +84,7 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
  	    });
         
         // Création de l'adapteur affichant les pointages. Pour l'instant, aucun pointage.
-        final ListAdapter adapter = new DayAdapter(this, R.layout.lst_itm_day_checking, mCheckingsArray);
+        final ListAdapter adapter = new DayAdapter(this, R.layout.itm_day_checking, mCheckingsArray);
         mLstCheckings = (ListView)pageCheckings.findViewById(R.id.list);
         mLstCheckings.setAdapter(adapter);
         
@@ -288,6 +291,12 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
         		strCurrent,
         		total,
         		PreferencesBean.instance.dayMin);
+        final TextView txtCurrent = (TextView)findViewById(R.id.txt_current);
+        if (day.note != null && !day.note.isEmpty()) {
+        	txtCurrent.setTextColor(getResources().getColor(R.color.calendar_day_with_note));
+        } else {
+        	txtCurrent.setTextColor(Color.BLACK);
+        }
         
         // Le bouton de pointage n'est affiché que pour aujourd'hui
         final ImageView image = (ImageView)findViewById(R.id.btn_checkin);
@@ -306,14 +315,6 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
         // On colore le fond de la date avec la couleur du type de jour
         Drawable background = DayBiColorDrawableHelper.getInstance().getDrawableForDayTypes(day.type, day.type);
         findViewById(R.id.txt_current).setBackgroundDrawable(background);
-        
-        // Masquage de l'image indiquant la présence d'une note si
-        // aucune note n'est disponible.
-        int noteBtnVisibility = View.VISIBLE;
-        if (day.note == null || day.note.isEmpty()) {
-        	noteBtnVisibility = View.INVISIBLE;
-        }
-        findViewById(R.id.img_note).setVisibility(noteBtnVisibility);
     }
     
     /**

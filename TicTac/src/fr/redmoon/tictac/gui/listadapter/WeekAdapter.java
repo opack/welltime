@@ -31,7 +31,7 @@ public class WeekAdapter extends ArrayAdapter<WeekAdapterEntry> {
 		if (v == null) {
 			// Création de la vue et de son contenu
 			LayoutInflater vi = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			v = vi.inflate(R.layout.lst_itm_week_day, null);
+			v = vi.inflate(R.layout.itm_week_day, null);
 			
 			// On conserve la position du jour dans la liste. Pratique pour mapper avec la liste de jours ;)
 			v.setTag(position);

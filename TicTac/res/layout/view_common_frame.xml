@@ -39,11 +39,16 @@
 		
 	</RelativeLayout>
 	
-	<ImageView
-		android:id="@+id/img_note"
-		android:layout_width="24sp"
-		android:layout_height="24sp"
-		android:src="@drawable/note" />
+	<!-- Sera remplit avec des images permettant
+		à l'utilisateur de savoir sur quelle page il
+		se trouve. -->	
+	<LinearLayout
+		android:id="@+id/lyt_page_indicator"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:gravity="center"
+	    android:padding="3dp"
+	    android:orientation="horizontal" />
 	
 	<android.support.v4.view.ViewPager
 	    android:id="@+id/view_pager"
