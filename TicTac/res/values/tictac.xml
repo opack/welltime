@@ -2,7 +2,7 @@
 <resources>
 	<!-- Propriétés de l'application -->
     <string name="app_name">TicTac</string>
-    <string name="app_version">beta (0.4.5)</string>
+    <string name="app_version">beta (0.4.6)</string>
     
     <!-- Titre des onglets -->
     <string name="tab_day">Jour</string>
@@ -22,6 +22,7 @@
     <string name="dlg_title_first_launch">Premier lancement !</string>
     <string name="dlg_title_edit_flex_time">Initialisez l\'horaire variable</string>
     <string name="dlg_msg_first_launch">Bienvenue dans TicTac !\nIl semble que ce soit la première fois que vous utilisez TicTac.\nVous allez être redirigé vers l\'écran de préférences qui vous permettra de définir toutes les plages horaires que doit prendre en compte TicTac.\nPas d\'inquiétude, des valeurs par défaut sont prédéfinies pour vous soulager un peu dans cette épreuve fastidieuse ;-)</string>
+    <string name="dlg_msg_confirm_exit">Voulez-vous vraiment quitter l\'application ?</string>
     <string name="btn_yes">Oui</string>
     <string name="btn_no">Non</string>
     <string name="btn_close">Fermer</string>
