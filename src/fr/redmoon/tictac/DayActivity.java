@@ -307,7 +307,7 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
         		total,
         		PreferencesBean.instance.dayMin);
         final TextView txtCurrent = (TextView)findViewById(R.id.txt_current);
-        if (day.note != null && !day.note.isEmpty()) {
+        if (day.note != null && day.note.length() != 0) {
         	txtCurrent.setTextColor(getResources().getColor(R.color.calendar_day_with_note));
         } else {
         	txtCurrent.setTextColor(Color.BLACK);

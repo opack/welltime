@@ -77,6 +77,30 @@ public abstract class TicTacActivity extends Activity {
     }
 	
 	@Override
+	public void onBackPressed() {
+		// Affichage d'une boîte de dialogue pour confirmer la sortie de l'application
+		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setMessage(R.string.dlg_msg_confirm_exit);
+		builder.setCancelable(false);
+		builder.setPositiveButton(R.string.btn_yes, new DialogInterface.OnClickListener() {
+           public void onClick(DialogInterface dialog, int id) {
+        	   closeApp();
+           }
+       });
+		builder.setNegativeButton(R.string.btn_no, new DialogInterface.OnClickListener() {
+           public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+           }
+       });
+		builder.show();
+	}
+	
+	protected void closeApp() {
+		ViewSynchronizer.getInstance().setCurrentDay(-1);
+		super.onBackPressed();
+	}
+	
+	@Override
     protected void onResume() {
     	// Récupération de la date affichée à l'onglet précédent
 		long currentDate = ViewSynchronizer.getInstance().getCurrentDay();

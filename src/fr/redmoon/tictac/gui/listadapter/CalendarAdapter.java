@@ -193,7 +193,7 @@ public class CalendarAdapter extends BaseAdapter {
         }
         
         // Coloration du texte pour indiquer la présence d'une note
-        if (dayData != null && dayData.note != null && !dayData.note.isEmpty()) {
+        if (dayData != null && dayData.note != null && dayData.note.length() != 0) {
         	// Une note existe pour ce jour : on affiche le libellé du jour en jaune
         	dayLabel.setTextColor(mActivity.getResources().getColor(R.color.calendar_day_with_note));
         }

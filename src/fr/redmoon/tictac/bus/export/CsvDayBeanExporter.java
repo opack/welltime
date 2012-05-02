@@ -98,7 +98,7 @@ public class CsvDayBeanExporter extends FileExporter<List<DayBean>> {
 		
 		// S'il n'y a pas de note, on met un espace pour que l'import fonctionne.
 		String note = day.note;
-		if (note == null || note.isEmpty()) {
+		if (note == null || note.length() == 0) {
 			note = " ";
 		}
 		csv.append(note).append(CSV_SEPARATOR);
