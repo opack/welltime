@@ -65,7 +65,6 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
         final View pageDetails = View.inflate(this, R.layout.view_day_details, null);
         initPages(pageCheckings, pageDetails);
         
-        
         // Remplissage de la liste des jours dans le détail
         Spinner spinner = (Spinner)pageDetails.findViewById(R.id.day_morning_type);
  	    ArrayAdapter<CharSequence> dayTypeAdapter = ArrayAdapter.createFromResource(this, R.array.dayTypesEntries, android.R.layout.simple_spinner_item);
@@ -101,7 +100,9 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
         final ListAdapter adapter = new DayAdapter(this, R.layout.itm_day_checking, mCheckingsArray);
         mLstCheckings = (ListView)pageCheckings.findViewById(R.id.list);
         mLstCheckings.setAdapter(adapter);
-        
+        final View emptyView = pageCheckings.findViewById(R.id.no_checkings);
+    	mLstCheckings.setEmptyView(emptyView);
+    	
         // Affichage du jour courant
         mWorkDayBean.date = mToday;
         

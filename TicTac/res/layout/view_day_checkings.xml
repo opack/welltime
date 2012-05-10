@@ -10,4 +10,10 @@
 		android:id="@+id/list"
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent" />
+	<TextView android:id="@+id/no_checkings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textStyle="italic"
+	    android:text="@string/day_no_checkings"/>
 </LinearLayout>
