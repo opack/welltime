@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 
 public class TableHelper {
 
-	private SQLiteDatabase mDb;
 	private final String tableName;
 	private final String[] columns;
 	
@@ -51,10 +50,6 @@ public class TableHelper {
 		createStatement = sbCreateStatement.toString();
 	}
 	
-	public void setDB(final SQLiteDatabase db) {
-		this.mDb = db;
-	}
-	
 	public String getTableName() {
 		return tableName;
 	}
@@ -71,24 +66,24 @@ public class TableHelper {
 		db.execSQL("DROP TABLE IF EXISTS " + tableName);
 	}
 	
-	public Cursor fetchAll() {
-		return mDb.query(tableName, columns, null, null, null, null, null);
+	public Cursor fetchAll(final SQLiteDatabase db) {
+		return db.query(tableName, columns, null, null, null, null, null);
 	}
 	
-	public Cursor fetch(final long id) {
-		return fetchWhere(columns[0] + "=" + id);
+	public Cursor fetch(final SQLiteDatabase db, final long id) {
+		return fetchWhere(db, columns[0] + "=" + id);
 	}
 	
-	public Cursor fetch(final String id) {
-		return fetchWhere(columns[0] + "='" + id + "'");
+	public Cursor fetch(final SQLiteDatabase db, final String id) {
+		return fetchWhere(db, columns[0] + "='" + id + "'");
 	}
 	
-	public Cursor fetchWhere(final String whereClause) {
-		return fetchWhere(whereClause, null);
+	public Cursor fetchWhere(final SQLiteDatabase db, final String whereClause) {
+		return fetchWhere(db, whereClause, null);
 	}
 	
-	public Cursor fetchWhere(final String whereClause, final String orderByClause) {
-		final Cursor mCursor = mDb.query(
+	public Cursor fetchWhere(final SQLiteDatabase db, final String whereClause, final String orderByClause) {
+		final Cursor mCursor = db.query(
 			true,
 			tableName,
 			columns,
@@ -105,53 +100,53 @@ public class TableHelper {
         return mCursor;
 	}
 	
-	public boolean exists(final long id) {
-		final Cursor result = fetch(id);
+	public boolean exists(final SQLiteDatabase db, final long id) {
+		final Cursor result = fetch(db, id);
 		final boolean exists = result.getCount() > 0;
 		result.close();
 		return exists;
 	}
 	
-	public boolean exists(final String id) {
-		final Cursor result = fetch(id);
+	public boolean exists(final SQLiteDatabase db, final String id) {
+		final Cursor result = fetch(db, id);
 		final boolean exists = result.getCount() > 0;
 		result.close();
 		return exists;
 	}
 	
-	public void deleteAll() {
-		mDb.execSQL("DELETE FROM " + tableName);
+	public void deleteAll(final SQLiteDatabase db) {
+		db.execSQL("DELETE FROM " + tableName);
 	}
 	
-	public boolean delete(final long id) {
-		return mDb.delete(tableName, columns[0] + "=" + id, null) > 0;
+	public boolean delete(final SQLiteDatabase db, final long id) {
+		return db.delete(tableName, columns[0] + "=" + id, null) > 0;
 	}
 	
-	public boolean delete(final String id) {
-		return mDb.delete(tableName, columns[0] + "='" + id + "'", null) > 0;
+	public boolean delete(final SQLiteDatabase db, final String id) {
+		return db.delete(tableName, columns[0] + "='" + id + "'", null) > 0;
 	}
 	
-	public int deleteWhere(final String whereClause) {
-		return mDb.delete(tableName, whereClause, null);
+	public int deleteWhere(final SQLiteDatabase db, final String whereClause) {
+		return db.delete(tableName, whereClause, null);
 	}
 	
-	public long createRecord(final ContentValues data) {
-		return mDb.insert(tableName, null, data);
+	public long createRecord(final SQLiteDatabase db, final ContentValues data) {
+		return db.insert(tableName, null, data);
 	}
 	
-	public boolean updateRecord(final long id, final ContentValues data) {
-		return mDb.update(tableName, data, columns[0] + "=" + id, null) > 0;
+	public boolean updateRecord(final SQLiteDatabase db, final long id, final ContentValues data) {
+		return db.update(tableName, data, columns[0] + "=" + id, null) > 0;
 	}
 	
-	public boolean updateRecord(final String id, final ContentValues data) {
-		return mDb.update(tableName, data, columns[0] + "='" + id + "'", null) > 0;
+	public boolean updateRecord(final SQLiteDatabase db, final String id, final ContentValues data) {
+		return db.update(tableName, data, columns[0] + "='" + id + "'", null) > 0;
 	}
 	
-	public boolean updateRecord(final long idCol1, final long idCol2, final ContentValues data) {
-		return mDb.update(tableName, data, columns[0] + "=" + idCol1 + " and " + columns[1] + "=" + idCol2, null) > 0;
+	public boolean updateRecord(final SQLiteDatabase db, final long idCol1, final long idCol2, final ContentValues data) {
+		return db.update(tableName, data, columns[0] + "=" + idCol1 + " and " + columns[1] + "=" + idCol2, null) > 0;
 	}
 
-	public long getCount() {
-		return DatabaseUtils.queryNumEntries(mDb, tableName);
+	public long getCount(final SQLiteDatabase db) {
+		return DatabaseUtils.queryNumEntries(db, tableName);
 	}
 }
