@@ -272,11 +272,6 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
     	// On récupère le jour en base
     	mDb.fetchDay(day, mWorkDayBean);
     	
-    	// Si le jour n'existe pas, on fait comme si =)
-    	if (!mWorkDayBean.isValid) {
-    		mWorkDayBean.date = day;
-    	}
-    	
     	// Rafraîchit l'interface graphique.
     	populateView(mWorkDayBean);
     }
@@ -452,9 +447,14 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
 	}
 	
 	public void updateDayType(final int typeMorning, final int typeAfternoon) {
-		if (mDb.updateDayType(mWorkDayBean.date, typeMorning, typeAfternoon)) {
-			// Mise à jour de l'affichage
-			populateView(mWorkDayBean.date);
+		// On teste si les types sont bien différents car lors de l'initialisation du spinner cette
+		// méthode sera appelée comme si l'utilisateur avait choisit une valeur. Or dans ce cas
+		// on ne veut pas créer un jour car le type de jour n'aura pas bougé.
+		if (typeAfternoon != mWorkDayBean.typeAfternoon || typeMorning != mWorkDayBean.typeMorning) {
+			if (mDb.updateDayType(mWorkDayBean.date, typeMorning, typeAfternoon)) {
+				// Mise à jour de l'affichage
+				populateView(mWorkDayBean.date);
+			}
 		}
 	}
 	

@@ -17,7 +17,6 @@ public class DbAdapter {
 	
 	private final Context mCtx;
 	private DatabaseHelper mDbHelper;
-    private SQLiteDatabase mDb;
 
 	private DaysTableHelper days;
 	private CheckingsTableHelper checkings;
@@ -76,13 +75,6 @@ public class DbAdapter {
     	
     	// Crée les objets permettant la manipulation de la base
         mDbHelper = new DatabaseHelper(mCtx, this);
-        mDb = mDbHelper.getWritableDatabase();
-        
-        // On dispose à présent d'un accès à la base. On le passe
-        // aux objets manipulant les tables.
-        weeks.setDB(mDb);
-        days.setDB(mDb);
-        checkings.setDB(mDb);
         
         return this;
     }
@@ -115,29 +107,33 @@ public class DbAdapter {
 	}
 	
 	public void createDay(final DayBean day) {
-		day.isValid = days.createRecord(day) && checkings.createRecords(day);
+		final SQLiteDatabase db = mDbHelper.getWritableDatabase();
+		day.isValid = days.createRecord(db, day) && checkings.createRecords(db, day);
 	}
 	
 	public boolean createChecking(final long dayId, final int time) {
+		final SQLiteDatabase db = mDbHelper.getWritableDatabase();
 		// Création du jour s'il n'existe pas
-		if (!days.exists(dayId)) {
+		if (!days.exists(db, dayId)) {
 			final DayBean day = new DayBean();
 			day.date = dayId;
-			days.createRecord(day);
+			days.createRecord(db, day);
 		}
 		
 		// Création du pointage
-		return checkings.createRecord(dayId, time);
+		return checkings.createRecord(db, dayId, time);
 	}
 	
 	public boolean createFlexTime(final long dayId, final int time) {
-		return weeks.createRecord(dayId, time);
+		final SQLiteDatabase db = mDbHelper.getWritableDatabase();
+		return weeks.createRecord(db, dayId, time);
 	}
 
 	public void fetchDay(final long id, final DayBean beanToFill) {
-		days.getDayById(id, beanToFill);
+		final SQLiteDatabase db = mDbHelper.getReadableDatabase();
+		days.getDayById(db, id, beanToFill);
 		if (beanToFill.isValid) {
-			checkings.fetchCheckings(beanToFill);
+			checkings.fetchCheckings(db, beanToFill);
 		} else {
 			beanToFill.emptyDayData();
 		}
@@ -147,7 +143,8 @@ public class DbAdapter {
 		listToFill.clear();
 		
 		// Récupération des jours en bases
-		weeks.getWeeksBetween(firstDay, lastDay, listToFill);
+		final SQLiteDatabase db = mDbHelper.getReadableDatabase();
+		weeks.getWeeksBetween(db, firstDay, lastDay, listToFill);
 		
 		// Récupération des pointages des jours
 		for (WeekBean week : listToFill) {
@@ -158,7 +155,8 @@ public class DbAdapter {
 	}
 	
 	public int fetchFlexTime(final long dayId) {
-		return weeks.fetchFlexTime(dayId);
+		final SQLiteDatabase db = mDbHelper.getReadableDatabase();
+		return weeks.fetchFlexTime(db, dayId);
 	}
 	
 	/**
@@ -167,37 +165,42 @@ public class DbAdapter {
 	 * @param dayId
 	 */
 	public void fetchLastFlexTime(final long dayId, final WeekBean weekData) {
-		weeks.fetchLastFlexTime(dayId, weekData);
+		final SQLiteDatabase db = mDbHelper.getReadableDatabase();
+		weeks.fetchLastFlexTime(db, dayId, weekData);
 	}
 	
 	public void fetchPreviousDay(final long date, final DayBean beanToFill) {
-		beanToFill.isValid = days.getPreviousDay(date, beanToFill);
+		final SQLiteDatabase db = mDbHelper.getReadableDatabase();
+		beanToFill.isValid = days.getPreviousDay(db, date, beanToFill);
 		if (beanToFill.isValid) {
-			checkings.fetchCheckings(beanToFill);
+			checkings.fetchCheckings(db, beanToFill);
 		}
 	}
 	
 	public long fetchPreviousDay(final long date) {
-		return days.getPreviousDay(date);
+		final SQLiteDatabase db = mDbHelper.getReadableDatabase();
+		return days.getPreviousDay(db, date);
 	}
 	
 	public void fetchNextDay(final long date, final DayBean beanToFill) {
-		beanToFill.isValid = days.getNextDay(date, beanToFill);
+		final SQLiteDatabase db = mDbHelper.getReadableDatabase();
+		beanToFill.isValid = days.getNextDay(db, date, beanToFill);
 		if (beanToFill.isValid) {
-			checkings.fetchCheckings(beanToFill);
+			checkings.fetchCheckings(db, beanToFill);
 		}
 	}
 	
 	public void fetchDays(final long firstDay, final long lastDay, final List<DayBean> listToFill) {
 		listToFill.clear();
+		final SQLiteDatabase db = mDbHelper.getReadableDatabase();
 		
 		// Récupération des jours en bases
-		days.getDaysBetween(firstDay, lastDay, listToFill);
+		days.getDaysBetween(db, firstDay, lastDay, listToFill);
 		
 		// Récupération des pointages des jours
 		for (DayBean day : listToFill) {
 			if (day.isValid) {
-				checkings.fetchCheckings(day);
+				checkings.fetchCheckings(db, day);
 			} else {
 				listToFill.remove(day);
 			}
@@ -205,90 +208,105 @@ public class DbAdapter {
 	}
 	
 	public void updateDay(final DayBean day) {
-		day.isValid = days.updateRecord(day) && checkings.updateRecords(day);
+		final SQLiteDatabase db = mDbHelper.getWritableDatabase();
+		day.isValid = days.updateRecord(db, day) && checkings.updateRecords(db, day);
 	}
 	
 	public boolean updateDayExtra(final long date, final int extra) {
+		final SQLiteDatabase db = mDbHelper.getWritableDatabase();
 		// Création du jour s'il n'existe pas
-		if (!days.exists(date)) {
+		if (!days.exists(db, date)) {
 			final DayBean day = new DayBean();
 			day.date = date;
 			day.extra = extra;
-			return days.createRecord(day);
+			return days.createRecord(db, day);
 		} else {
-			return days.updateExtraTime(date, extra);
+			return days.updateExtraTime(db, date, extra);
 		}
 	}
 	
 	public boolean updateDayType(final long date, final int typeMorning, final int typeAfternoon) {
-		if (!days.exists(date)) {
+		final SQLiteDatabase db = mDbHelper.getWritableDatabase();
+		if (!days.exists(db, date)) {
 			final DayBean day = new DayBean();
 			day.date = date;
 			day.typeMorning = typeMorning;
 			day.typeAfternoon = typeAfternoon;
-			return days.createRecord(day);
+			return days.createRecord(db, day);
 		} else {
-			return days.updateType(date, typeMorning, typeAfternoon);
+			return days.updateType(db, date, typeMorning, typeAfternoon);
 		}
 	}
 	
 	public boolean updateDayNote(final long date, final String note) {
-		if (!days.exists(date)) {
+		final SQLiteDatabase db = mDbHelper.getWritableDatabase();
+		if (!days.exists(db, date)) {
 			final DayBean day = new DayBean();
 			day.date = date;
 			day.note = note;
-			return days.createRecord(day);
+			return days.createRecord(db, day);
 		} else {
-			return days.updateNote(date, note);
+			return days.updateNote(db, date, note);
 		}
 	}
 	
 	public boolean updateChecking(final long date, final int oldTime, final int newTime) {
-		return checkings.updateRecord(date, oldTime, newTime);
+		final SQLiteDatabase db = mDbHelper.getWritableDatabase();
+		return checkings.updateRecord(db, date, oldTime, newTime);
 	}
 	
 	public boolean updateFlexTime(final long date, final int flexTime) {
-		if (!weeks.exists(date)) {
+		final SQLiteDatabase db = mDbHelper.getWritableDatabase();
+		if (!weeks.exists(db, date)) {
 			return createFlexTime(date, flexTime);
 		} else {
-			return weeks.updateRecord(date, flexTime);
+			return weeks.updateRecord(db, date, flexTime);
 		}
 	}
 	
 	public boolean deleteChecking(final long date, final int checking) {
-		return checkings.delete(date, checking);
+		final SQLiteDatabase db = mDbHelper.getWritableDatabase();
+		return checkings.delete(db, date, checking);
 	}
 	
 	public boolean deleteFlexTime(final long date) {
-		return weeks.delete(date);
+		final SQLiteDatabase db = mDbHelper.getWritableDatabase();
+		return weeks.delete(db, date);
 	}
 
 	public boolean deleteDay(final long dayId) {
-		return days.delete(dayId)
-			&& checkings.delete(dayId);
+		final SQLiteDatabase db = mDbHelper.getWritableDatabase();
+		return days.delete(db, dayId)
+			&& checkings.delete(db, dayId);
 	}
 
 	public long getLastDayId() {
-		return days.getCount();
+		final SQLiteDatabase db = mDbHelper.getReadableDatabase();
+		return days.getCount(db);
 	}
 
 	public boolean isDayExisting(final long date) {
-		return days.exists(date);
+		final SQLiteDatabase db = mDbHelper.getReadableDatabase();
+		return days.exists(db, date);
 	}
 	
 	public boolean isCheckingExisting(final long date, final int time) {
-		return checkings.exists(date, time);
+		final SQLiteDatabase db = mDbHelper.getReadableDatabase();
+		return checkings.exists(db, date, time);
 	}
 	
 	public boolean isWeekExisting(final long date) {
-		return weeks.exists(date);
+		final SQLiteDatabase db = mDbHelper.getReadableDatabase();
+		return weeks.exists(db, date);
 	}
 
 	public void updateWeek(final WeekBean week) {
-		week.isValid = weeks.updateRecord(week);
+		final SQLiteDatabase db = mDbHelper.getWritableDatabase();
+		week.isValid = weeks.updateRecord(db, week);
 	}
 
 	public void createWeek(WeekBean week) {
-		week.isValid = weeks.createRecord(week);
+		final SQLiteDatabase db = mDbHelper.getWritableDatabase();
+		week.isValid = weeks.createRecord(db, week);
 	}
 }

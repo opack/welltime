@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import fr.redmoon.tictac.bus.DayTypes;
 import fr.redmoon.tictac.bus.bean.DayBean;
 
@@ -59,8 +60,8 @@ public class DaysTableHelper extends TableHelper {
 			});
 	}
 	
-	public boolean getDayById(final long id, final DayBean beanToFill) {
-		final Cursor day = fetch(id);
+	public boolean getDayById(final SQLiteDatabase db, final long id, final DayBean beanToFill) {
+		final Cursor day = fetch(db, id);
 		beanToFill.isValid = fillBean(day, beanToFill);
 		if (!beanToFill.isValid) {
 			// Le jour n'est pas valide mais on va quand même conserver
@@ -71,28 +72,28 @@ public class DaysTableHelper extends TableHelper {
 		return beanToFill.isValid;
 	}
 	
-	public boolean getNextDay(final long date, final DayBean beanToFill) {
+	public boolean getNextDay(final SQLiteDatabase db, final long date, final DayBean beanToFill) {
 		final String whereClause = COL_DATE + ">" + date;
 		final String orderClause = COL_DATE + " asc LIMIT 1";
-		final Cursor day = fetchWhere(whereClause, orderClause);
+		final Cursor day = fetchWhere(db, whereClause, orderClause);
 		final boolean exists = fillBean(day, beanToFill);
 		day.close();
 		return exists;
 	}
 	
-	public boolean getPreviousDay(final long date, final DayBean beanToFill) {
+	public boolean getPreviousDay(final SQLiteDatabase db, final long date, final DayBean beanToFill) {
 		final String whereClause = COL_DATE + "<" + date;
 		final String orderClause = COL_DATE + " desc LIMIT 1";
-		final Cursor day = fetchWhere(whereClause, orderClause);
+		final Cursor day = fetchWhere(db, whereClause, orderClause);
 		final boolean exists = fillBean(day, beanToFill);
 		day.close();
 		return exists;
 	}
 	
-	public long getPreviousDay(final long date) {
+	public long getPreviousDay(final SQLiteDatabase db, final long date) {
 		final String whereClause = COL_DATE + "<" + date;
 		final String orderClause = COL_DATE + " desc LIMIT 1";
-		final Cursor cursor = fetchWhere(whereClause, orderClause);
+		final Cursor cursor = fetchWhere(db, whereClause, orderClause);
 		
 		long previousDayId = -1;
 		if (cursor.getCount() > 0) {
@@ -102,8 +103,8 @@ public class DaysTableHelper extends TableHelper {
 		return previousDayId;
 	}
 
-	public List<DayBean> getDaysBetween(final long firstDay, final long lastDay) {
-		return getDaysBetween(firstDay, lastDay, null);
+	public List<DayBean> getDaysBetween(final SQLiteDatabase db, final long firstDay, final long lastDay) {
+		return getDaysBetween(db, firstDay, lastDay, null);
 	}
 	
 	/**
@@ -113,10 +114,10 @@ public class DaysTableHelper extends TableHelper {
 	 * @param listToFill
 	 * @return
 	 */
-	public List<DayBean> getDaysBetween(final long firstDay, final long lastDay, final List<DayBean> listToFill) {
+	public List<DayBean> getDaysBetween(final SQLiteDatabase db, final long firstDay, final long lastDay, final List<DayBean> listToFill) {
 		final String whereClause = COL_DATE + ">=" + firstDay + " and " + COL_DATE + "<=" + lastDay;
 		final String orderClause = COL_DATE + " asc";
-		final Cursor cursorDays = fetchWhere(whereClause, orderClause);
+		final Cursor cursorDays = fetchWhere(db, whereClause, orderClause);
 		final int nbDays = cursorDays.getCount();
 		
 		List<DayBean> days = listToFill;
@@ -135,33 +136,33 @@ public class DaysTableHelper extends TableHelper {
 		return days;
 	}
 	
-	public boolean createRecord(final DayBean day) {
+	public boolean createRecord(final SQLiteDatabase db, final DayBean day) {
 		fillContentValues(day);
-		return createRecord(mTempContentValues) != -1;
+		return createRecord(db, mTempContentValues) != -1;
 	}
 	
-	public boolean updateRecord(final DayBean day) {
+	public boolean updateRecord(final SQLiteDatabase db, final DayBean day) {
 		fillContentValues(day);
-		return updateRecord(day.date, mTempContentValues);
+		return updateRecord(db, day.date, mTempContentValues);
 	}
 	
-	public boolean updateExtraTime(final long dayId, final long time) {
+	public boolean updateExtraTime(final SQLiteDatabase db, final long dayId, final long time) {
 		mTempContentValues.clear();
 		mTempContentValues.put(COL_EXTRA, time);
-		return updateRecord(dayId, mTempContentValues);
+		return updateRecord(db, dayId, mTempContentValues);
 	}
 	
-	public boolean updateType(final long dayId, final int typeMorning, final int typeAfternoon) {
+	public boolean updateType(final SQLiteDatabase db, final long dayId, final int typeMorning, final int typeAfternoon) {
 		mTempContentValues.clear();
 		mTempContentValues.put(COL_TYPE_MORNING, typeMorning);
 		mTempContentValues.put(COL_TYPE_AFTERNOON, typeAfternoon);
-		return updateRecord(dayId, mTempContentValues);
+		return updateRecord(db, dayId, mTempContentValues);
 	}
 	
-	public boolean updateNote(final long dayId, final String note) {
+	public boolean updateNote(final SQLiteDatabase db, final long dayId, final String note) {
 		mTempContentValues.clear();
 		mTempContentValues.put(COL_NOTE, note);
-		return updateRecord(dayId, mTempContentValues);
+		return updateRecord(db, dayId, mTempContentValues);
 	}
 	
 	public static boolean fillBean(final Cursor data, final DayBean beanToFill) {

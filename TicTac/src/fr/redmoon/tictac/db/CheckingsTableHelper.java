@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import fr.redmoon.tictac.bus.bean.DayBean;
 
 public class CheckingsTableHelper extends TableHelper {
@@ -36,15 +37,15 @@ public class CheckingsTableHelper extends TableHelper {
 			});
 	}
 	
-	public boolean createRecord(final long dayId, final int time) {
+	public boolean createRecord(final SQLiteDatabase db, final long dayId, final int time) {
 		final ContentValues values = new ContentValues();
 		values.put(COL_DATE, dayId);
 		values.put(COL_TIME, time);
 		
-		return createRecord(values) != -1;
+		return createRecord(db, values) != -1;
 	}
 	
-	public boolean createRecords(final DayBean day) {
+	public boolean createRecords(final SQLiteDatabase db, final DayBean day) {
 		boolean done = true;
 		if (day.checkings != null) {
 			final ContentValues values = new ContentValues();
@@ -52,16 +53,16 @@ public class CheckingsTableHelper extends TableHelper {
 			
 			for (Integer time : day.checkings) {
 				values.put(COL_TIME, time);
-				done &= createRecord(values) != -1;
+				done &= createRecord(db, values) != -1;
 			}
 		}
 		return done;
 	}
 	
-	public void fetchCheckings(final DayBean beanToFill) {
+	public void fetchCheckings(final SQLiteDatabase db, final DayBean beanToFill) {
 		final String whereClause = COL_DATE + "=" + beanToFill.date;
 		final String orderClause = COL_TIME + " asc";
-		final Cursor cursor = fetchWhere(whereClause, orderClause);
+		final Cursor cursor = fetchWhere(db, whereClause, orderClause);
 		final int nbDays = cursor.getCount();
 		
 		List<Integer> checkings = beanToFill.checkings;
@@ -81,30 +82,31 @@ public class CheckingsTableHelper extends TableHelper {
 		cursor.close();
 	}
 	
-	public boolean updateRecord(final long dayId, final int oldTime, final int newTime) {
+	public boolean updateRecord(final SQLiteDatabase db, final long dayId, final int oldTime, final int newTime) {
 		final ContentValues values = new ContentValues();
 		values.put(COL_DATE, dayId);
 		values.put(COL_TIME, newTime);
 		
-		return updateRecord(dayId, oldTime, values);
+		return updateRecord(db, dayId, oldTime, values);
 	}
 	
-	public boolean updateRecords(final DayBean day) {
+	public boolean updateRecords(final SQLiteDatabase db, final DayBean day) {
 		// On supprime les pointages de ce jour
-		delete(day.date);
+		delete(db, day.date);
 		
 		// Et on ajoute les nouveaux pointages
-		return createRecords(day);
+		return createRecords(db, day);
 	}
 	
-	public boolean delete(final long date, final int checking) {
+	public boolean delete(final SQLiteDatabase db, final long date, final int checking) {
 		return deleteWhere(
+				db, 
 				COL_DATE + "=" + date + " and "
 				+ COL_TIME + "=" + checking) != 0;
 	}
 	
-	public boolean exists(final long date, final int checking) {
-		final Cursor result = fetchWhere(COL_DATE + "=" + date + " and " + COL_TIME + "=" + checking);
+	public boolean exists(final SQLiteDatabase db, final long date, final int checking) {
+		final Cursor result = fetchWhere(db, COL_DATE + "=" + date + " and " + COL_TIME + "=" + checking);
 		final boolean exists = result.getCount() > 0;
 		result.close();
 		return exists;

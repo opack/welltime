@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import fr.redmoon.tictac.bus.TimeUtils;
 import fr.redmoon.tictac.bus.bean.WeekBean;
 
@@ -39,47 +40,47 @@ public class WeeksTableHelper extends TableHelper {
 			});
 	}
 	
-	public boolean createRecord(final long dayId, final int flexTime) {
+	public boolean createRecord(final SQLiteDatabase db, final long dayId, final int flexTime) {
 		final ContentValues values = new ContentValues();
 		values.put(COL_DATE, dayId);
 		values.put(COL_FLEX_TIME, flexTime);
 		
-		return createRecord(values) != -1;
+		return createRecord(db, values) != -1;
 	}
 	
-	public boolean createRecord(final WeekBean week) {
+	public boolean createRecord(final SQLiteDatabase db, final WeekBean week) {
 		fillContentValues(week);
-		return createRecord(mTempContentValues) != -1;
+		return createRecord(db, mTempContentValues) != -1;
 	}
 	
-	public boolean updateRecord(final long dayId, final int newTime) {
+	public boolean updateRecord(final SQLiteDatabase db, final long dayId, final int newTime) {
 		final ContentValues values = new ContentValues();
 		values.put(COL_DATE, dayId);
 		values.put(COL_FLEX_TIME, newTime);
 		
-		return updateRecord(dayId, values);
+		return updateRecord(db, dayId, values);
 	}
 	
-	public boolean updateRecord(final WeekBean week) {
+	public boolean updateRecord(final SQLiteDatabase db, final WeekBean week) {
 		fillContentValues(week);
-		return updateRecord(week.date, mTempContentValues);
+		return updateRecord(db, week.date, mTempContentValues);
 	}
 	
-	public boolean delete(final long date) {
-		return deleteWhere(COL_DATE + "=" + date) != 0;
+	public boolean delete(final SQLiteDatabase db, final long date) {
+		return deleteWhere(db, COL_DATE + "=" + date) != 0;
 	}
 	
-	public boolean exists(final long date) {
-		final Cursor result = fetchWhere(COL_DATE + "=" + date);
+	public boolean exists(final SQLiteDatabase db, final long date) {
+		final Cursor result = fetchWhere(db, COL_DATE + "=" + date);
 		final boolean exists = result.getCount() > 0;
 		result.close();
 		return exists;
 	}
 
-	public void fetchLastFlexTime(final long dayId, final WeekBean weekData) {
+	public void fetchLastFlexTime(final SQLiteDatabase db, final long dayId, final WeekBean weekData) {
 		final String whereClause = COL_DATE + "<=" + dayId + " and " + COL_FLEX_TIME + " is not null";
 		final String orderClause = COL_DATE + " desc LIMIT 1";
-		final Cursor cursor = fetchWhere(whereClause, orderClause);
+		final Cursor cursor = fetchWhere(db, whereClause, orderClause);
 		
 		weekData.date = dayId;
 		if (cursor.getCount() > 0) {
@@ -92,8 +93,8 @@ public class WeeksTableHelper extends TableHelper {
 		cursor.close();
 	}
 
-	public int fetchFlexTime(long dayId) {
-		final Cursor cursor = fetch(dayId);
+	public int fetchFlexTime(final SQLiteDatabase db, final long dayId) {
+		final Cursor cursor = fetch(db, dayId);
 		
 		int flex = TimeUtils.UNKNOWN_TIME;
 		if (cursor.getCount() > 0) {
@@ -103,8 +104,8 @@ public class WeeksTableHelper extends TableHelper {
 		return flex;
 	}
 	
-	public List<WeekBean> getWeeksBetween(final long firstDay, final long lastDay) {
-		return getWeeksBetween(firstDay, lastDay, null);
+	public List<WeekBean> getWeeksBetween(final SQLiteDatabase db, final long firstDay, final long lastDay) {
+		return getWeeksBetween(db, firstDay, lastDay, null);
 	}
 	
 	/**
@@ -114,10 +115,10 @@ public class WeeksTableHelper extends TableHelper {
 	 * @param listToFill
 	 * @return
 	 */
-	public List<WeekBean> getWeeksBetween(final long firstDay, final long lastDay, final List<WeekBean> listToFill) {
+	public List<WeekBean> getWeeksBetween(final SQLiteDatabase db, final long firstDay, final long lastDay, final List<WeekBean> listToFill) {
 		final String whereClause = COL_DATE + ">=" + firstDay + " and " + COL_DATE + "<=" + lastDay;
 		final String orderClause = COL_DATE + " asc";
-		final Cursor cursorWeeks = fetchWhere(whereClause, orderClause);
+		final Cursor cursorWeeks = fetchWhere(db, whereClause, orderClause);
 		final int nbWeeks = cursorWeeks.getCount();
 		
 		List<WeekBean> weeks = listToFill;
