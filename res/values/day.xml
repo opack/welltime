@@ -7,6 +7,7 @@
     <string name="day_extra_time">Extra :</string>
     <string name="day_lost_time">Perdu :</string>
     <string name="day_note">Note :</string>
+    <string name="day_no_checkings">Pas de pointages pour ce jour !</string>
     
     <!-- Menu principal -->
     <string name="menu_day_add_checking">Ajouter un pointage</string>
