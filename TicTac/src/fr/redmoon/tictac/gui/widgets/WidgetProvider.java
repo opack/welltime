@@ -6,6 +6,7 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.widget.RemoteViews;
 import fr.redmoon.tictac.R;
 import fr.redmoon.tictac.bus.DateUtils;
@@ -26,25 +27,34 @@ public class WidgetProvider extends AppWidgetProvider {
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget);
+    	final RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget);
         
         // Mise à jour de l'image dans les widgets
         updateClockinImage(context,appWidgetIds, getCheckingCount(context));
 
         // Build the intent to call the service
-		Intent intent = new Intent(context.getApplicationContext(), AddCheckingService.class);
+        final Intent intent = new Intent(context.getApplicationContext(), AddCheckingService.class);
 		intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
 
 		// Pour réagir à un clic il faut utiliser une pending intent car le onClickListener
 		// est exécuté par l'application Home
-		PendingIntent pendingIntent = PendingIntent.getService(context.getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+		final PendingIntent pendingIntent = PendingIntent.getService(context.getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 		remoteViews.setOnClickPendingIntent(R.id.btn_checkin, pendingIntent);
 
-		// Finally update all widgets with the information about the click
-		// listener
+		// Mise à jour des widgets avec le nouvel intent
 		appWidgetManager.updateAppWidget(appWidgetIds, remoteViews);
 		
-        super.onUpdate(context, appWidgetManager, appWidgetIds);
+		// DBG Cela semble inutile. Une fois confirmé, à supprimer.
+        //super.onUpdate(context, appWidgetManager, appWidgetIds);
+    }
+    
+    @Override
+    public void onReceive(Context context, Intent intent) {
+    	// DBG Très sale ! Ca permet de faire fonctionner le widget lorsque l'orientation de l'écran change
+    	// mais c'est sale car on le fait à chaque notification et pas uniquement quand l'orientation change.
+    	Log.d("TicTac", "OnReceive:Action > " + intent.getAction());
+    	onUpdate(context, AppWidgetManager.getInstance(context), getAppWidgetIds(context));
+    	super.onReceive(context, intent);
     }
 
     /**
