@@ -9,6 +9,7 @@ import android.widget.Toast;
 import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.bus.DayTypes;
 import fr.redmoon.tictac.bus.FlexUtils;
+import fr.redmoon.tictac.bus.PreferencesUtils;
 import fr.redmoon.tictac.bus.TimeUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
 import fr.redmoon.tictac.db.DbAdapter;
@@ -17,6 +18,9 @@ import fr.redmoon.tictac.gui.widgets.WidgetProvider;
 public class AddCheckingService extends Service {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
+		// Chargement des préférences
+		PreferencesUtils.updatePreferencesBean(this);
+		
 		// Enregistre le pointage en base
 		final int checkingsCount = doClockin();
 		
