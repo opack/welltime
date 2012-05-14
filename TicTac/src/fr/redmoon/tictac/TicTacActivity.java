@@ -20,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import fr.redmoon.tictac.bus.DateUtils;
+import fr.redmoon.tictac.bus.FlexUtils;
 import fr.redmoon.tictac.bus.TimeUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
 import fr.redmoon.tictac.db.DbAdapter;
@@ -388,6 +389,9 @@ public abstract class TicTacActivity extends Activity {
             	// Suppression du jour en base
             	mDb.deleteDay(date);
             	
+            	// Si la semaine de ce jour est vide, on la supprime
+            	updateFlexAfterDeletion(date);
+            	
             	// Mise à jour de l'affichage
             	populateView(date);
 //            	mWeek.remove(selectedDay);
@@ -413,6 +417,26 @@ public abstract class TicTacActivity extends Activity {
             	// pour qu'elle mette à jour son affichage
             	fireOnDeleteDay(date);
             }
+
+			private void updateFlexAfterDeletion(final long date) {
+				final Time time = new Time();
+				// On récupère le lundi correspondant au jour indiqué
+				TimeUtils.parseDate(date, time);
+				DateUtils.getDateOfDayOfWeek(time, Time.MONDAY, time);
+				final long firstDay = DateUtils.getDayId(time);
+				
+				DateUtils.getDateOfDayOfWeek(mWorkTime, Time.SUNDAY, mWorkTime);
+				final long lastDay = DateUtils.getDayId(mWorkTime);
+				
+				// Si la semaine est vide, on supprime l'enregistrement correspondant
+				if (mDb.countDaysBetween(firstDay, lastDay) == 0) {
+					mDb.deleteFlexTime(firstDay);
+				}
+				
+				// Puis on met à jour l'HV
+				final FlexUtils flexUtils = new FlexUtils(mDb);
+    			flexUtils.updateFlex(date);
+			}
         };
         final DialogInterface.OnClickListener negativeListener = new DialogInterface.OnClickListener() {
         	@Override

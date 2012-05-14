@@ -136,6 +136,15 @@ public class DaysTableHelper extends TableHelper {
 		return days;
 	}
 	
+	public int getDaysCountBetween(final SQLiteDatabase db, final long firstDay, final long lastDay) {
+		final String whereClause = COL_DATE + ">=" + firstDay + " and " + COL_DATE + "<=" + lastDay;
+		final String orderClause = COL_DATE + " asc";
+		final Cursor cursorDays = fetchIdsWhere(db, whereClause, orderClause);
+		final int nbDays = cursorDays.getCount();
+		cursorDays.close();
+		return nbDays;
+	}
+	
 	public boolean createRecord(final SQLiteDatabase db, final DayBean day) {
 		fillContentValues(day);
 		return createRecord(db, mTempContentValues) != -1;

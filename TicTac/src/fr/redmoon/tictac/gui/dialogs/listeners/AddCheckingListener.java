@@ -37,12 +37,9 @@ public class AddCheckingListener extends TimeSetListener {
 				// Création du nouveau pointage
 				dbUpdated = mDb.createChecking(mDate, selectedTime);
 				
-				// Si le pointage n'est pas au cours de la semaine courante,
-    			// alors on met à jour l'HV des semaines qui suivent ce jour
-    			if (!DateUtils.isInTodaysWeek(mDate)) {
-    				final FlexUtils flexUtils = new FlexUtils(mDb);
-    				flexUtils.updateFlex(mDate);
-    			}
+				// Mise à jour de l'HV.
+				final FlexUtils flexUtils = new FlexUtils(mDb);
+				flexUtils.updateFlex(mDate);
 			}
 			
 			// Mise à jour de l'affichage
