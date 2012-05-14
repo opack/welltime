@@ -71,11 +71,9 @@ public class PeriodCheckinListener extends AbsPeriodChooserListener {
 			curDate = DateUtils.getDayId(calendar);
 		}
 		
-		// On met à jour le temps HV depuis le 
-    	// dernier enregistrement avant cette date jusqu'au dernier
-    	// jour en base.
+		// Mise à jour de l'HV.
     	final FlexUtils flexUtils = new FlexUtils(mDb);
-    	flexUtils.updateFlexIfNeeded(firstDay);
+    	flexUtils.updateFlex(firstDay);
 		
 		// Affichage des résultats
 		Toast.makeText(

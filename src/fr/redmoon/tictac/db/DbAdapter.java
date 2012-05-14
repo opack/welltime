@@ -207,6 +207,13 @@ public class DbAdapter {
 		}
 	}
 	
+	public int countDaysBetween(final long firstDay, final long lastDay) {
+		final SQLiteDatabase db = mDbHelper.getReadableDatabase();
+		
+		// Récupération du nombre de jours en bases
+		return days.getDaysCountBetween(db, firstDay, lastDay);
+	}
+	
 	public void updateDay(final DayBean day) {
 		final SQLiteDatabase db = mDbHelper.getWritableDatabase();
 		day.isValid = days.updateRecord(db, day) && checkings.updateRecords(db, day);

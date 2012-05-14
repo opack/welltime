@@ -183,14 +183,10 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
 		    		mWorkDayBean.typeAfternoon = DayTypes.normal.ordinal();
 		    		
 		    		mDb.createDay(mWorkDayBean);
-		    	
-			    	// Si aucun enregistrement pour cette semaine existe, on
-			    	// en crée un et on met à jour le temps HV depuis le
-			    	// dernier enregistrement avant cette date jusqu'au dernier
-			    	// jour en base.
-			    	final FlexUtils flexUtils = new FlexUtils(mDb);
-			    	flexUtils.updateFlexIfNeeded(mWorkDayBean.date);
 		    	}
+		    	// Mise à jour de l'HV.
+		    	final FlexUtils flexUtils = new FlexUtils(mDb);
+		    	flexUtils.updateFlex(mWorkDayBean.date);
 		    	
 		    	// Rafraîchissement de l'interface
 		    	if (mWorkDayBean.isValid) {
@@ -408,12 +404,9 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
             	// Suppression du jour en base
             	mDb.deleteChecking(date, time);
             	
-            	// Si le pointage n'est pas au cours de la semaine courante,
-    			// alors on met à jour l'HV des semaines qui suivent ce jour
-    			if (!DateUtils.isInTodaysWeek(date)) {
-    				final FlexUtils flexUtils = new FlexUtils(mDb);
-    				flexUtils.updateFlex(date);
-    			}
+            	// Mise à jour de l'HV.
+				final FlexUtils flexUtils = new FlexUtils(mDb);
+				flexUtils.updateFlex(date);
             	
             	// Mise à jour de l'affichage
         		populateView(date);
@@ -453,6 +446,10 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
 		// on ne veut pas créer un jour car le type de jour n'aura pas bougé.
 		if (typeAfternoon != mWorkDayBean.typeAfternoon || typeMorning != mWorkDayBean.typeMorning) {
 			if (mDb.updateDayType(mWorkDayBean.date, typeMorning, typeAfternoon)) {
+				// Mise à jour de l'HV.
+				final FlexUtils flexUtils = new FlexUtils(mDb);
+		    	flexUtils.updateFlex(mWorkDayBean.date);
+				
 				// Mise à jour de l'affichage
 				populateView(mWorkDayBean.date);
 			}

@@ -31,8 +31,12 @@ public class FlexUtils {
 	public void updateFlex(final long initialDay) {
 		final List<DayBean> days = new ArrayList<DayBean>();
 		final Calendar calendar = new GregorianCalendar(DateUtils.extractYear(initialDay), DateUtils.extractMonth(initialDay), DateUtils.extractDayOfMonth(initialDay));
-		long firstDay = initialDay;
 		final WeekBean weekData = new WeekBean();
+		
+		// On récupère le lundi correspondant au jour indiqué
+		TimeUtils.parseDate(initialDay, mWorkTime);
+		DateUtils.getDateOfDayOfWeek(mWorkTime, Time.MONDAY, mWorkTime);
+		long firstDay = DateUtils.getDayId(mWorkTime);
 		
 		// Récupération de l'HV pour la date indiquée
 		mDb.fetchLastFlexTime(initialDay, weekData);
@@ -109,28 +113,6 @@ public class FlexUtils {
 		return (NB_DAYS_IN_WEEK - nbWorkedDays) * PreferencesBean.instance.dayMin;
 	}
 
-	/**
-	 * Si aucun enregistrement pour cette semaine existe, on
-	 * en crée un et on met à jour le temps HV depuis le
-	 * dernier enregistrement avant cette date jusqu'au dernier
-	 * jour en base.
-	 * @param date
-	 */
-	public void updateFlexIfNeeded(final long date) {
-		// Récupération du lundi de la semaine
-		TimeUtils.parseDate(date, mWorkTime);
-		DateUtils.getDateOfDayOfWeek(mWorkTime, Time.MONDAY, mWorkTime);
-		
-		// Vérification de l'existence de données pour cette semaine
-		if (mDb.isWeekExisting(date)) {
-			// Un temps HV existe pour cette date : on ne fait rien de plus.
-			return;
-		}
-		
-		// Si rien n'existe, on met à jour l'HV
-		updateFlex(date);
-	}
-	
 	/**
 	 * Retourne le temps total effectué en plus du temps minimum 
 	 * au cours de la semaine contenant le jour indiqué.

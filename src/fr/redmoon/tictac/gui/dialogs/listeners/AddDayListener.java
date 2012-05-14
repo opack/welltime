@@ -23,12 +23,9 @@ public class AddDayListener extends DateSetListener {
 				mDb.createDay(day);
 				dbUpdated = day.isValid;
 				
-				// Si aucun enregistrement pour cette semaine existe, on
-		    	// en crée un et on met à jour le temps HV depuis le
-		    	// dernier enregistrement avant cette date jusqu'au dernier
-		    	// jour en base.
+				// Mise à jour de l'HV.
 		    	final FlexUtils flexUtils = new FlexUtils(mDb);
-		    	flexUtils.updateFlexIfNeeded(day.date);
+		    	flexUtils.updateFlex(day.date);
 			} else {
 				// Si le jour existe déjà, tant pis : on l'affiche.
 				dbUpdated = true;

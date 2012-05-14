@@ -100,6 +100,24 @@ public class TableHelper {
         return mCursor;
 	}
 	
+	public Cursor fetchIdsWhere(final SQLiteDatabase db, final String whereClause, final String orderByClause) {
+		final Cursor mCursor = db.query(
+			true,
+			tableName,
+			new String[]{columns[0]},
+			whereClause,
+			null,
+			null,
+			null,
+			orderByClause,
+			null);
+        
+        if (mCursor != null) {
+            mCursor.moveToFirst();
+        }
+        return mCursor;
+	}
+	
 	public boolean exists(final SQLiteDatabase db, final long id) {
 		final Cursor result = fetch(db, id);
 		final boolean exists = result.getCount() > 0;

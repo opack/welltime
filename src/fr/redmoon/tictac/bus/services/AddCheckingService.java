@@ -74,14 +74,10 @@ public class AddCheckingService extends Service {
 	    		day.typeAfternoon = DayTypes.normal.ordinal();
 	    		
 	    		db.createDay(day);
-	    		
-	    		// Si aucun enregistrement pour cette semaine existe, on
-		    	// en crée un et on met à jour le temps HV depuis le
-		    	// dernier enregistrement avant cette date jusqu'au dernier
-		    	// jour en base.
-		    	final FlexUtils flexUtils = new FlexUtils(db);
-		    	flexUtils.updateFlexIfNeeded(day.date);
 	    	}
+	    	// Mise à jour de l'HV.
+	    	final FlexUtils flexUtils = new FlexUtils(db);
+	    	flexUtils.updateFlex(day.date);
 	    	
 	    	// Incrément du nombre de jour si l'ajout en base s'est correctement déroulé.
 	    	// Quelle que soit l'opération effectuée, isValid a été mis à jour.
