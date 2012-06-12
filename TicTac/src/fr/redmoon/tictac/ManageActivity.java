@@ -39,6 +39,7 @@ import fr.redmoon.tictac.bus.export.ZipDecompress;
 import fr.redmoon.tictac.db.DbAdapter;
 import fr.redmoon.tictac.gui.DbInserterThread;
 import fr.redmoon.tictac.gui.ProgressDialogHandler;
+import fr.redmoon.tictac.gui.ViewSynchronizer;
 import fr.redmoon.tictac.gui.dialogs.listeners.PeriodCheckinListener;
 import fr.redmoon.tictac.gui.dialogs.listeners.PeriodExporterListener;
 import fr.redmoon.tictac.gui.listadapter.ManageAdapter;
@@ -376,6 +377,30 @@ public class ManageActivity extends ListActivity {
 			}
 		}
 		super.onActivityResult(requestCode, resultCode, data);
+	}
+	
+	@Override
+	public void onBackPressed() {
+		// Affichage d'une boîte de dialogue pour confirmer la sortie de l'application
+		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setMessage(R.string.dlg_msg_confirm_exit);
+		builder.setCancelable(false);
+		builder.setPositiveButton(R.string.btn_yes, new DialogInterface.OnClickListener() {
+           public void onClick(DialogInterface dialog, int id) {
+        	   closeApp();
+           }
+       });
+		builder.setNegativeButton(R.string.btn_no, new DialogInterface.OnClickListener() {
+           public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+           }
+       });
+		builder.show();
+	}
+	
+	protected void closeApp() {
+		ViewSynchronizer.getInstance().setCurrentDay(-1);
+		super.onBackPressed();
 	}
 }
 
