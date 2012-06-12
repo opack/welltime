@@ -113,12 +113,6 @@ public class DbAdapter {
 	
 	public boolean createChecking(final long dayId, final int time) {
 		final SQLiteDatabase db = mDbHelper.getWritableDatabase();
-		// Création du jour s'il n'existe pas
-		if (!days.exists(db, dayId)) {
-			final DayBean day = new DayBean();
-			day.date = dayId;
-			days.createRecord(db, day);
-		}
 		
 		// Création du pointage
 		return checkings.createRecord(db, dayId, time);

@@ -4,7 +4,9 @@ import android.widget.Toast;
 import fr.redmoon.tictac.R;
 import fr.redmoon.tictac.TicTacActivity;
 import fr.redmoon.tictac.bus.DateUtils;
+import fr.redmoon.tictac.bus.DayTypes;
 import fr.redmoon.tictac.bus.FlexUtils;
+import fr.redmoon.tictac.bus.bean.DayBean;
 import fr.redmoon.tictac.gui.widgets.WidgetProvider;
 
 public class AddCheckingListener extends TimeSetListener {
@@ -35,7 +37,19 @@ public class AddCheckingListener extends TimeSetListener {
 				.show();
 			} else {
 				// Création du nouveau pointage
-				dbUpdated = mDb.createChecking(mDate, selectedTime);
+				if (!mDb.isDayExisting(mDate)) {
+					// Le jour n'existe pas : on le crée.
+					final DayBean day = new DayBean();
+					day.date = mDate;
+					day.typeMorning = DayTypes.normal.ordinal();
+					day.typeAfternoon = DayTypes.normal.ordinal();
+					day.checkings.add(selectedTime);
+					mDb.createDay(day);
+					dbUpdated = day.isValid;
+				} else {
+					// Le jour existe : on ajoute simplement le pointage
+					dbUpdated = mDb.createChecking(mDate, selectedTime);
+				}
 				
 				// Mise à jour de l'HV.
 				final FlexUtils flexUtils = new FlexUtils(mDb);
