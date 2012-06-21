@@ -73,7 +73,7 @@ public class MonthActivity extends TicTacActivity implements OnDayDeletionListen
 		});
 		
 		// On veut être informé si la vue "Semaine" supprime un jour
-		WeekActivity.registerDayDeletionListener(this);
+		TicTacActivity.registerDayDeletionListener(this);
 		
 		// Affichage du mois courant. Inutile de passer des paramètres car l'adapteur
 		// vient juste d'être créé avec les infos (année, mois) du mois courant.

@@ -1,4 +1,4 @@
-package fr.redmoon.tictac.bus;
+package fr.redmoon.tictac.bus.export;
 
 import java.util.Calendar;
 import java.util.List;
@@ -10,8 +10,16 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.widget.Toast;
+import fr.redmoon.tictac.TicTacActivity;
+import fr.redmoon.tictac.TicTacActivity.OnDayDeletionListener;
+import fr.redmoon.tictac.bus.DateUtils;
+import fr.redmoon.tictac.bus.TimeUtils;
 
-public class CalendarAccess {
+public class CalendarAccess implements OnDayDeletionListener {
+	public static final Uri EVENTS_CONTENT_URI = Uri.parse("content://com.android.calendar/events");
+	public static final String WORKEVENT_TITLE = "Travail";
+	
+	
 	// Projection array. Creating indices for this array instead of doing
 	// dynamic lookups improves performance.
 	public static final String[] EVENT_PROJECTION = new String[] {
@@ -32,19 +40,27 @@ public class CalendarAccess {
 	
 	private static CalendarAccess INSTANCE; 
 	
-	private CalendarAccess(final Activity activity) {
-		mActivity = activity;
-		initAccess();
+	private CalendarAccess() {
+		// Demande aux autres vues de nous notifier en cas de suppression de jour
+		TicTacActivity.registerDayDeletionListener(this);
 	}
 	
-	public static CalendarAccess getInstance(final Activity activity) {
+	public static CalendarAccess getInstance() {
 		if (INSTANCE == null) {
-			INSTANCE = new CalendarAccess(activity); 
+			INSTANCE = new CalendarAccess(); 
 		}
 		return INSTANCE;
 	}
 
-	private void initAccess() {
+	public void initAccess(final Activity activity) {
+		mActivity = activity;
+		
+		// S'il n'y a pas d'activity, c'est qu'on souhaite désactiver cette
+		// fonctionnalité
+		if (activity == null) {
+			return;
+		}
+		
 		// Run query
 		Cursor cur = null;
 		ContentResolver cr = mActivity.getContentResolver();
@@ -78,12 +94,7 @@ public class CalendarAccess {
 		}
 	}
 
-	public void addWorkingEvent(final long date, final int inTime, final int outTime) {
-		// Extraction des infos de la date
-		final int year = DateUtils.extractYear(date);
-		final int month = DateUtils.extractYear(date) - 1;
-		final int dayOfMonth = DateUtils.extractYear(date);
-		
+	private void addWorkingEvent(final int year, final int month, final int dayOfMonth, final int inTime, final int outTime) {
 		// Extraction des heures et minutes des pointages
 		final int inHour = TimeUtils.extractHour(inTime);
 		final int inMinutes = TimeUtils.extractMinutes(inTime);
@@ -103,10 +114,10 @@ public class CalendarAccess {
 		ContentValues values = new ContentValues();
 		values.put("dtstart"/*Events.DTSTART*/, startMillis);
 		values.put("dtend"/*Events.DTEND*/, endMillis);
-		values.put("title"/*Events.TITLE*/, "Travail");
+		values.put("title"/*Events.TITLE*/, WORKEVENT_TITLE);
 		//values.put("description"/*Events.DESCRIPTION*/, "Group workout");
 		values.put("calendar_id"/*Events.CALENDAR_ID*/, mCalID);
-		Uri uri = cr.insert(Uri.parse("content://com.android.calendar/events")/*Events.CONTENT_URI*/, values);
+		Uri uri = cr.insert(EVENTS_CONTENT_URI/*Events.CONTENT_URI*/, values);
 		if (uri == null) {
 			Toast.makeText(mActivity, "Erreur lors de l'insertion de l'évènement dans le calendrier.", Toast.LENGTH_SHORT).show();
 		}
@@ -117,13 +128,23 @@ public class CalendarAccess {
 		//
 		//
 	}
-
+	
 	public void createWorkingEvents(final long date, final List<Integer> checkings) {
+		// S'il n'y a pas d'activity, c'est qu'on souhaite désactiver cette fonctionnalité
+		if (mActivity == null) {
+			return;
+		}
+		
+		// Extraction des infos de la date
+		final int year = DateUtils.extractYear(date);
+		final int month = DateUtils.extractMonth(date);
+		final int dayOfMonth = DateUtils.extractDayOfMonth(date);
+		
 		// Suppression de tous les évènements de ce type de la journée
 		// TODO Pour être propre il faudrait enregistrer l'ID des évènements
 		// créés pour tel et tel pointage, pour mettre à jour cet évènement
 		// en cas de modification des pointages associés.
-		// TODO
+		deleteDayEvents(year, month, dayOfMonth);
 		
 		// Ajout des pointages par deux dans un évènement
 		Integer in = null;
@@ -131,9 +152,67 @@ public class CalendarAccess {
 			if (in == null) {
 				in = checking;
 			} else {
-				addWorkingEvent(date, in, checking);
+				addWorkingEvent(year, month, dayOfMonth, in, checking);
 				in = null;
 			}
 		}
+	}
+
+	private void deleteDayEvents(final int year, final int month, final int dayOfMonth) {
+		// S'il n'y a pas d'activity, c'est qu'on souhaite désactiver cette fonctionnalité
+		if (mActivity == null) {
+			return;
+		}
+		
+		// Création des heures de l'évènement en millisecondes
+		Calendar beginTime = Calendar.getInstance();
+		beginTime.set(year, month, dayOfMonth, 0, 0);
+		final long dayStart = beginTime.getTimeInMillis();
+		Calendar endTime = Calendar.getInstance();
+		endTime.set(year, month, dayOfMonth, 23, 59);
+		final long dayEnd = endTime.getTimeInMillis();
+		
+		mActivity.getContentResolver().delete(
+			EVENTS_CONTENT_URI,
+			"dtstart >= ? AND dtend <= ? AND title = ?",
+			new String[]{ String.valueOf(dayStart), String.valueOf(dayEnd), WORKEVENT_TITLE });
+		
+		// Run query
+//		Cursor cur = null;
+//		ContentResolver cr = mActivity.getContentResolver();
+//		Uri uri = Uri.parse("content://com.android.calendar/calendars");//Calendars.CONTENT_URI;   
+//		String selection = "((" + "account_name"/*Calendars.ACCOUNT_NAME*/ + " = ?) AND (" 
+//		                        + "account_type"/*Calendars.ACCOUNT_TYPE*/ + " = ?) AND ("
+//		                        + "ownerAccount"/*Calendars.OWNER_ACCOUNT*/ + " = ?))";
+//		String[] selectionArgs = new String[] {"marekh.ebony@gmail.com", "com.google", "marekh.ebony@gmail.com"}; 
+//		// Submit the query and get a Cursor object back. 
+//		cur = cr.query(uri, EVENT_PROJECTION, selection, selectionArgs, null);
+//
+//        cur = cr.query(
+//        	EVENTS_CONTENT_URI,
+//        	new String[]{ "_id" },
+//        	"dtstart >= ? AND dtend <= ? AND title = ?",
+//        	new String[]{ String.valueOf(dayStart), String.valueOf(dayEnd), WORKEVENT_TITLE },
+//        	null);
+//		
+//		while (cur.moveToNext()) {		    
+//		    // Récupération de l'identifiant de l'évènement
+//		    long eventID = cur.getLong(0);
+//		              
+//		    // Suppression de l'évènement
+//		    Uri deleteUri = ContentUris.withAppendedId(EVENTS_CONTENT_URI, eventID);
+//		    cr.delete(deleteUri, null, null);
+//		}
+	}
+
+	@Override
+	public void onDeleteDay(long date) {
+		// Extraction des infos de la date
+		final int year = DateUtils.extractYear(date);
+		final int month = DateUtils.extractMonth(date);
+		final int dayOfMonth = DateUtils.extractDayOfMonth(date);
+				
+		// Suppression des évènements de ce jour
+		deleteDayEvents(year, month, dayOfMonth);
 	}
 }

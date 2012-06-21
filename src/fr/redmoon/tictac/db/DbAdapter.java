@@ -134,7 +134,8 @@ public class DbAdapter {
 	}
 	
 	public void fetchCheckings(final long date, final List<Integer> listToFill) {
-		fetchCheckings(date, listToFill);
+		final SQLiteDatabase db = mDbHelper.getReadableDatabase();
+		checkings.fetchCheckings(db, date, listToFill);
 	}
 	
 	public void fetchWeeks(final long firstDay, final long lastDay, final List<WeekBean> listToFill) {

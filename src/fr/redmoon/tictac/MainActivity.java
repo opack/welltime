@@ -13,6 +13,7 @@ import android.widget.TabHost;
 import android.widget.TextView;
 import fr.redmoon.tictac.bus.PreferencesUtils;
 import fr.redmoon.tictac.bus.bean.PreferencesBean;
+import fr.redmoon.tictac.bus.export.CalendarAccess;
 
 public class MainActivity extends TabActivity {
 	public static final int TAB_DAY_POS = 0;
@@ -27,6 +28,7 @@ public class MainActivity extends TabActivity {
 	    setContentView(R.layout.tictac);
 	    createTabs();
 	    initPrefs();
+	    CalendarAccess.getInstance().initAccess(this);
 	}
 	
 	private void initPrefs() {

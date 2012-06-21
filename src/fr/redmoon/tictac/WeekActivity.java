@@ -78,7 +78,7 @@ public class WeekActivity extends TicTacActivity implements OnDayDeletionListene
         					// sera effectuée afin d'initialiser le bean.
         
         // On veut être informé si la vue "Mois" supprime un jour
-        MonthActivity.registerDayDeletionListener(this);
+        TicTacActivity.registerDayDeletionListener(this);
     }
     
     @Override
