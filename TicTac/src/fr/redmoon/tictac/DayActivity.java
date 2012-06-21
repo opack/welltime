@@ -33,6 +33,7 @@ import fr.redmoon.tictac.bus.FlexUtils;
 import fr.redmoon.tictac.bus.TimeUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
 import fr.redmoon.tictac.bus.bean.PreferencesBean;
+import fr.redmoon.tictac.bus.export.CalendarAccess;
 import fr.redmoon.tictac.gui.DayBiColorDrawableHelper;
 import fr.redmoon.tictac.gui.ViewSynchronizer;
 import fr.redmoon.tictac.gui.dialogs.DayDialogDelegate;
@@ -107,8 +108,7 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
         mWorkDayBean.date = mToday;
         
         // On veut être informé si la vue "Semaine" ou "Mois" supprime un jour
-        WeekActivity.registerDayDeletionListener(this);
-        MonthActivity.registerDayDeletionListener(this);
+        TicTacActivity.registerDayDeletionListener(this);
     }
     
     @Override
@@ -191,6 +191,9 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
 		    	// Rafraîchissement de l'interface
 		    	if (mWorkDayBean.isValid) {
 		    		populateView(mWorkDayBean);
+		    		
+		    		// Ajout du pointage dans le calendrier
+					CalendarAccess.getInstance().createWorkingEvents(mWorkDayBean.date, mWorkDayBean.checkings);
 		    		
 		    		// Mise à jour des widgets
 					WidgetProvider.updateClockinImage(
@@ -398,6 +401,7 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
 	private void deleteChecking(final long date, final int time) {
 		// Création des éléments de la boîte de dialogue
 		final CharSequence message = getString(R.string.dlg_msg_confirm_checking_deletion, TimeUtils.formatTime(time));
+		final DayBean workBean = mWorkDayBean;
 		final DialogInterface.OnClickListener positiveListener = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -410,6 +414,9 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
             	
             	// Mise à jour de l'affichage
         		populateView(date);
+        		
+        		// Suppression du pointage dans le calendrier
+				CalendarAccess.getInstance().createWorkingEvents(workBean.date, workBean.checkings);
             	
             	// Si on a supprimé un pointage d'aujourd'hui, on met à jour le widget
             	if (mToday == date) {

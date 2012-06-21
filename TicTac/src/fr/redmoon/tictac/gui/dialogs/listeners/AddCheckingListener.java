@@ -6,11 +6,11 @@ import java.util.List;
 import android.widget.Toast;
 import fr.redmoon.tictac.R;
 import fr.redmoon.tictac.TicTacActivity;
-import fr.redmoon.tictac.bus.CalendarAccess;
 import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.bus.DayTypes;
 import fr.redmoon.tictac.bus.FlexUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
+import fr.redmoon.tictac.bus.export.CalendarAccess;
 import fr.redmoon.tictac.gui.widgets.WidgetProvider;
 
 public class AddCheckingListener extends TimeSetListener {
@@ -67,7 +67,7 @@ public class AddCheckingListener extends TimeSetListener {
 				// Ajout du pointage dans le calendrier
 				final List<Integer> checkings = new ArrayList<Integer>();
 				mDb.fetchCheckings(mDate, checkings);
-				CalendarAccess.getInstance(mActivity).createWorkingEvents(mDate, checkings);
+				CalendarAccess.getInstance().createWorkingEvents(mDate, checkings);
 				
 				// Mise à jour des widgets
 				if (mDate == DateUtils.getCurrentDayId()) {
