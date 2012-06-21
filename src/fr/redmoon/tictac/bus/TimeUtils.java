@@ -270,4 +270,22 @@ public class TimeUtils {
 		setToNow(now);
 		return now;
 	}
+
+	/**
+	 * Retourne le nombre d'heures dans le temps donné
+	 * @param time
+	 * @return
+	 */
+	public static int extractHour(final int time) {
+		return time / 100;
+	}
+	
+	/**
+	 * Retourne le nombre de minutes dans le temps donné
+	 * @param time
+	 * @return
+	 */
+	public static int extractMinutes(final int time) {
+		return time % 100;
+	}
 }

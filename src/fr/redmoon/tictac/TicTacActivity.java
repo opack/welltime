@@ -127,13 +127,18 @@ public abstract class TicTacActivity extends Activity {
     
     @Override
 	protected Dialog onCreateDialog(final int id) {
-		return mDialogDelegate.createDialog(id);
+    	if (mDialogDelegate != null) {
+    		return mDialogDelegate.createDialog(id);
+    	}
+    	return super.onCreateDialog(id);
 	}
 	
 	@Override
 	protected void onPrepareDialog(final int id, final Dialog dialog, final Bundle args) {
 		super.onPrepareDialog(id, dialog, args);
-		mDialogDelegate.prepareDialog(id, dialog, args);
+		if (mDialogDelegate != null) {
+			mDialogDelegate.prepareDialog(id, dialog, args);
+		}
 	}
 	
 	protected void setDialogDelegate(final AbsDialogDelegate dialogDelegate) {

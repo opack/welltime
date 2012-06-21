@@ -29,7 +29,7 @@ public class CsvWeekBeanExporter extends FileExporter<List<WeekBean>> {
 	
 	@Override
 	public boolean performExport(final File file) throws IOException {
-		if (mData.isEmpty()) {
+		if (mData == null) {
 			return false;
 		}
 		

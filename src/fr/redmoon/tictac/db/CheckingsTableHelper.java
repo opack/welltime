@@ -59,27 +59,35 @@ public class CheckingsTableHelper extends TableHelper {
 		return done;
 	}
 	
-	public void fetchCheckings(final SQLiteDatabase db, final DayBean beanToFill) {
-		final String whereClause = COL_DATE + "=" + beanToFill.date;
+	public void fetchCheckings(final SQLiteDatabase db, final long date, final List<Integer> listToFill) {
+		final String whereClause = COL_DATE + "=" + date;
 		final String orderClause = COL_TIME + " asc";
 		final Cursor cursor = fetchWhere(db, whereClause, orderClause);
-		final int nbDays = cursor.getCount();
+		final int nbCheckings = cursor.getCount();
 		
-		List<Integer> checkings = beanToFill.checkings;
 		// On vide la liste avant de la remplir
-		if (checkings == null) {
-			checkings = new ArrayList<Integer>(nbDays);
-		} else {
-			checkings.clear();
-		}
+		listToFill.clear();
 		
 		// On remplit la liste
-		if (nbDays > 0) {
+		if (nbCheckings > 0) {
 			do {
-				checkings.add(cursor.getInt(COL_TIME_INDEX));
+				listToFill.add(cursor.getInt(COL_TIME_INDEX));
 			} while (cursor.moveToNext());
 		}
 		cursor.close();
+	}
+	
+	public List<Integer> fetchCheckings(final SQLiteDatabase db, final long date) {
+		final List<Integer> listToFill = new ArrayList<Integer>();
+		fetchCheckings(db, date, listToFill);
+		return listToFill;
+	}
+	
+	public void fetchCheckings(final SQLiteDatabase db, final DayBean beanToFill) {
+		if (beanToFill.checkings == null) {
+			beanToFill.checkings = new ArrayList<Integer>();
+		}
+		fetchCheckings(db, beanToFill.date, beanToFill.checkings);
 	}
 	
 	public boolean updateRecord(final SQLiteDatabase db, final long dayId, final int oldTime, final int newTime) {
