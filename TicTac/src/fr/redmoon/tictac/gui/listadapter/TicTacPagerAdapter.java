@@ -6,7 +6,6 @@ import android.support.v4.view.ViewPager;
 import android.view.View;
 
 public class TicTacPagerAdapter extends PagerAdapter {
-	private static int NUM_AWESOME_VIEWS = 2;
 	private View[] mPages;
 	
 	public TicTacPagerAdapter(View... pages) {
@@ -15,7 +14,7 @@ public class TicTacPagerAdapter extends PagerAdapter {
 	
 	@Override
 	public int getCount() {
-		return NUM_AWESOME_VIEWS;
+		return mPages.length;
 	}
 
 	/**

@@ -48,12 +48,12 @@ public class MonthActivity extends TicTacActivity implements OnDayDeletionListen
 	    
 	    // Création de l'interface graphique
         setContentView(R.layout.view_common_frame);
-        findViewById(R.id.lyt_btn_bar).setVisibility(View.INVISIBLE);
+        findViewById(R.id.lyt_clockin).setVisibility(View.INVISIBLE);
 	    
         // Initialisation du gestionnaire de pages
         final View pageCalendar = View.inflate(this, R.layout.view_month_calendar, null);
-        final View pageDetails = View.inflate(this, R.layout.view_month_details, null);
-        initPages(pageCalendar, pageDetails);
+     // DBG Pas encore implémenté final View pageDetails = View.inflate(this, R.layout.view_month_details, null);
+        initPages(pageCalendar);// DBG Pas encore implémenté , pageDetails);
         
 	    // Initialisation du GridView du calendrier
 	    GridView gridview = (GridView)pageCalendar.findViewById(R.id.gridview);

@@ -1,8 +1,12 @@
 package fr.redmoon.tictac.gui.dialogs.listeners;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.widget.Toast;
 import fr.redmoon.tictac.R;
 import fr.redmoon.tictac.TicTacActivity;
+import fr.redmoon.tictac.bus.CalendarAccess;
 import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.bus.DayTypes;
 import fr.redmoon.tictac.bus.FlexUtils;
@@ -59,6 +63,11 @@ public class AddCheckingListener extends TimeSetListener {
 			// Mise à jour de l'affichage
 			if (dbUpdated) {
 				mActivity.populateView(mDate);
+				
+				// Ajout du pointage dans le calendrier
+				final List<Integer> checkings = new ArrayList<Integer>();
+				mDb.fetchCheckings(mDate, checkings);
+				CalendarAccess.getInstance(mActivity).createWorkingEvents(mDate, checkings);
 				
 				// Mise à jour des widgets
 				if (mDate == DateUtils.getCurrentDayId()) {

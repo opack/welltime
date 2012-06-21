@@ -53,6 +53,12 @@
     <string name="btn_checkin">Pointer</string>
     <string name="period_checkin_results">Pointage terminé.\n%1$d jour(s) créé(s).\n%2$d jour(s) mis à jour.</string>
     
+    <!-- Opération affichage des préférences -->
+	<string-array name="show_preferences">
+        <item>Afficher les préférences</item>
+        <item>Afficher les préférences de l\'application</item>
+    </string-array>
+    
     <!-- Erreurs -->
     <string name="error_mkdir_failed">L\'opération a été interrompu car un répertoire n\'a pas pu être créé.</string>
     <string name="error_sdcard_unknown">Une erreur inconnue a empêché l\'écriture sur la carte SD.</string>
