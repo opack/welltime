@@ -45,4 +45,6 @@
 	<!-- Ecran principal -->
 	<string name="pref_clock_shift">Décalage horloge</string>
 	<string name="pref_clock_shift_summary">Indiquez le décalage entre la pointeuse et l\'heure du téléphone.</string>
+	<string name="pref_sync_calendar">Synchroniser avec le calendrier</string>
+	<string name="pref_sync_calendar_summary">Activer la création d\'évènements dans le calendrier nommé \"Welltime\".</string>
 </resources>

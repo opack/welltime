@@ -18,6 +18,9 @@ public class PreferencesUtils {
 	// Décalage pointeuse/téléphone
 		PreferencesBean.instance.clockShift = TimeUtils.parseMinutes(prefs.getString(PreferenceKeys.clockShift.getKey(), "00:00"));
 		
+	// Synchronisation avec la calendrier
+		PreferencesBean.instance.syncCalendar = prefs.getBoolean(PreferenceKeys.syncCalendar.getKey(), false);
+		
 	// Limites
 		// Temps de travail quotidien
 		PreferencesBean.instance.dayMin = TimeUtils.parseMinutes(prefs.getString(PreferenceKeys.dayMin.getKey(), "07:00"));
@@ -102,6 +105,9 @@ public class PreferencesUtils {
 		
 	// Décalage pointeuse/téléphone
 		editor.putString(PreferenceKeys.clockShift.getKey(), TimeUtils.formatMinutes(PreferencesBean.instance.clockShift));
+
+	// Synchronisation avec la calendrier
+		editor.putBoolean(PreferenceKeys.syncCalendar.getKey(), PreferencesBean.instance.syncCalendar);
 		
 	// Limites
 		// Temps de travail quotidien

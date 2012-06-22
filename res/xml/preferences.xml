@@ -33,6 +33,13 @@
 		android:key="clock_shift"
 		android:defaultValue="00:00" />
 	
+	<!-- Synchronisation avec la calendrier -->
+	<CheckBoxPreference
+	    android:title="@string/pref_sync_calendar"
+		android:summary="@string/pref_sync_calendar_summary"
+		android:key="sync_calendar"
+		android:defaultValue="false" />
+	
 	<!-- Affichage de la version de l'application -->
 	<Preference
 		android:summary="@string/app_version"

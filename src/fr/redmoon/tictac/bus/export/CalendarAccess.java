@@ -12,6 +12,7 @@ import android.os.Build;
 import android.widget.Toast;
 import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.bus.TimeUtils;
+import fr.redmoon.tictac.bus.bean.PreferencesBean;
 import fr.redmoon.tictac.gui.activities.TicTacActivity;
 import fr.redmoon.tictac.gui.activities.TicTacActivity.OnDayDeletionListener;
 
@@ -53,13 +54,11 @@ public class CalendarAccess implements OnDayDeletionListener {
 	}
 
 	public void initAccess(final Activity activity) {
-		mActivity = activity;
-		
-		// S'il n'y a pas d'activity, c'est qu'on souhaite désactiver cette
-		// fonctionnalité
-		if (activity == null) {
+		mCalID = -1;
+		if (!PreferencesBean.instance.syncCalendar || activity == null) {
 			return;
 		}
+		mActivity = activity;
 		
 		// Run query
 		Cursor cur = null;
@@ -130,8 +129,7 @@ public class CalendarAccess implements OnDayDeletionListener {
 	}
 	
 	public void createWorkingEvents(final long date, final List<Integer> checkings) {
-		// S'il n'y a pas d'activity, c'est qu'on souhaite désactiver cette fonctionnalité
-		if (mActivity == null) {
+		if (!PreferencesBean.instance.syncCalendar || mActivity == null || mCalID == -1) {
 			return;
 		}
 		
@@ -207,6 +205,10 @@ public class CalendarAccess implements OnDayDeletionListener {
 
 	@Override
 	public void onDeleteDay(long date) {
+		if (!PreferencesBean.instance.syncCalendar || mActivity == null || mCalID == -1) {
+			return;
+		}
+		
 		// Extraction des infos de la date
 		final int year = DateUtils.extractYear(date);
 		final int month = DateUtils.extractMonth(date);

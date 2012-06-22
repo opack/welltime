@@ -18,8 +18,11 @@ public class PreferencesBean implements Serializable{
 	
 	public static PreferencesBean instance = new PreferencesBean();
 
-	// Flag indiquant s'il s'agit du premier lancement
+// Flag indiquant s'il s'agit du premier lancement
 	public boolean isFirstLaunch;
+	
+// Flag indiquant s'il faut synchroniser les données avec le calendrier
+	public boolean syncCalendar;
 	
 // Limites
 	// Temps de travail quotidien
@@ -114,6 +117,7 @@ public class PreferencesBean implements Serializable{
 	public void clone(final PreferencesBean otherPrefs) {
 		// Général
 		clockShift = otherPrefs.clockShift;
+		syncCalendar = otherPrefs.syncCalendar;
 
 		// Limites
 		dayMin = otherPrefs.dayMin;
