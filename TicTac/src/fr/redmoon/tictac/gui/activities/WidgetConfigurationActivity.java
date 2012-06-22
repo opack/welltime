@@ -15,8 +15,6 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import fr.redmoon.tictac.R;
-import fr.redmoon.tictac.R.id;
-import fr.redmoon.tictac.R.layout;
 import fr.redmoon.tictac.gui.widgets.WidgetProvider;
 
 public class WidgetConfigurationActivity extends Activity {

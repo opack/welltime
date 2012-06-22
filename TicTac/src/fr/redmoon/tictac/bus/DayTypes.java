@@ -1,7 +1,7 @@
 package fr.redmoon.tictac.bus;
 
-import fr.redmoon.tictac.R;
 import android.content.Context;
+import fr.redmoon.tictac.R;
 
 public enum DayTypes {
 	

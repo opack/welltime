@@ -1,6 +1,5 @@
 package fr.redmoon.tictac.gui;
 
-import fr.redmoon.tictac.bus.bean.PreferencesBean;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
@@ -9,6 +8,7 @@ import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.PathShape;
 import android.graphics.drawable.shapes.Shape;
+import fr.redmoon.tictac.bus.bean.PreferencesBean;
 
 public class DayBiColorDrawableHelper {
 	

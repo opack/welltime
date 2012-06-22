@@ -1,9 +1,9 @@
 package fr.redmoon.tictac.gui.dialogs;
 
-import fr.redmoon.tictac.bus.TimeUtils;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import fr.redmoon.tictac.bus.TimeUtils;
 
 public class TimePickerDialogHelper {
 	public static Dialog createDialog(final Context context, final TimePickerDialog.OnTimeSetListener listener) {
