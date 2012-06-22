@@ -5,8 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import fr.redmoon.tictac.PreferencesActivity;
 import fr.redmoon.tictac.bus.bean.PreferencesBean;
+import fr.redmoon.tictac.gui.activities.PreferencesActivity;
 
 public class PreferencesUtils {
 	public static void updatePreferencesBean(final Context context) {

@@ -1,7 +1,7 @@
 package fr.redmoon.tictac.gui;
 
-import static fr.redmoon.tictac.ManageActivity.PERIOD_EXPORT_DIALOG;
-import static fr.redmoon.tictac.ManageActivity.PROGRESS_DIALOG;
+import static fr.redmoon.tictac.gui.activities.ManageActivity.PERIOD_EXPORT_DIALOG;
+import static fr.redmoon.tictac.gui.activities.ManageActivity.PROGRESS_DIALOG;
 
 import java.io.File;
 import java.util.ArrayList;

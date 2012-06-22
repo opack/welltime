@@ -3,11 +3,11 @@ package fr.redmoon.tictac.gui.dialogs.listeners;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.redmoon.tictac.TicTacActivity;
 import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.bus.FlexUtils;
 import fr.redmoon.tictac.bus.TimeUtils;
 import fr.redmoon.tictac.bus.export.CalendarAccess;
+import fr.redmoon.tictac.gui.activities.TicTacActivity;
 import fr.redmoon.tictac.gui.widgets.WidgetProvider;
 
 public class EditCheckingListener extends TimeSetListener {

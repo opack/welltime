@@ -1,7 +1,7 @@
 package fr.redmoon.tictac.gui.dialogs.listeners;
 
-import fr.redmoon.tictac.TicTacActivity;
 import fr.redmoon.tictac.db.DbAdapter;
+import fr.redmoon.tictac.gui.activities.TicTacActivity;
 
 public abstract class TicTacListener {
 	protected final TicTacActivity mActivity;

@@ -1,7 +1,7 @@
 package fr.redmoon.tictac.gui.dialogs.listeners;
 
-import fr.redmoon.tictac.TicTacActivity;
 import fr.redmoon.tictac.bus.FlexUtils;
+import fr.redmoon.tictac.gui.activities.TicTacActivity;
 
 public class EditFlexTimeListener extends TicTacListener {
 	private int mOldTime;

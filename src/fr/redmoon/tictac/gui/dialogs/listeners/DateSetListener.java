@@ -2,8 +2,8 @@ package fr.redmoon.tictac.gui.dialogs.listeners;
 
 import android.app.DatePickerDialog;
 import android.widget.DatePicker;
-import fr.redmoon.tictac.TicTacActivity;
 import fr.redmoon.tictac.bus.DateUtils;
+import fr.redmoon.tictac.gui.activities.TicTacActivity;
 
 public abstract class DateSetListener extends TicTacListener implements DatePickerDialog.OnDateSetListener {
 	

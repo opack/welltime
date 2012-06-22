@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="fr.redmoon.tictac"
-    android:versionCode="12"
+    android:versionCode="13"
     android:versionName="@string/app_version">
 
     <uses-sdk android:minSdkVersion="7" />
@@ -18,7 +18,7 @@
     	android:theme="@style/TicTacLightTheme.NoShadow" >
     	
         <activity
-        	android:name="MainActivity"
+        	android:name=".gui.activities.MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" >
             <intent-filter>
@@ -28,23 +28,23 @@
         </activity>
         	
         <activity
-        	android:name=".DayActivity"
+        	android:name=".gui.activities.DayActivity"
             android:screenOrientation="portrait" />
         	
         <activity
-        	android:name=".WeekActivity"
+        	android:name=".gui.activities.WeekActivity"
             android:screenOrientation="portrait" />
         
         <activity
-        	android:name=".MonthActivity"
+        	android:name=".gui.activities.MonthActivity"
             android:screenOrientation="portrait" />
         
         <activity
-        	android:name=".ManageActivity"
+        	android:name=".gui.activities.ManageActivity"
             android:screenOrientation="portrait" />
         		
         <activity
-        	android:name=".PreferencesActivity"
+        	android:name=".gui.activities.PreferencesActivity"
             android:screenOrientation="portrait" />
 
         <!-- activity

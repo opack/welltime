@@ -1,7 +1,7 @@
 package fr.redmoon.tictac.gui.dialogs.listeners;
 
-import fr.redmoon.tictac.TicTacActivity;
 import fr.redmoon.tictac.gui.ViewSynchronizer;
+import fr.redmoon.tictac.gui.activities.TicTacActivity;
 
 public class ShowDayListener extends DateSetListener {
     	public ShowDayListener(final TicTacActivity activity) {

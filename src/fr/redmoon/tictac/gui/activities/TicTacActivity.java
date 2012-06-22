@@ -1,4 +1,4 @@
-package fr.redmoon.tictac;
+package fr.redmoon.tictac.gui.activities;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -19,6 +19,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import fr.redmoon.tictac.R;
+import fr.redmoon.tictac.R.drawable;
+import fr.redmoon.tictac.R.id;
+import fr.redmoon.tictac.R.layout;
+import fr.redmoon.tictac.R.string;
 import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.bus.FlexUtils;
 import fr.redmoon.tictac.bus.TimeUtils;

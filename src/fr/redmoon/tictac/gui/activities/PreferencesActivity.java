@@ -1,10 +1,12 @@
-package fr.redmoon.tictac;
+package fr.redmoon.tictac.gui.activities;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
+import fr.redmoon.tictac.R;
+import fr.redmoon.tictac.R.xml;
 import fr.redmoon.tictac.bus.PreferencesUtils;
 
 public class PreferencesActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {

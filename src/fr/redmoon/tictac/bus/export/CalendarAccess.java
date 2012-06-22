@@ -10,10 +10,10 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.widget.Toast;
-import fr.redmoon.tictac.TicTacActivity;
-import fr.redmoon.tictac.TicTacActivity.OnDayDeletionListener;
 import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.bus.TimeUtils;
+import fr.redmoon.tictac.gui.activities.TicTacActivity;
+import fr.redmoon.tictac.gui.activities.TicTacActivity.OnDayDeletionListener;
 
 public class CalendarAccess implements OnDayDeletionListener {
 	public static final Uri EVENTS_CONTENT_URI = Uri.parse("content://com.android.calendar/events");

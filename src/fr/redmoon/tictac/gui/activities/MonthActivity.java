@@ -1,4 +1,4 @@
-package fr.redmoon.tictac;
+package fr.redmoon.tictac.gui.activities;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,10 +16,14 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
-import fr.redmoon.tictac.TicTacActivity.OnDayDeletionListener;
+import fr.redmoon.tictac.R;
+import fr.redmoon.tictac.R.id;
+import fr.redmoon.tictac.R.layout;
+import fr.redmoon.tictac.R.menu;
 import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
 import fr.redmoon.tictac.gui.ViewSynchronizer;
+import fr.redmoon.tictac.gui.activities.TicTacActivity.OnDayDeletionListener;
 import fr.redmoon.tictac.gui.dialogs.AbsDialogDelegate;
 import fr.redmoon.tictac.gui.dialogs.MonthDialogDelegate;
 import fr.redmoon.tictac.gui.listadapter.CalendarAdapter;

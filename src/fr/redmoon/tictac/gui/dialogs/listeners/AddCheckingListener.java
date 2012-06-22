@@ -5,12 +5,12 @@ import java.util.List;
 
 import android.widget.Toast;
 import fr.redmoon.tictac.R;
-import fr.redmoon.tictac.TicTacActivity;
 import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.bus.DayTypes;
 import fr.redmoon.tictac.bus.FlexUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
 import fr.redmoon.tictac.bus.export.CalendarAccess;
+import fr.redmoon.tictac.gui.activities.TicTacActivity;
 import fr.redmoon.tictac.gui.widgets.WidgetProvider;
 
 public class AddCheckingListener extends TimeSetListener {

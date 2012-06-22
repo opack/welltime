@@ -1,4 +1,4 @@
-package fr.redmoon.tictac;
+package fr.redmoon.tictac.gui.activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -11,6 +11,11 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TextView;
+import fr.redmoon.tictac.R;
+import fr.redmoon.tictac.R.drawable;
+import fr.redmoon.tictac.R.id;
+import fr.redmoon.tictac.R.layout;
+import fr.redmoon.tictac.R.string;
 import fr.redmoon.tictac.bus.PreferencesUtils;
 import fr.redmoon.tictac.bus.bean.PreferencesBean;
 import fr.redmoon.tictac.bus.export.CalendarAccess;
