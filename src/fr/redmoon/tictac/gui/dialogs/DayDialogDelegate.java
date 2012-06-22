@@ -13,10 +13,10 @@ import fr.redmoon.tictac.R;
 import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.gui.activities.TicTacActivity;
 import fr.redmoon.tictac.gui.dialogs.listeners.AddCheckingListener;
-import fr.redmoon.tictac.gui.dialogs.listeners.EditNoteListener;
-import fr.redmoon.tictac.gui.dialogs.listeners.ShowDayListener;
 import fr.redmoon.tictac.gui.dialogs.listeners.EditCheckingListener;
 import fr.redmoon.tictac.gui.dialogs.listeners.EditExtraListener;
+import fr.redmoon.tictac.gui.dialogs.listeners.EditNoteListener;
+import fr.redmoon.tictac.gui.dialogs.listeners.ShowDayListener;
 
 public class DayDialogDelegate extends AbsDialogDelegate {
 	/**

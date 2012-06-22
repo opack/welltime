@@ -1,11 +1,12 @@
 package fr.redmoon.tictac.bus.export;
 
-import android.util.Log;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import android.util.Log;
 
 public class ZipDecompress {
 	private String _zipFile;
