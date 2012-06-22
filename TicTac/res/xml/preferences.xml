@@ -11,7 +11,7 @@
 		<intent
 		    android:action="android.intent.action.VIEW"
 	        android:targetPackage="fr.redmoon.tictac"
-	        android:targetClass="fr.redmoon.tictac.PreferencesActivity"
+	        android:targetClass="fr.redmoon.tictac.gui.activities.PreferencesActivity"
 	        android:data="preferences://limits" />
 	</PreferenceScreen>
 	
@@ -22,7 +22,7 @@
 	<intent
 		    android:action="android.intent.action.VIEW"
 	        android:targetPackage="fr.redmoon.tictac"
-	        android:targetClass="fr.redmoon.tictac.PreferencesActivity"
+	        android:targetClass="fr.redmoon.tictac.gui.activities.PreferencesActivity"
 	        android:data="preferences://days" />
 	</PreferenceScreen>
 		

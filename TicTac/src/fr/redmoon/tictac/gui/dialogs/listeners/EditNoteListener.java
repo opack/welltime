@@ -1,7 +1,7 @@
 package fr.redmoon.tictac.gui.dialogs.listeners;
 
 import android.widget.EditText;
-import fr.redmoon.tictac.TicTacActivity;
+import fr.redmoon.tictac.gui.activities.TicTacActivity;
 
 public class EditNoteListener extends TicTacListener {
 	

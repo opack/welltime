@@ -3,8 +3,8 @@ package fr.redmoon.tictac.gui.dialogs;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.os.Bundle;
-import fr.redmoon.tictac.TicTacActivity;
 import fr.redmoon.tictac.bus.DateUtils;
+import fr.redmoon.tictac.gui.activities.TicTacActivity;
 import fr.redmoon.tictac.gui.dialogs.listeners.AddDayListener;
 import fr.redmoon.tictac.gui.dialogs.listeners.ShowDayListener;
 

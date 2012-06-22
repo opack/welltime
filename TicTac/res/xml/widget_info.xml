@@ -4,4 +4,4 @@
   	android:minWidth="72dp"
 	android:minHeight="72dp"
 	android:initialLayout="@layout/widget" />
-	<!-- android:configure="fr.redmoon.tictac.WidgetConfigurationActivity" --> 
+	<!-- android:configure="fr.redmoon.tictac.gui.activities.WidgetConfigurationActivity" --> 

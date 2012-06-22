@@ -2,7 +2,7 @@ package fr.redmoon.tictac.gui.dialogs;
 
 import android.app.Dialog;
 import android.os.Bundle;
-import fr.redmoon.tictac.TicTacActivity;
+import fr.redmoon.tictac.gui.activities.TicTacActivity;
 
 public abstract class AbsDialogDelegate {
 	protected final TicTacActivity mActivity;

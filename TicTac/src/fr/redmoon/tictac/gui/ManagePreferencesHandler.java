@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import fr.redmoon.tictac.PreferencesActivity;
+import fr.redmoon.tictac.gui.activities.PreferencesActivity;
 
 public class ManagePreferencesHandler implements OnItemClickListener {
 	private final static int POS_SHOW_PREFS = 0;

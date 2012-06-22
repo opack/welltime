@@ -1,4 +1,4 @@
-package fr.redmoon.tictac;
+package fr.redmoon.tictac.gui.activities;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -16,7 +16,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import fr.redmoon.tictac.TicTacActivity.OnDayDeletionListener;
+import fr.redmoon.tictac.R;
+import fr.redmoon.tictac.R.id;
+import fr.redmoon.tictac.R.layout;
+import fr.redmoon.tictac.R.menu;
+import fr.redmoon.tictac.R.string;
 import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.bus.FlexUtils;
 import fr.redmoon.tictac.bus.TimeUtils;
@@ -24,6 +28,7 @@ import fr.redmoon.tictac.bus.bean.DayBean;
 import fr.redmoon.tictac.bus.bean.PreferencesBean;
 import fr.redmoon.tictac.bus.bean.WeekBean;
 import fr.redmoon.tictac.gui.ViewSynchronizer;
+import fr.redmoon.tictac.gui.activities.TicTacActivity.OnDayDeletionListener;
 import fr.redmoon.tictac.gui.dialogs.DialogArgs;
 import fr.redmoon.tictac.gui.dialogs.DialogTypes;
 import fr.redmoon.tictac.gui.dialogs.WeekDialogDelegate;

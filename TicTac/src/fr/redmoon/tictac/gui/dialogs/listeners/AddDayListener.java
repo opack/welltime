@@ -1,9 +1,9 @@
 package fr.redmoon.tictac.gui.dialogs.listeners;
 
-import fr.redmoon.tictac.TicTacActivity;
 import fr.redmoon.tictac.bus.DayTypes;
 import fr.redmoon.tictac.bus.FlexUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
+import fr.redmoon.tictac.gui.activities.TicTacActivity;
 
 public class AddDayListener extends DateSetListener {
     	public AddDayListener(final TicTacActivity activity) {

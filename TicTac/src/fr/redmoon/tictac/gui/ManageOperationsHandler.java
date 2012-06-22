@@ -1,6 +1,6 @@
 package fr.redmoon.tictac.gui;
 
-import static fr.redmoon.tictac.ManageActivity.PERIOD_CHECKIN_DIALOG;
+import static fr.redmoon.tictac.gui.activities.ManageActivity.PERIOD_CHECKIN_DIALOG;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;

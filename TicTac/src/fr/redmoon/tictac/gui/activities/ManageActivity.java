@@ -1,4 +1,4 @@
-package fr.redmoon.tictac;
+package fr.redmoon.tictac.gui.activities;
 
 import android.app.Dialog;
 import android.content.Intent;
@@ -6,6 +6,10 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
+import fr.redmoon.tictac.R;
+import fr.redmoon.tictac.R.array;
+import fr.redmoon.tictac.R.id;
+import fr.redmoon.tictac.R.layout;
 import fr.redmoon.tictac.db.DbAdapter;
 import fr.redmoon.tictac.gui.ManageImportExportHandler;
 import fr.redmoon.tictac.gui.ManageOperationsHandler;
