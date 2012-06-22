@@ -8,6 +8,9 @@ public enum PreferenceKeys {
 // Décalage entre l'horloge de la pointeuse et celle du téléphone
 	clockShift("clock_shift"),
 	
+// Activer la synchronisation avec le calendrier
+	syncCalendar("sync_calendar"),
+	
 // Limites
 	// Temps de travail quotidien en minutes
 	dayMin("day_min"),
