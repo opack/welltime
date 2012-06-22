@@ -12,6 +12,7 @@ import fr.redmoon.tictac.bus.FlexUtils;
 import fr.redmoon.tictac.bus.PreferencesUtils;
 import fr.redmoon.tictac.bus.TimeUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
+import fr.redmoon.tictac.bus.export.CalendarAccess;
 import fr.redmoon.tictac.db.DbAdapter;
 import fr.redmoon.tictac.gui.widgets.WidgetProvider;
 
@@ -78,6 +79,9 @@ public class AddCheckingService extends Service {
 	    	// Mise à jour de l'HV.
 	    	final FlexUtils flexUtils = new FlexUtils(db);
 	    	flexUtils.updateFlex(day.date);
+	    	
+	    	// Ajout du pointage dans le calendrier
+			CalendarAccess.getInstance().createWorkingEvents(day.date, day.checkings);
 	    	
 	    	// Incrément du nombre de jour si l'ajout en base s'est correctement déroulé.
 	    	// Quelle que soit l'opération effectuée, isValid a été mis à jour.
