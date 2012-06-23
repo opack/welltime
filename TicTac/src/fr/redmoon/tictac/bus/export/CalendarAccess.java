@@ -186,9 +186,13 @@ public class CalendarAccess implements OnDayDeletionListener {
 		// Création des heures de l'évènement en millisecondes
 		Calendar beginTime = Calendar.getInstance();
 		beginTime.set(year, month, dayOfMonth, 0, 1);
+		// Pour une raison obscure et inconnue l'ajout d'un évènement allDay=1
+		// décale de -1 jour. On ajoute donc un jour ici.
+		beginTime.add(Calendar.DAY_OF_YEAR, 1);
 		final long startMillis = beginTime.getTimeInMillis();
 		Calendar endTime = Calendar.getInstance();
 		endTime.set(year, month, dayOfMonth, 0, 2);
+		endTime.add(Calendar.DAY_OF_YEAR, 1);
 		final long endMillis = endTime.getTimeInMillis();
 
 		// Création de l'évènement dans le calendrier
@@ -222,8 +226,8 @@ public class CalendarAccess implements OnDayDeletionListener {
 		
 		mActivity.getContentResolver().delete(
 			EVENTS_CONTENT_URI,
-			"dtstart >= ? AND dtend <= ? AND title = ?",
-			new String[]{ String.valueOf(dayStart), String.valueOf(dayEnd), WORKEVENT_TITLE });
+			"calendar_id = ? AND dtstart >= ? AND dtend <= ? AND title = ?",
+			new String[]{ String.valueOf(mCalID), String.valueOf(dayStart), String.valueOf(dayEnd), WORKEVENT_TITLE });
 		
 		// Run query
 //		Cursor cur = null;
@@ -268,8 +272,8 @@ public class CalendarAccess implements OnDayDeletionListener {
 		
 		mActivity.getContentResolver().delete(
 			EVENTS_CONTENT_URI,
-			"dtstart >= ? AND dtend <= ? AND allDay = ?",
-			new String[]{ String.valueOf(dayStart), String.valueOf(dayEnd), "1" });
+			"calendar_id = ? AND dtstart >= ? AND dtend <= ? AND allDay = ?",
+			new String[]{ String.valueOf(mCalID), String.valueOf(dayStart), String.valueOf(dayEnd), "1" });
 	}
 	
 	public void deleteEvents(final int year, final int month, final int dayOfMonth) {
@@ -287,8 +291,8 @@ public class CalendarAccess implements OnDayDeletionListener {
 		
 		mActivity.getContentResolver().delete(
 			EVENTS_CONTENT_URI,
-			"dtstart = ? AND dtend = ?",
-			new String[]{ String.valueOf(dayStart), String.valueOf(dayEnd) });
+			"calendar_id = ? AND dtstart >= ? AND dtend <= ?",
+			new String[]{ String.valueOf(mCalID), String.valueOf(dayStart), String.valueOf(dayEnd) });
 	}
 	
 	@Override
