@@ -13,6 +13,7 @@ import android.widget.Toast;
 import fr.redmoon.tictac.R;
 import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.bus.TimeUtils;
+import fr.redmoon.tictac.bus.bean.DayBean;
 import fr.redmoon.tictac.bus.bean.PreferencesBean;
 import fr.redmoon.tictac.gui.activities.TicTacActivity;
 import fr.redmoon.tictac.gui.activities.TicTacActivity.OnDayDeletionListener;
@@ -94,6 +95,55 @@ public class CalendarAccess implements OnDayDeletionListener {
 		}
 	}
 
+	public void createEvents(final DayBean day) {
+		if (!PreferencesBean.instance.syncCalendar || mActivity == null || mCalID == -1) {
+			return;
+		}
+		
+		// Extraction des infos de la date
+		final int year = DateUtils.extractYear(day.date);
+		final int month = DateUtils.extractMonth(day.date);
+		final int dayOfMonth = DateUtils.extractDayOfMonth(day.date);
+		
+		// Création des plages de travail
+		createWorkEvents(year, month, dayOfMonth, day.checkings);
+		
+		// Création du type de jour
+		createDayTypeEvent(year, month, dayOfMonth, day.typeMorning, day.typeAfternoon);
+	}
+	
+	public void createWorkEvents(final long date, final List<Integer> checkings) {
+		if (!PreferencesBean.instance.syncCalendar || mActivity == null || mCalID == -1) {
+			return;
+		}
+		
+		// Extraction des infos de la date
+		final int year = DateUtils.extractYear(date);
+		final int month = DateUtils.extractMonth(date);
+		final int dayOfMonth = DateUtils.extractDayOfMonth(date);
+		
+		createWorkEvents(year, month, dayOfMonth, checkings);
+	}
+	
+	private void createWorkEvents(final int year, final int month, final int dayOfMonth, final List<Integer> checkings) {
+		// Suppression de tous les évènements de ce type de la journée
+		// TODO Pour être propre il faudrait enregistrer l'ID des évènements
+		// créés pour tel et tel pointage, pour mettre à jour cet évènement
+		// en cas de modification des pointages associés.
+		deleteWorkEvents(year, month, dayOfMonth);
+		
+		// Ajout des pointages par deux dans un évènement
+		Integer in = null;
+		for (Integer checking : checkings) {
+			if (in == null) {
+				in = checking;
+			} else {
+				addWorkEvent(year, month, dayOfMonth, in, checking);
+				in = null;
+			}
+		}
+	}
+	
 	private void addWorkEvent(final int year, final int month, final int dayOfMonth, final int inTime, final int outTime) {
 		// Extraction des heures et minutes des pointages
 		final int inHour = TimeUtils.extractHour(inTime);
@@ -129,34 +179,6 @@ public class CalendarAccess implements OnDayDeletionListener {
 		//
 	}
 	
-	public void createWorkEvents(final long date, final List<Integer> checkings) {
-		if (!PreferencesBean.instance.syncCalendar || mActivity == null || mCalID == -1) {
-			return;
-		}
-		
-		// Extraction des infos de la date
-		final int year = DateUtils.extractYear(date);
-		final int month = DateUtils.extractMonth(date);
-		final int dayOfMonth = DateUtils.extractDayOfMonth(date);
-		
-		// Suppression de tous les évènements de ce type de la journée
-		// TODO Pour être propre il faudrait enregistrer l'ID des évènements
-		// créés pour tel et tel pointage, pour mettre à jour cet évènement
-		// en cas de modification des pointages associés.
-		deleteWorkEvents(year, month, dayOfMonth);
-		
-		// Ajout des pointages par deux dans un évènement
-		Integer in = null;
-		for (Integer checking : checkings) {
-			if (in == null) {
-				in = checking;
-			} else {
-				addWorkEvent(year, month, dayOfMonth, in, checking);
-				in = null;
-			}
-		}
-	}
-	
 	public void createDayTypeEvent(final long date, final int typeMorning, final int typeAfternoon) {
 		if (!PreferencesBean.instance.syncCalendar || mActivity == null || mCalID == -1) {
 			return;
@@ -167,6 +189,10 @@ public class CalendarAccess implements OnDayDeletionListener {
 		final int month = DateUtils.extractMonth(date);
 		final int dayOfMonth = DateUtils.extractDayOfMonth(date);
 		
+		createDayTypeEvent(year, month, dayOfMonth, typeMorning, typeAfternoon);
+	}
+	
+	private void createDayTypeEvent(final int year, final int month, final int dayOfMonth, final int typeMorning, final int typeAfternoon) {
 		// Suppression de tous les évènements de ce type de la journée
 		// TODO Pour être propre il faudrait enregistrer l'ID des évènements
 		// créés pour tel et tel pointage, pour mettre à jour cet évènement
@@ -265,12 +291,17 @@ public class CalendarAccess implements OnDayDeletionListener {
 		// Création des heures de l'évènement en millisecondes
 		Calendar beginTime = Calendar.getInstance();
 		beginTime.set(year, month, dayOfMonth, 0, 0);
+		// Pour une raison obscure et inconnue l'ajout d'un évènement allDay=1
+		// décale de -1 jour. On retire donc un jour ici pour correspondre au
+		// jour ajouter lors de addDayTypeEvent.
+		//beginTime.add(Calendar.DAY_OF_YEAR, 1);
 		final long dayStart = beginTime.getTimeInMillis();
 		Calendar endTime = Calendar.getInstance();
 		endTime.set(year, month, dayOfMonth, 23, 59);
+		//endTime.add(Calendar.DAY_OF_YEAR, 1);
 		final long dayEnd = endTime.getTimeInMillis();
 		
-		mActivity.getContentResolver().delete(
+		int nbDel = mActivity.getContentResolver().delete(
 			EVENTS_CONTENT_URI,
 			"calendar_id = ? AND dtstart >= ? AND dtend <= ? AND allDay = ?",
 			new String[]{ String.valueOf(mCalID), String.valueOf(dayStart), String.valueOf(dayEnd), "1" });
