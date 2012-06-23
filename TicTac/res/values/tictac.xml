@@ -14,7 +14,7 @@
     <!-- Menus communs -->
     <string name="menu_show_day">Aller au&#8230;</string>
     <string name="menu_preferences">Préférences</string>
-    <string name="menu_day_show_details">Afficher les détails</string>    
+    <string name="menu_day_show_details">Détails</string>    
     
     <!-- Libellés pour les boîtes de dialogue -->
     <string name="dlg_title_edit_day_type">Choisissez le nouveau type de jour :</string>

@@ -87,12 +87,10 @@ public class CalendarAdapter extends BaseAdapter {
         	adaptDayView(row - 1, col - 1, v);
         }
         
-        // Ajout/retrait de ce jour comme proposant un menu contextuel suivant qu'il est dans
-        // un entête ou non, ou dans le WE
+        // Si on est en présence d'un entête de ligne ou de colonne, alors il n'y a aucune date
+        // associée.
         if (row == 0 || col == 0) {
-            mActivity.unregisterForContextMenu(v);
-        } else {
-            mActivity.registerForContextMenu(v);
+        	v.setTag(null);
         }
         return v;
     }

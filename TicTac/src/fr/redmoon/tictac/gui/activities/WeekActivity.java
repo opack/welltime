@@ -8,12 +8,12 @@ import java.util.Set;
 
 import android.os.Bundle;
 import android.text.format.Time;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import fr.redmoon.tictac.R;
@@ -30,11 +30,18 @@ import fr.redmoon.tictac.gui.dialogs.DialogTypes;
 import fr.redmoon.tictac.gui.dialogs.WeekDialogDelegate;
 import fr.redmoon.tictac.gui.listadapter.WeekAdapter;
 import fr.redmoon.tictac.gui.listadapter.WeekAdapterEntry;
+import fr.redmoon.tictac.gui.quickactions.ActionItem;
+import fr.redmoon.tictac.gui.quickactions.QuickAction;
 
 public class WeekActivity extends TicTacActivity implements OnDayDeletionListener {
 	public static final int PAGE_DAYS = 0;
 	public static final int PAGE_DETAILS = 1;
 	
+	// Quick Action IDs
+	private static final int QAID_SHOW_CHECKINGS = 0;
+	private static final int QAID_SHOW_DETAILS = 1;
+	private static final int QAID_DELETE_DAY = 2;
+
 	private List<DayBean> mWeekDays;
 	private WeekBean mWeekData;
 	private int mSelectedDay;
@@ -73,6 +80,57 @@ public class WeekActivity extends TicTacActivity implements OnDayDeletionListene
         mLstDays = (ListView)pageDays.findViewById(R.id.list);
         mLstDays.setAdapter(adapter);
         
+        // Création des QuickActions
+    	ActionItem showCheckingsItem = new ActionItem(QAID_SHOW_CHECKINGS, getString(R.string.menu_day_show_checkings), getResources().getDrawable(android.R.drawable.ic_menu_recent_history));
+		ActionItem showDetailsItem = new ActionItem(QAID_SHOW_DETAILS, getString(R.string.menu_day_show_details), getResources().getDrawable(android.R.drawable.ic_menu_info_details));
+		ActionItem deleteDayItem = new ActionItem(QAID_DELETE_DAY, getString(R.string.menu_day_delete), getResources().getDrawable(android.R.drawable.ic_menu_delete));
+		
+		final QuickAction mQuickAction 	= new QuickAction(this);
+		mQuickAction.addActionItem(showCheckingsItem);
+		mQuickAction.addActionItem(showDetailsItem);
+		mQuickAction.addActionItem(deleteDayItem);
+		
+		mQuickAction.setOnActionItemClickListener(new QuickAction.OnActionItemClickListener() {
+			@Override
+			public void onItemClick(QuickAction quickAction, int pos, int actionId) {
+				final DayBean day = mWeekDays.get(mSelectedDay);
+				switch (actionId) {
+				case QAID_SHOW_CHECKINGS:
+					// Sauvegarde du jour affiché pour synchroniser les vues
+					ViewSynchronizer.getInstance().setCurrentDay(day.date);
+					
+					// Modification de l'onglet courant
+					switchTab(MainActivity.TAB_DAY_POS, day.date, DayActivity.PAGE_CHECKINGS);
+					break;
+				case QAID_SHOW_DETAILS:
+					// Sauvegarde du jour affiché pour synchroniser les vues
+					ViewSynchronizer.getInstance().setCurrentDay(day.date);
+					
+					// Modification de l'onglet courant
+					switchTab(MainActivity.TAB_DAY_POS, day.date, DayActivity.PAGE_DETAILS);
+					break;
+				case QAID_DELETE_DAY:
+					deleteDay(day.date);
+					break;
+				}
+			}
+		});
+		
+		mLstDays.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				// Mise à jour du jour sélectionné et du menu (en fonction de l'existence du jour en base)
+				mSelectedDay = (Integer)view.getTag();
+				
+				// Si le jour n'existe pas en base, on masque certaines options
+				final DayBean day = mWeekDays.get(mSelectedDay);
+				final boolean isDayExisting = mDb.isDayExisting(day.date);
+				mQuickAction.setActionVisible(QAID_SHOW_CHECKINGS, isDayExisting);
+				mQuickAction.setActionVisible(QAID_DELETE_DAY, isDayExisting);
+				
+				mQuickAction.show(view);
+			}
+		});
+        
         // Affichage du jour courant
         mMonday = mToday; 	// On passe la date et non pas juste le bean pour
         					// s'assurer qu'une lecture des données en base
@@ -104,48 +162,6 @@ public class WeekActivity extends TicTacActivity implements OnDayDeletionListene
 		return super.onMenuItemSelected(featureId, item);
 	}
     
-    @Override
-	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-		super.onCreateContextMenu(menu, v, menuInfo);
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.week_contextual, menu);
-		
-		// Mise à jour du jour sélectionné et du menu (en fonction de l'existence du jour en base)
-		mSelectedDay = (Integer)v.getTag();
-		
-		// Si le jour n'existe pas en base, on masque certaines options
-		final DayBean day = mWeekDays.get(mSelectedDay);
-		if (!mDb.isDayExisting(day.date)) {
-			menu.findItem(R.id.menu_day_show_checkings).setVisible(false);
-			menu.findItem(R.id.menu_day_delete).setVisible(false);
-		}
-	}
-	
-	@Override
-	public boolean onContextItemSelected(MenuItem item) {
-		final DayBean day = mWeekDays.get(mSelectedDay);
-		switch (item.getItemId()) {
-		case R.id.menu_day_show_checkings:
-			// Sauvegarde du jour affiché pour synchroniser les vues
-			ViewSynchronizer.getInstance().setCurrentDay(day.date);
-			
-			// Modification de l'onglet courant
-			switchTab(MainActivity.TAB_DAY_POS, day.date, DayActivity.PAGE_CHECKINGS);
-			return true;
-		case R.id.menu_day_show_details:
-			// Sauvegarde du jour affiché pour synchroniser les vues
-			ViewSynchronizer.getInstance().setCurrentDay(day.date);
-			
-			// Modification de l'onglet courant
-			switchTab(MainActivity.TAB_DAY_POS, day.date, DayActivity.PAGE_DETAILS);
-			return true;
-		case R.id.menu_day_delete:
-			deleteDay(day.date);
-			return true;
-		}
-		return super.onContextItemSelected(item);
-	}
-	
 	public void showPrevious(final View btn) {
 		// On se place sur le lundi de la semaine, et on recule d'un jour
     	mWorkCal.set(DateUtils.extractYear(mMonday), DateUtils.extractMonth(mMonday), DateUtils.extractDayOfMonth(mMonday));

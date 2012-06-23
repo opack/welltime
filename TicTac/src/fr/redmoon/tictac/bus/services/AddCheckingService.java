@@ -75,13 +75,16 @@ public class AddCheckingService extends Service {
 	    		day.typeAfternoon = DayTypes.normal.ordinal();
 	    		
 	    		db.createDay(day);
+	    		
+	    		// Ajout de l'évènement dans le calendrier
+	    		CalendarAccess.getInstance().createDayTypeEvent(day.date, day.typeMorning, day.typeAfternoon);
 	    	}
 	    	// Mise à jour de l'HV.
 	    	final FlexUtils flexUtils = new FlexUtils(db);
 	    	flexUtils.updateFlex(day.date);
 	    	
 	    	// Ajout du pointage dans le calendrier
-			CalendarAccess.getInstance().createWorkingEvents(day.date, day.checkings);
+			CalendarAccess.getInstance().createWorkEvents(day.date, day.checkings);
 	    	
 	    	// Incrément du nombre de jour si l'ajout en base s'est correctement déroulé.
 	    	// Quelle que soit l'opération effectuée, isValid a été mis à jour.

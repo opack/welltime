@@ -13,8 +13,8 @@
     <string name="menu_day_add_checking">Ajouter un pointage</string>
     
     <!-- Menu contextuel -->
-	<string name="menu_checking_edit">Modifier le pointage</string>
-	<string name="menu_checking_delete">Supprimer le pointage</string>
+	<string name="menu_checking_edit">Modifier</string>
+	<string name="menu_checking_delete">Supprimer</string>
 	
 	<!-- Messages d'erreur -->
 	<string name="error_checking_already_exists">Le pointage n\'a pas été ajouté car il existe déjà.</string>

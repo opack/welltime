@@ -35,9 +35,6 @@ public class WeekAdapter extends ArrayAdapter<WeekAdapterEntry> {
 			
 			// On conserve la position du jour dans la liste. Pratique pour mapper avec la liste de jours ;)
 			v.setTag(position);
-			
-			// Activation du menu contextuel
-			activity.registerForContextMenu(v);
 		}
 		final WeekAdapterEntry infos = items.get(position);
 		if (infos != null) {

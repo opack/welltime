@@ -49,7 +49,7 @@ public class EditCheckingListener extends TimeSetListener {
 				// Ajout du pointage dans le calendrier
 				final List<Integer> checkings = new ArrayList<Integer>();
 				mDb.fetchCheckings(mDate, checkings);
-				CalendarAccess.getInstance().createWorkingEvents(mDate, checkings);
+				CalendarAccess.getInstance().createWorkEvents(mDate, checkings);
 				
 				// Mise à jour des widgets
 				if (mDate == DateUtils.getCurrentDayId()) {
