@@ -3,6 +3,8 @@ package fr.redmoon.tictac.gui.dialogs.listeners;
 import fr.redmoon.tictac.bus.DayTypes;
 import fr.redmoon.tictac.bus.FlexUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
+import fr.redmoon.tictac.bus.bean.PreferencesBean;
+import fr.redmoon.tictac.bus.export.CalendarAccess;
 import fr.redmoon.tictac.gui.activities.TicTacActivity;
 
 public class AddDayListener extends DateSetListener {
@@ -26,6 +28,11 @@ public class AddDayListener extends DateSetListener {
 				// Mise à jour de l'HV.
 		    	final FlexUtils flexUtils = new FlexUtils(mDb);
 		    	flexUtils.updateFlex(day.date);
+		    	
+		    	// Ajout des évènements dans le calendrier
+				if (dbUpdated && PreferencesBean.instance.syncCalendar) {
+					CalendarAccess.getInstance().createDayTypeEvent(day.date, day.typeMorning, day.typeAfternoon);
+				}
 			} else {
 				// Si le jour existe déjà, tant pis : on l'affiche.
 				dbUpdated = true;

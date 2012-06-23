@@ -13,6 +13,8 @@ import fr.redmoon.tictac.R;
 import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.bus.FlexUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
+import fr.redmoon.tictac.bus.bean.PreferencesBean;
+import fr.redmoon.tictac.bus.export.CalendarAccess;
 import fr.redmoon.tictac.db.DbAdapter;
 
 public class PeriodCheckinListener extends AbsPeriodChooserListener {
@@ -62,6 +64,11 @@ public class PeriodCheckinListener extends AbsPeriodChooserListener {
 					mDb.createDay(dayData);
 					if (dayData.isValid) {
 						nbDaysCreated++;
+						
+						// Ajout des évènements dans le calendrier
+						if (PreferencesBean.instance.syncCalendar) {
+							CalendarAccess.getInstance().createDayTypeEvent(dayData.date, dayData.typeMorning, dayData.typeAfternoon);
+						}
 					}
 				}
 			}

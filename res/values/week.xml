@@ -12,8 +12,8 @@
     <string name="menu_week_add_day">Ajouter un jour</string>
     
     <!-- Menu contextuel -->
-    <string name="menu_day_show_checkings">Afficher les pointages</string>
-	<string name="menu_day_delete">Supprimer le jour</string>
+    <string name="menu_day_show_checkings">Pointages</string>
+	<string name="menu_day_delete">Supprimer</string>
 	
 	<!-- Divers -->
 	<string name="dlg_msg_confirm_day_deletion">Voulez-vous vraiment supprimer le jour du %1$s ?</string>

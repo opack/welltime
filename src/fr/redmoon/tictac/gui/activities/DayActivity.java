@@ -10,12 +10,11 @@ import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
@@ -39,11 +38,17 @@ import fr.redmoon.tictac.gui.ViewSynchronizer;
 import fr.redmoon.tictac.gui.activities.TicTacActivity.OnDayDeletionListener;
 import fr.redmoon.tictac.gui.dialogs.DayDialogDelegate;
 import fr.redmoon.tictac.gui.listadapter.DayAdapter;
+import fr.redmoon.tictac.gui.quickactions.ActionItem;
+import fr.redmoon.tictac.gui.quickactions.QuickAction;
 import fr.redmoon.tictac.gui.widgets.WidgetProvider;
 
 public class DayActivity extends TicTacActivity implements OnDayDeletionListener {
 	public static final int PAGE_CHECKINGS = 0;
 	public static final int PAGE_DETAILS = 1;
+	
+	// Quick Action IDs
+	private static final int QAID_EDIT_CHECKING = 0;
+	private static final int QAID_DELETE_CHECKING = 1;
 
 	private int mCheckingToEdit;
 	
@@ -99,12 +104,43 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
 	    });
         
         // Création de l'adapteur affichant les pointages. Pour l'instant, aucun pointage.
-        final ListAdapter adapter = new DayAdapter(this, R.layout.itm_day_checking, mCheckingsArray);
+	    final QuickAction mQuickAction 	= new QuickAction(this);
+	    final OnClickListener checkingClickListener = new OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				// Mise à jour du jour sélectionné et du menu (en fonction de l'existence du jour en base)
+				mCheckingToEdit = (Integer)view.getTag();
+				
+				mQuickAction.show(view);
+			}
+		};
+        final ListAdapter adapter = new DayAdapter(this, R.layout.itm_day_checking, mCheckingsArray, checkingClickListener);
         mLstCheckings = (ListView)pageCheckings.findViewById(R.id.list);
         mLstCheckings.setAdapter(adapter);
         final View emptyView = pageCheckings.findViewById(R.id.no_checkings);
     	mLstCheckings.setEmptyView(emptyView);
     	
+    	// Création des QuickActions
+    	ActionItem editCheckingItem = new ActionItem(QAID_EDIT_CHECKING, getString(R.string.menu_checking_edit), getResources().getDrawable(android.R.drawable.ic_menu_edit));
+		ActionItem deleteCheckingItem = new ActionItem(QAID_DELETE_CHECKING, getString(R.string.menu_checking_delete), getResources().getDrawable(android.R.drawable.ic_menu_delete));
+		
+		mQuickAction.addActionItem(editCheckingItem);
+		mQuickAction.addActionItem(deleteCheckingItem);
+		
+		mQuickAction.setOnActionItemClickListener(new QuickAction.OnActionItemClickListener() {
+			@Override
+			public void onItemClick(QuickAction quickAction, int pos, int actionId) {
+				switch (actionId) {
+				case QAID_EDIT_CHECKING:
+			    	promptEditChecking(mWorkDayBean.date, mCheckingToEdit);
+					break;
+				case QAID_DELETE_CHECKING:
+					deleteChecking(mWorkDayBean.date, mCheckingToEdit);
+					break;
+				}
+			}
+		});
+		
         // Affichage du jour courant
         mWorkDayBean.date = mToday;
         
@@ -134,29 +170,6 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
 		return super.onMenuItemSelected(featureId, item);
 	}
     
-    @Override
-	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-		super.onCreateContextMenu(menu, v, menuInfo);
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.day_contextual, menu);
-		
-		// Mise à jour du jour sélectionné et du menu (en fonction de l'existence du jour en base)
-		mCheckingToEdit = (Integer)v.getTag();
-	}
-	
-	@Override
-	public boolean onContextItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case R.id.menu_checking_edit:
-	    	promptEditChecking(mWorkDayBean.date, mCheckingToEdit);
-			return true;
-		case R.id.menu_checking_delete:
-			deleteChecking(mWorkDayBean.date, mCheckingToEdit);
-			return true;
-		}
-		return super.onContextItemSelected(item);
-	}
-	
     /**
      * Ajoute un pointage à l'heure courante
      * @param btn Bouton qui a été cliqué.
@@ -193,8 +206,11 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
 		    	if (mWorkDayBean.isValid) {
 		    		populateView(mWorkDayBean);
 		    		
-		    		// Ajout du pointage dans le calendrier
-					CalendarAccess.getInstance().createWorkingEvents(mWorkDayBean.date, mWorkDayBean.checkings);
+		    		// Ajout des évènements dans le calendrier
+					if (PreferencesBean.instance.syncCalendar) {
+						CalendarAccess.getInstance().createWorkEvents(mWorkDayBean.date, mWorkDayBean.checkings);
+						CalendarAccess.getInstance().createDayTypeEvent(mWorkDayBean.date, mWorkDayBean.typeMorning, mWorkDayBean.typeAfternoon);
+					}
 		    		
 		    		// Mise à jour des widgets
 					WidgetProvider.updateClockinImage(
@@ -417,7 +433,7 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
         		populateView(date);
         		
         		// Suppression du pointage dans le calendrier
-				CalendarAccess.getInstance().createWorkingEvents(workBean.date, workBean.checkings);
+				CalendarAccess.getInstance().createWorkEvents(workBean.date, workBean.checkings);
             	
             	// Si on a supprimé un pointage d'aujourd'hui, on met à jour le widget
             	if (mToday == date) {
@@ -457,6 +473,11 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
 				// Mise à jour de l'HV.
 				final FlexUtils flexUtils = new FlexUtils(mDb);
 		    	flexUtils.updateFlex(mWorkDayBean.date);
+		    	
+		    	// Ajout des évènements dans le calendrier
+				if (PreferencesBean.instance.syncCalendar) {
+					CalendarAccess.getInstance().createDayTypeEvent(mWorkDayBean.date, typeMorning, typeAfternoon);
+				}
 				
 				// Mise à jour de l'affichage
 				populateView(mWorkDayBean.date);

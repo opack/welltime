@@ -10,6 +10,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.widget.Toast;
+import fr.redmoon.tictac.R;
 import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.bus.TimeUtils;
 import fr.redmoon.tictac.bus.bean.PreferencesBean;
@@ -19,7 +20,7 @@ import fr.redmoon.tictac.gui.activities.TicTacActivity.OnDayDeletionListener;
 public class CalendarAccess implements OnDayDeletionListener {
 	public static final Uri EVENTS_CONTENT_URI = Uri.parse("content://com.android.calendar/events");
 	public static final String WORKEVENT_TITLE = "Travail";
-	
+	public static final String CALENDAR_NAME = "Welltime";
 	
 	// Projection array. Creating indices for this array instead of doing
 	// dynamic lookups improves performance.
@@ -86,14 +87,14 @@ public class CalendarAccess implements OnDayDeletionListener {
 //		    String ownerName = cur.getString(PROJECTION_OWNER_ACCOUNT_INDEX);
 		              
 		    // Sauvegarde de l'ID du calendrier
-		    if ("Welltime".equals(displayName)) {
+		    if (CALENDAR_NAME.equals(displayName)) {
 		    	mCalID = calID;
 		    	break;
 		    }
 		}
 	}
 
-	private void addWorkingEvent(final int year, final int month, final int dayOfMonth, final int inTime, final int outTime) {
+	private void addWorkEvent(final int year, final int month, final int dayOfMonth, final int inTime, final int outTime) {
 		// Extraction des heures et minutes des pointages
 		final int inHour = TimeUtils.extractHour(inTime);
 		final int inMinutes = TimeUtils.extractMinutes(inTime);
@@ -128,7 +129,7 @@ public class CalendarAccess implements OnDayDeletionListener {
 		//
 	}
 	
-	public void createWorkingEvents(final long date, final List<Integer> checkings) {
+	public void createWorkEvents(final long date, final List<Integer> checkings) {
 		if (!PreferencesBean.instance.syncCalendar || mActivity == null || mCalID == -1) {
 			return;
 		}
@@ -142,7 +143,7 @@ public class CalendarAccess implements OnDayDeletionListener {
 		// TODO Pour être propre il faudrait enregistrer l'ID des évènements
 		// créés pour tel et tel pointage, pour mettre à jour cet évènement
 		// en cas de modification des pointages associés.
-		deleteDayEvents(year, month, dayOfMonth);
+		deleteWorkEvents(year, month, dayOfMonth);
 		
 		// Ajout des pointages par deux dans un évènement
 		Integer in = null;
@@ -150,15 +151,64 @@ public class CalendarAccess implements OnDayDeletionListener {
 			if (in == null) {
 				in = checking;
 			} else {
-				addWorkingEvent(year, month, dayOfMonth, in, checking);
+				addWorkEvent(year, month, dayOfMonth, in, checking);
 				in = null;
 			}
 		}
 	}
+	
+	public void createDayTypeEvent(final long date, final int typeMorning, final int typeAfternoon) {
+		if (!PreferencesBean.instance.syncCalendar || mActivity == null || mCalID == -1) {
+			return;
+		}
+		
+		// Extraction des infos de la date
+		final int year = DateUtils.extractYear(date);
+		final int month = DateUtils.extractMonth(date);
+		final int dayOfMonth = DateUtils.extractDayOfMonth(date);
+		
+		// Suppression de tous les évènements de ce type de la journée
+		// TODO Pour être propre il faudrait enregistrer l'ID des évènements
+		// créés pour tel et tel pointage, pour mettre à jour cet évènement
+		// en cas de modification des pointages associés.
+		deleteDayTypeEvents(year, month, dayOfMonth);
+		
+		// Ajout d'un évènement durant toute la journée
+		final String[] dayTypes = mActivity.getResources().getStringArray(R.array.dayTypesEntries);
+		final StringBuilder type = new StringBuilder(dayTypes[typeMorning]);
+		if (typeMorning != typeAfternoon) {
+			type.append(" / ").append(dayTypes[typeAfternoon]);
+		}
+		addDayTypeEvent(year, month, dayOfMonth, type.toString());
+	}
+	
+	private void addDayTypeEvent(final int year, final int month, final int dayOfMonth, final String type) {
+		// Création des heures de l'évènement en millisecondes
+		Calendar beginTime = Calendar.getInstance();
+		beginTime.set(year, month, dayOfMonth, 0, 1);
+		final long startMillis = beginTime.getTimeInMillis();
+		Calendar endTime = Calendar.getInstance();
+		endTime.set(year, month, dayOfMonth, 0, 2);
+		final long endMillis = endTime.getTimeInMillis();
 
-	private void deleteDayEvents(final int year, final int month, final int dayOfMonth) {
-		// S'il n'y a pas d'activity, c'est qu'on souhaite désactiver cette fonctionnalité
-		if (mActivity == null) {
+		// Création de l'évènement dans le calendrier
+		ContentResolver cr = mActivity.getContentResolver();
+		ContentValues values = new ContentValues();
+		values.put("dtstart"/*Events.DTSTART*/, startMillis);
+		values.put("dtend"/*Events.DTEND*/, endMillis);
+		values.put("title"/*Events.TITLE*/, type);
+		values.put("allDay"/*Events.ALL_DAY*/, "1");
+		//values.put("eventTimezone"/*Events.TIMEZONE_UTC*/, "UTC");
+		//values.put("description"/*Events.DESCRIPTION*/, "Group workout");
+		values.put("calendar_id"/*Events.CALENDAR_ID*/, mCalID);
+		Uri uri = cr.insert(EVENTS_CONTENT_URI/*Events.CONTENT_URI*/, values);
+		if (uri == null) {
+			Toast.makeText(mActivity, "Erreur lors de l'insertion de l'évènement dans le calendrier.", Toast.LENGTH_SHORT).show();
+		}
+	}
+
+	public void deleteWorkEvents(final int year, final int month, final int dayOfMonth) {
+		if (mActivity == null || mCalID == -1) {
 			return;
 		}
 		
@@ -202,7 +252,45 @@ public class CalendarAccess implements OnDayDeletionListener {
 //		    cr.delete(deleteUri, null, null);
 //		}
 	}
-
+	
+	public void deleteDayTypeEvents(final int year, final int month, final int dayOfMonth) {
+		if (mActivity == null || mCalID == -1) {
+			return;
+		}
+		
+		// Création des heures de l'évènement en millisecondes
+		Calendar beginTime = Calendar.getInstance();
+		beginTime.set(year, month, dayOfMonth, 0, 0);
+		final long dayStart = beginTime.getTimeInMillis();
+		Calendar endTime = Calendar.getInstance();
+		endTime.set(year, month, dayOfMonth, 23, 59);
+		final long dayEnd = endTime.getTimeInMillis();
+		
+		mActivity.getContentResolver().delete(
+			EVENTS_CONTENT_URI,
+			"dtstart >= ? AND dtend <= ? AND allDay = ?",
+			new String[]{ String.valueOf(dayStart), String.valueOf(dayEnd), "1" });
+	}
+	
+	public void deleteEvents(final int year, final int month, final int dayOfMonth) {
+		if (mActivity == null || mCalID == -1) {
+			return;
+		}
+		
+		// Création des heures de l'évènement en millisecondes
+		Calendar beginTime = Calendar.getInstance();
+		beginTime.set(year, month, dayOfMonth, 0, 0);
+		final long dayStart = beginTime.getTimeInMillis();
+		Calendar endTime = Calendar.getInstance();
+		endTime.set(year, month, dayOfMonth, 23, 59);
+		final long dayEnd = endTime.getTimeInMillis();
+		
+		mActivity.getContentResolver().delete(
+			EVENTS_CONTENT_URI,
+			"dtstart = ? AND dtend = ?",
+			new String[]{ String.valueOf(dayStart), String.valueOf(dayEnd) });
+	}
+	
 	@Override
 	public void onDeleteDay(long date) {
 		if (!PreferencesBean.instance.syncCalendar || mActivity == null || mCalID == -1) {
@@ -215,6 +303,6 @@ public class CalendarAccess implements OnDayDeletionListener {
 		final int dayOfMonth = DateUtils.extractDayOfMonth(date);
 				
 		// Suppression des évènements de ce jour
-		deleteDayEvents(year, month, dayOfMonth);
+		deleteEvents(year, month, dayOfMonth);
 	}
 }

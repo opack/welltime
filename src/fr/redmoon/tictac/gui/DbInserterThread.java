@@ -6,7 +6,9 @@ import java.util.List;
 import android.os.Handler;
 import android.os.Message;
 import fr.redmoon.tictac.bus.bean.DayBean;
+import fr.redmoon.tictac.bus.bean.PreferencesBean;
 import fr.redmoon.tictac.bus.bean.WeekBean;
+import fr.redmoon.tictac.bus.export.CalendarAccess;
 import fr.redmoon.tictac.db.DbAdapter;
 
 public class DbInserterThread extends Thread {
@@ -129,6 +131,12 @@ public class DbInserterThread extends Thread {
 				if (day.isValid) {
 					nbDaysCreated++;
 				}
+			}
+			
+			// Ajout des évènements dans le calendrier
+			if (PreferencesBean.instance.syncCalendar) {
+				CalendarAccess.getInstance().createWorkEvents(day.date, day.checkings);
+				CalendarAccess.getInstance().createDayTypeEvent(day.date, day.typeMorning, day.typeAfternoon);
 			}
 			
 			// Mise à jour de la barre de progression

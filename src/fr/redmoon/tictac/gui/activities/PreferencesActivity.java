@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import fr.redmoon.tictac.R;
 import fr.redmoon.tictac.bus.PreferencesUtils;
+import fr.redmoon.tictac.bus.export.CalendarAccess;
 
 public class PreferencesActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
 	public static final String URI_PAGE_MAIN = "preferences://main";
@@ -39,5 +40,8 @@ public class PreferencesActivity extends PreferenceActivity implements OnSharedP
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 		PreferencesUtils.updatePreferencesBean(this);
+		
+		// Si on a activé la synchro calendrier, il faut s'assurer qu'on a accès au calendrier
+		CalendarAccess.getInstance().initAccess(this);
 	}
 }
