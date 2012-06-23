@@ -64,12 +64,13 @@ public class PeriodCheckinListener extends AbsPeriodChooserListener {
 					mDb.createDay(dayData);
 					if (dayData.isValid) {
 						nbDaysCreated++;
-						
-						// Ajout des évènements dans le calendrier
-						if (PreferencesBean.instance.syncCalendar) {
-							CalendarAccess.getInstance().createDayTypeEvent(dayData.date, dayData.typeMorning, dayData.typeAfternoon);
-						}
 					}
+				}
+				if (dayData.isValid && PreferencesBean.instance.syncCalendar) {
+					// Créé ou mis à jour, le jour existe désormais et son type
+					// a été renseigné. Il faut à présent ajoutr l'évènement
+					// corresondant dans le calendrier
+					CalendarAccess.getInstance().createDayTypeEvent(dayData.date, dayData.typeMorning, dayData.typeAfternoon);
 				}
 			}
 			

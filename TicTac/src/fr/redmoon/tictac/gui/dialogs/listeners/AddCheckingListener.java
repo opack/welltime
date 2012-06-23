@@ -54,8 +54,7 @@ public class AddCheckingListener extends TimeSetListener {
 					
 					// Ajout des évènements dans le calendrier
 					if (dbUpdated && PreferencesBean.instance.syncCalendar) {
-						CalendarAccess.getInstance().createWorkEvents(day.date, day.checkings);
-						CalendarAccess.getInstance().createDayTypeEvent(day.date, day.typeMorning, day.typeAfternoon);
+						CalendarAccess.getInstance().createEvents(day);
 					}
 				} else {
 					// Le jour existe : on ajoute simplement le pointage

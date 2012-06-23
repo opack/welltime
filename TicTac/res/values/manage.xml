@@ -53,6 +53,13 @@
     <string name="btn_checkin">Pointer</string>
     <string name="period_checkin_results">Pointage terminé.\n%1$d jour(s) créé(s).\n%2$d jour(s) mis à jour.</string>
     
+    <!-- Opération synchronisation immédiate du calendrier sur une période -->
+	<string-array name="period_sync_calendar">
+        <item>Synchroniser le calendrier maintenant</item>
+        <item>Reporte dans le calendrier les informations sur les pointages.</item>
+    </string-array>
+    <string name="period_sync_calendar_title">Synchronisation du calendrier</string>
+    
     <!-- Opération affichage des préférences -->
 	<string-array name="show_preferences">
         <item>Afficher les préférences</item>

@@ -208,8 +208,7 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
 		    		
 		    		// Ajout des évènements dans le calendrier
 					if (PreferencesBean.instance.syncCalendar) {
-						CalendarAccess.getInstance().createWorkEvents(mWorkDayBean.date, mWorkDayBean.checkings);
-						CalendarAccess.getInstance().createDayTypeEvent(mWorkDayBean.date, mWorkDayBean.typeMorning, mWorkDayBean.typeAfternoon);
+						CalendarAccess.getInstance().createEvents(mWorkDayBean);
 					}
 		    		
 		    		// Mise à jour des widgets

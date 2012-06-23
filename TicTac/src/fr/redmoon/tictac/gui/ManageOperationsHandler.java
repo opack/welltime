@@ -1,6 +1,7 @@
 package fr.redmoon.tictac.gui;
 
 import static fr.redmoon.tictac.gui.activities.ManageActivity.PERIOD_CHECKIN_DIALOG;
+import static fr.redmoon.tictac.gui.activities.ManageActivity.PERIOD_SYNC_CALENDAR_DIALOG;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -16,9 +17,11 @@ import android.widget.Spinner;
 import fr.redmoon.tictac.R;
 import fr.redmoon.tictac.db.DbAdapter;
 import fr.redmoon.tictac.gui.dialogs.listeners.PeriodCheckinListener;
+import fr.redmoon.tictac.gui.dialogs.listeners.PeriodSyncCalendarListener;
 
 public class ManageOperationsHandler implements OnItemClickListener {
 	private final static int POS_CHECKIN_PERIOD = 0;
+	private final static int POS_SYNC_CALENDAR_PERIOD = 1;
 	
 	private final Activity activity;
 	private final DbAdapter db;
@@ -33,6 +36,9 @@ public class ManageOperationsHandler implements OnItemClickListener {
 		switch (position) {
 		case POS_CHECKIN_PERIOD:
 			activity.showDialog(PERIOD_CHECKIN_DIALOG);
+			break;
+		case POS_SYNC_CALENDAR_PERIOD:
+			activity.showDialog(PERIOD_SYNC_CALENDAR_DIALOG);
 			break;
 		}
 	}
@@ -73,6 +79,39 @@ public class ManageOperationsHandler implements OnItemClickListener {
         adb.setNegativeButton(R.string.btn_cancel, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
           } });
+		return adb.create();
+	}
+
+	public Dialog createPeriodSyncCalendarDialog() {
+		//On instancie notre layout en tant que View
+        LayoutInflater factory = LayoutInflater.from(activity);
+        final View dialogView = factory.inflate(R.layout.dlg_period_chooser, null);
+ 
+        //Création de l'AlertDialog
+        AlertDialog.Builder adb = new AlertDialog.Builder(activity);
+ 
+        //On affecte la vue personnalisé que l'on a crée à notre AlertDialog
+        adb.setView(dialogView);
+        
+        //On donne un titre à l'AlertDialog
+        adb.setTitle(R.string.period_sync_calendar_title);
+ 
+        //On modifie l'icône de l'AlertDialog pour le fun ;)
+        //adb.setIcon(android.R.drawable.ic_dialog_alert);
+        
+        //On affecte un bouton "OK" à notre AlertDialog et on lui affecte un évènement
+        adb.setPositiveButton(R.string.btn_ok, new PeriodSyncCalendarListener(
+        	activity, 
+        	db, 
+        	(DatePicker)dialogView.findViewById(R.id.date1), 
+        	(DatePicker)dialogView.findViewById(R.id.date2))
+        );
+ 
+        //On crée un bouton "Annuler" à notre AlertDialog et on lui affecte un évènement
+        adb.setNegativeButton(R.string.btn_cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {}
+        });
+        
 		return adb.create();
 	}
 }

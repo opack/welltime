@@ -6,7 +6,6 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.widget.RemoteViews;
 import fr.redmoon.tictac.R;
 import fr.redmoon.tictac.bus.DateUtils;
@@ -52,7 +51,7 @@ public class WidgetProvider extends AppWidgetProvider {
     public void onReceive(Context context, Intent intent) {
     	// DBG Très sale ! Ca permet de faire fonctionner le widget lorsque l'orientation de l'écran change
     	// mais c'est sale car on le fait à chaque notification et pas uniquement quand l'orientation change.
-    	Log.d("TicTac", "OnReceive:Action > " + intent.getAction());
+//    	Log.d("TicTac", "OnReceive:Action > " + intent.getAction());
     	onUpdate(context, AppWidgetManager.getInstance(context), getAppWidgetIds(context));
     	super.onReceive(context, intent);
     }

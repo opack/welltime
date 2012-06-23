@@ -68,6 +68,9 @@ public class AddCheckingService extends Service {
    			// Ajout ou mise à jour du jour dans la base
 	    	if (day.isValid) {
 	    		db.updateDay(day);
+	    		
+	    		// Ajout du pointage dans le calendrier
+				CalendarAccess.getInstance().createWorkEvents(day.date, day.checkings);
 	    	} else {
 	    		// Le jour sera créé. On vient d'ajouter un pointage, donc c'est
 	    		// un jour de type "normal"
@@ -76,15 +79,12 @@ public class AddCheckingService extends Service {
 	    		
 	    		db.createDay(day);
 	    		
-	    		// Ajout de l'évènement dans le calendrier
-	    		CalendarAccess.getInstance().createDayTypeEvent(day.date, day.typeMorning, day.typeAfternoon);
+	    		// Ajout des évènements dans le calendrier
+	    		CalendarAccess.getInstance().createEvents(day);
 	    	}
 	    	// Mise à jour de l'HV.
 	    	final FlexUtils flexUtils = new FlexUtils(db);
 	    	flexUtils.updateFlex(day.date);
-	    	
-	    	// Ajout du pointage dans le calendrier
-			CalendarAccess.getInstance().createWorkEvents(day.date, day.checkings);
 	    	
 	    	// Incrément du nombre de jour si l'ajout en base s'est correctement déroulé.
 	    	// Quelle que soit l'opération effectuée, isValid a été mis à jour.

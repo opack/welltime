@@ -18,6 +18,7 @@ public class ManageActivity extends TicTacActivity {
 	public static final int PROGRESS_DIALOG = 0;
 	public static final int PERIOD_CHECKIN_DIALOG = 1;
 	public static final int PERIOD_EXPORT_DIALOG = 2;
+	public static final int PERIOD_SYNC_CALENDAR_DIALOG = 3;
 	
 	private DbAdapter mDb;
 	private ManageImportExportHandler importExportHandler;
@@ -47,7 +48,8 @@ public class ManageActivity extends TicTacActivity {
         // Préparation de la liste des opérations de gestion
         final Resources resources = getResources();
  		final String[][] lblOperations = new String[][] {
- 			resources.getStringArray(R.array.period_checkin)
+ 			resources.getStringArray(R.array.period_checkin),
+ 			resources.getStringArray(R.array.period_sync_calendar)
  		};
  		final ListView lstOperations = (ListView)pageOperations.findViewById(R.id.list);
  		lstOperations.setAdapter(new ManageAdapter(this, R.layout.itm_manage_operation, lblOperations));
@@ -91,6 +93,8 @@ public class ManageActivity extends TicTacActivity {
         	return operationsHandler.createPeriodCheckinDialog();
         case PERIOD_EXPORT_DIALOG:
         	return importExportHandler.createPeriodExportDialog();
+        case PERIOD_SYNC_CALENDAR_DIALOG:
+        	return operationsHandler.createPeriodSyncCalendarDialog();
         default:
             return null;
         }
