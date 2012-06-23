@@ -2,9 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 	<item android:id="@+id/menu_day_add_checking"
         android:title="@string/menu_day_add_checking"
-        android:icon="@drawable/ic_menu_add" />
+        android:icon="@android:drawable/ic_menu_add" />
         
    	<item android:id="@+id/menu_show_day"
         android:title="@string/menu_show_day"
-        android:icon="@drawable/ic_menu_more" />
+        android:icon="@android:drawable/ic_menu_today" />
 </menu>
