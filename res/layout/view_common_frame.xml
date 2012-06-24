@@ -24,7 +24,7 @@
 			android:layout_height="24sp"
 			android:layout_alignLeft="@+id/txt_current"
 			android:layout_centerVertical="true"
-			android:src="@drawable/previous"
+			android:src="@drawable/navigation_previous"
 			android:clickable="true"
 			android:onClick="showPrevious" />
 		
@@ -34,7 +34,7 @@
 			android:layout_height="24sp"
 			android:layout_alignRight="@+id/txt_current"
 			android:layout_centerVertical="true"
-			android:src="@drawable/next"
+			android:src="@drawable/navigation_next"
 			android:clickable="true"
 			android:onClick="showNext" />
 		
