@@ -344,10 +344,11 @@ public class WeekActivity extends TicTacActivity implements OnDayDeletionListene
 		
         // Mise à jour des composants graphiques
 		final View pageDetails = getPage(PAGE_DETAILS);
-		setText(pageDetails, R.id.btn_update_flex_time, R.string.week_monday_flex_time, DateUtils.formatDateDDMM(mWeekData.date), TimeUtils.formatMinutes(mWeekData.flexTime));
-		setText(pageDetails, R.id.txt_week_current_flex_time, R.string.week_current_flex_time, TimeUtils.formatMinutes(curWeekFlex));
-		setText(pageDetails, R.id.txt_week_work_time, R.string.week_work_time, TimeUtils.formatMinutes(mWeekWorked));
-		setText(pageDetails, R.id.txt_week_lost_time, R.string.week_lost_time, TimeUtils.formatMinutes(lost));
+		setText(pageDetails, R.id.btn_monday_flex_time, R.string.week_monday_flex_time, DateUtils.formatDateDDMM(mWeekData.date));
+		setText(pageDetails, R.id.txt_monday_flex_time, TimeUtils.formatMinutes(mWeekData.flexTime));
+		setText(pageDetails, R.id.txt_week_current_flex_time, TimeUtils.formatMinutes(curWeekFlex));
+		setText(pageDetails, R.id.txt_week_work_time, TimeUtils.formatMinutes(mWeekWorked));
+		setText(pageDetails, R.id.txt_week_lost_time, TimeUtils.formatMinutes(lost));
 	}
     
     public void updateFlexTime(final View btn) {
