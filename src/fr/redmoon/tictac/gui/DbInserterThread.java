@@ -96,8 +96,7 @@ public class DbInserterThread extends Thread {
 			if (mHandler != null) {
 	            final Message msg = mHandler.obtainMessage();
 	            msg.what = STATE_IMPORTING_WEEKS;
-	            msg.arg1 = (int)( (nbDaysCreated + nbDaysUpdated + nbWeeksProcessed) / (double)(nbDaysToProcess + nbWeeksToProcess) * 100.0 );
-	            msg.arg2 = (int)( nbWeeksProcessed / (double)nbWeeksToProcess * 100.0 );
+	            msg.arg1 = nbDaysCreated + nbDaysUpdated + nbWeeksProcessed;
 	            mHandler.sendMessage(msg);
 			}
     	} else {
@@ -143,8 +142,7 @@ public class DbInserterThread extends Thread {
 			if (mHandler != null) {
 	            final Message msg = mHandler.obtainMessage();
 	            msg.what = STATE_IMPORTING_DAYS;
-	            msg.arg1 = (int)( (nbDaysCreated + nbDaysUpdated + nbWeeksProcessed) / (double)(nbDaysToProcess + nbWeeksToProcess) * 100.0 );
-	            msg.arg2 = (int)( (nbDaysCreated + nbDaysUpdated) / (double)nbDaysToProcess * 100.0 );
+	            msg.arg1 = nbDaysCreated + nbDaysUpdated + nbWeeksProcessed;
 	            mHandler.sendMessage(msg);
 			}
     	} else {
@@ -168,5 +166,9 @@ public class DbInserterThread extends Thread {
 	public boolean isRunning() {
 		return mState == STATE_IMPORTING_DAYS
 			|| mState == STATE_IMPORTING_WEEKS;
+	}
+
+	public int getMax() {
+		return nbDaysToProcess + nbWeeksToProcess;
 	}
 }

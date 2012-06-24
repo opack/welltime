@@ -237,7 +237,7 @@ public class ManageImportExportHandler implements OnItemClickListener {
 	public void prepareProgressDialog() {
 		progressDialog.setProgress(0);
         progressDialog.setSecondaryProgress(0);
-        progressDialog.setMax(100);
+        progressDialog.setMax(progressThread.getMax());
         progressThread.start();
 	}
 
