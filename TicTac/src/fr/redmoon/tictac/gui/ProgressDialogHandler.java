@@ -25,7 +25,6 @@ public class ProgressDialogHandler extends Handler {
     	if (msg.what == DbInserterThread.STATE_IMPORTING_DAYS
     	|| msg.what == DbInserterThread.STATE_IMPORTING_WEEKS) {
     		mProgressDialog.setProgress(msg.arg1);
-            mProgressDialog.setSecondaryProgress(msg.arg2);
     	} else {
     		// Fermeture de la boîte de dialogue
     		mActivity.dismissDialog(mDialogId);
