@@ -1,4 +1,4 @@
-package fr.redmoon.tictac.bus.export;
+package fr.redmoon.tictac.bus.export.tocsv;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -10,6 +10,7 @@ import android.app.Activity;
 import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.bus.TimeUtils;
 import fr.redmoon.tictac.bus.bean.WeekBean;
+import fr.redmoon.tictac.bus.export.FileImporter;
 
 public class CsvWeekBeanImporter extends FileImporter<List<WeekBean>> {
 	public final static String MIME_TYPE = "text/csv";	

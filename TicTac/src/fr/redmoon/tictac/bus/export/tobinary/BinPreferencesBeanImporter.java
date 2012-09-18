@@ -1,4 +1,4 @@
-package fr.redmoon.tictac.bus.export;
+package fr.redmoon.tictac.bus.export.tobinary;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -8,6 +8,7 @@ import java.io.ObjectInputStream;
 import android.app.Activity;
 import android.util.Log;
 import fr.redmoon.tictac.bus.bean.PreferencesBean;
+import fr.redmoon.tictac.bus.export.FileImporter;
 
 public class BinPreferencesBeanImporter extends FileImporter<PreferencesBean> {
 	

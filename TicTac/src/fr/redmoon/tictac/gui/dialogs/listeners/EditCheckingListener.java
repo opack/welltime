@@ -6,7 +6,7 @@ import java.util.List;
 import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.bus.FlexUtils;
 import fr.redmoon.tictac.bus.TimeUtils;
-import fr.redmoon.tictac.bus.export.calendar.CalendarAccess;
+import fr.redmoon.tictac.bus.export.tocalendar.CalendarAccess;
 import fr.redmoon.tictac.gui.activities.TicTacActivity;
 import fr.redmoon.tictac.gui.widgets.WidgetProvider;
 
