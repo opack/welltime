@@ -4,7 +4,7 @@ import fr.redmoon.tictac.bus.DayTypes;
 import fr.redmoon.tictac.bus.FlexUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
 import fr.redmoon.tictac.bus.bean.PreferencesBean;
-import fr.redmoon.tictac.bus.export.calendar.CalendarAccess;
+import fr.redmoon.tictac.bus.export.tocalendar.CalendarAccess;
 import fr.redmoon.tictac.gui.activities.TicTacActivity;
 
 public class AddDayListener extends DateSetListener {

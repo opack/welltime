@@ -1,7 +1,6 @@
 package fr.redmoon.tictac.gui.activities;
 
 import android.app.Dialog;
-import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.View;
@@ -109,13 +108,6 @@ public class ManageActivity extends TicTacActivity {
         }
     }
         
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		// Import des données
-		importExportHandler.onActivityResult(requestCode, resultCode, data);
-		super.onActivityResult(requestCode, resultCode, data);
-	}
-
 	@Override
 	public void populateView(long day) {
 		// Rien à faire pour afficher des données d'un jour particulier

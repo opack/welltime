@@ -34,7 +34,7 @@
         <item>Exporter les préférences</item>
         <item>Ecrire les préférences dans un fichier sur la carte SD.</item>
     </string-array>
-	<string name="export_prefs_filename">Welltime.prefs</string>
+	<string name="export_prefs_filename">Welltime %1$s.prefs</string>
 	<string name="export_prefs_success">Les préférences ont bien été exportées !</string>
 	<string name="export_prefs_fail">L\'export des préférences a échoué.</string>
 	

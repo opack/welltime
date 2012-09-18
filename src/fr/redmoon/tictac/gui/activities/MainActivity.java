@@ -14,7 +14,7 @@ import android.widget.TextView;
 import fr.redmoon.tictac.R;
 import fr.redmoon.tictac.bus.PreferencesUtils;
 import fr.redmoon.tictac.bus.bean.PreferencesBean;
-import fr.redmoon.tictac.bus.export.calendar.CalendarAccess;
+import fr.redmoon.tictac.bus.export.tocalendar.CalendarAccess;
 
 public class MainActivity extends TabActivity {
 	public static final int TAB_DAY_POS = 0;

@@ -1,4 +1,4 @@
-package fr.redmoon.tictac.bus.export.calendar;
+package fr.redmoon.tictac.bus.export.tocalendar;
 
 import java.util.Calendar;
 import java.util.List;

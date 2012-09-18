@@ -8,7 +8,7 @@ import android.os.Message;
 import fr.redmoon.tictac.bus.bean.DayBean;
 import fr.redmoon.tictac.bus.bean.PreferencesBean;
 import fr.redmoon.tictac.bus.bean.WeekBean;
-import fr.redmoon.tictac.bus.export.calendar.CalendarAccess;
+import fr.redmoon.tictac.bus.export.tocalendar.CalendarAccess;
 import fr.redmoon.tictac.db.DbAdapter;
 
 public class DbInserterThread extends Thread {

@@ -1,4 +1,4 @@
-package fr.redmoon.tictac.bus.export;
+package fr.redmoon.tictac.bus.export.tocsv;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -13,6 +13,7 @@ import fr.redmoon.tictac.R;
 import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.bus.TimeUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
+import fr.redmoon.tictac.bus.export.FileImporter;
 
 public class CsvDayBeanImporter extends FileImporter<List<DayBean>> {
 	public final static String MIME_TYPE = "text/csv";	

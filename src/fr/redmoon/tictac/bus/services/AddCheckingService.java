@@ -12,7 +12,7 @@ import fr.redmoon.tictac.bus.FlexUtils;
 import fr.redmoon.tictac.bus.PreferencesUtils;
 import fr.redmoon.tictac.bus.TimeUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
-import fr.redmoon.tictac.bus.export.calendar.CalendarAccess;
+import fr.redmoon.tictac.bus.export.tocalendar.CalendarAccess;
 import fr.redmoon.tictac.db.DbAdapter;
 import fr.redmoon.tictac.gui.widgets.WidgetProvider;
 

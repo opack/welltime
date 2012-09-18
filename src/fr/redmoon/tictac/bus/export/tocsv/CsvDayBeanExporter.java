@@ -1,4 +1,4 @@
-package fr.redmoon.tictac.bus.export;
+package fr.redmoon.tictac.bus.export.tocsv;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -10,6 +10,7 @@ import fr.redmoon.tictac.R;
 import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.bus.TimeUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
+import fr.redmoon.tictac.bus.export.FileExporter;
 
 public class CsvDayBeanExporter extends FileExporter<List<DayBean>> {
 	

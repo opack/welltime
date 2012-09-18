@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import fr.redmoon.tictac.R;
 import fr.redmoon.tictac.bus.PreferencesUtils;
-import fr.redmoon.tictac.bus.export.calendar.CalendarAccess;
+import fr.redmoon.tictac.bus.export.tocalendar.CalendarAccess;
 
 public class PreferencesActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
 	public static final String URI_PAGE_MAIN = "preferences://main";
