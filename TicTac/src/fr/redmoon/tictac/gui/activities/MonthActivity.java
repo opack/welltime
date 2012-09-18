@@ -17,8 +17,6 @@ import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
 import fr.redmoon.tictac.gui.ViewSynchronizer;
 import fr.redmoon.tictac.gui.activities.TicTacActivity.OnDayDeletionListener;
-import fr.redmoon.tictac.gui.dialogs.AbsDialogDelegate;
-import fr.redmoon.tictac.gui.dialogs.MonthDialogDelegate;
 import fr.redmoon.tictac.gui.listadapter.CalendarAdapter;
 import fr.redmoon.tictac.gui.quickactions.ActionItem;
 import fr.redmoon.tictac.gui.quickactions.QuickAction;
@@ -33,7 +31,6 @@ public class MonthActivity extends TicTacActivity implements OnDayDeletionListen
 	private static final int QAID_DELETE_DAY = 2;
 	private static final int QAID_SHOW_WEEK = 3;
 	
-	protected AbsDialogDelegate mDialogDelegate;
 	private CalendarAdapter mAdapter;
 	private SparseArray<DayBean> items;
 	private List<DayBean> mMonthDays;
@@ -43,8 +40,6 @@ public class MonthActivity extends TicTacActivity implements OnDayDeletionListen
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
-	    
-	    setDialogDelegate(new MonthDialogDelegate(this));
 	    
 	    mMonthDays = new ArrayList<DayBean>();
 	    items = new SparseArray<DayBean>();

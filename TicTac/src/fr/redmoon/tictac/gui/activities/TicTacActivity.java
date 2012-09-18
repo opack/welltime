@@ -5,12 +5,12 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.format.Time;
@@ -26,9 +26,13 @@ import fr.redmoon.tictac.bus.TimeUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
 import fr.redmoon.tictac.db.DbAdapter;
 import fr.redmoon.tictac.gui.ViewSynchronizer;
-import fr.redmoon.tictac.gui.dialogs.AbsDialogDelegate;
 import fr.redmoon.tictac.gui.dialogs.DialogArgs;
-import fr.redmoon.tictac.gui.dialogs.DialogTypes;
+import fr.redmoon.tictac.gui.dialogs.fragments.AddCheckingFragment;
+import fr.redmoon.tictac.gui.dialogs.fragments.AddDayFragment;
+import fr.redmoon.tictac.gui.dialogs.fragments.EditCheckingFragment;
+import fr.redmoon.tictac.gui.dialogs.fragments.EditExtraFragment;
+import fr.redmoon.tictac.gui.dialogs.fragments.EditNoteFragment;
+import fr.redmoon.tictac.gui.dialogs.fragments.ShowDayFragment;
 import fr.redmoon.tictac.gui.listadapter.TicTacPagerAdapter;
 import fr.redmoon.tictac.gui.widgets.WidgetProvider;
 
@@ -38,7 +42,7 @@ import fr.redmoon.tictac.gui.widgets.WidgetProvider;
  *  - disposer d'un DayBean et d'un Time de travail
  *  - afficher des boîtes de dialogue
  */
-public abstract class TicTacActivity extends Activity {
+public abstract class TicTacActivity extends FragmentActivity {
 	
 	public interface OnDayDeletionListener{
 		/**
@@ -57,8 +61,6 @@ public abstract class TicTacActivity extends Activity {
 	protected DayBean mWorkDayBean;
 	protected Calendar mWorkCal;
 
-	protected AbsDialogDelegate mDialogDelegate;
-	
 	private ViewPager mPager;
 	private View[] mPages;
 	
@@ -126,26 +128,6 @@ public abstract class TicTacActivity extends Activity {
 		return mDb;
 	}
     
-    @Override
-	protected Dialog onCreateDialog(final int id) {
-    	if (mDialogDelegate != null) {
-    		return mDialogDelegate.createDialog(id);
-    	}
-    	return super.onCreateDialog(id);
-	}
-	
-	@Override
-	protected void onPrepareDialog(final int id, final Dialog dialog, final Bundle args) {
-		super.onPrepareDialog(id, dialog, args);
-		if (mDialogDelegate != null) {
-			mDialogDelegate.prepareDialog(id, dialog, args);
-		}
-	}
-	
-	protected void setDialogDelegate(final AbsDialogDelegate dialogDelegate) {
-		mDialogDelegate = dialogDelegate;
-	}
-	
 	protected void initPages(final View... pages) {
 		// Initialise l'indicateur de pages s'il est présent
         int curIndicator;
@@ -235,9 +217,12 @@ public abstract class TicTacActivity extends Activity {
 	 */
 	protected void promptEditExtraTime(final long date, final int extra) {
 		final Bundle args = new Bundle();
-		args.putLong(DialogArgs.DATE, date);
-		args.putInt(DialogArgs.TIME, extra);
-		showDialog(DialogTypes.TIMEPICKER_EDIT_EXTRA, args);
+		args.putLong(DialogArgs.DATE.name(), date);
+		args.putInt(DialogArgs.TIME.name(), extra);
+
+		final DialogFragment newFragment = new EditExtraFragment();
+		newFragment.setArguments(args);
+	    newFragment.show(getSupportFragmentManager(), EditExtraFragment.TAG);
 	}
 	
 	/**
@@ -249,9 +234,12 @@ public abstract class TicTacActivity extends Activity {
 	 */
 	protected void promptEditChecking(final long date, final int checkingToEdit) {
 		final Bundle args = new Bundle();
-		args.putLong(DialogArgs.DATE, date);
-		args.putInt(DialogArgs.TIME, checkingToEdit);
-		showDialog(DialogTypes.TIMEPICKER_EDIT_CHECKING, args);
+		args.putLong(DialogArgs.DATE.name(), date);
+		args.putInt(DialogArgs.TIME.name(), checkingToEdit);
+
+		final DialogFragment newFragment = new EditCheckingFragment();
+		newFragment.setArguments(args);
+	    newFragment.show(getSupportFragmentManager(), EditCheckingFragment.TAG);
 	}
 	
 	/**
@@ -260,8 +248,11 @@ public abstract class TicTacActivity extends Activity {
 	 */
 	protected void promptAddDay() {
 		final Bundle args = new Bundle();
-		args.putLong(DialogArgs.DATE, mToday);
-		showDialog(DialogTypes.DATEPICKER_ADD_DAY, args);
+		args.putLong(DialogArgs.DATE.name(), mToday);
+		
+		final DialogFragment newFragment = new AddDayFragment();
+		newFragment.setArguments(args);
+	    newFragment.show(getSupportFragmentManager(), AddDayFragment.TAG);
 	}
 	
 	/**
@@ -270,8 +261,11 @@ public abstract class TicTacActivity extends Activity {
 	 */
 	protected void promptShowDay() {
 		final Bundle args = new Bundle();
-		args.putLong(DialogArgs.DATE, mToday);
-		showDialog(DialogTypes.DATEPICKER_SHOW_DAY, args);
+		args.putLong(DialogArgs.DATE.name(), mToday);
+
+		final DialogFragment newFragment = new ShowDayFragment();
+		newFragment.setArguments(args);
+	    newFragment.show(getSupportFragmentManager(), ShowDayFragment.TAG);
 	}
 	
 	/**
@@ -281,9 +275,11 @@ public abstract class TicTacActivity extends Activity {
 	 */
 	protected void promptAddChecking(final long date) {
 		final Bundle args = new Bundle();
-		args.putLong(DialogArgs.DATE, date);
-		args.putInt(DialogArgs.TIME, 0);// Par défaut, on met l'heure à 00:00
-		showDialog(DialogTypes.TIMEPICKER_ADD_CHECKING, args);
+		args.putLong(DialogArgs.DATE.name(), date);
+
+		final DialogFragment newFragment = new AddCheckingFragment();
+		newFragment.setArguments(args);
+	    newFragment.show(getSupportFragmentManager(), AddCheckingFragment.TAG);
 	}
 	
 	/**
@@ -295,9 +291,12 @@ public abstract class TicTacActivity extends Activity {
 	 */
 	protected void promptEditNote(final long date, final String initialNote) {
 		final Bundle args = new Bundle();
-		args.putLong(DialogArgs.DATE, date);
-		args.putString(DialogArgs.NOTE, initialNote);
-		showDialog(DialogTypes.TEXTINPUT_EDIT_NOTE, args);
+		args.putLong(DialogArgs.DATE.name(), date);
+		args.putString(DialogArgs.NOTE.name(), initialNote);
+
+		final DialogFragment newFragment = new EditNoteFragment();
+		newFragment.setArguments(args);
+	    newFragment.show(getSupportFragmentManager(), EditNoteFragment.TAG);
 	}
 	
 	/**
