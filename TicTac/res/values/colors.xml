@@ -4,6 +4,8 @@
 	<color name="light_blue">#a6d2ff</color>
 	<color name="dark_blue">#0f0c9d</color>
 	
+	<color name="very_light_blue">#d2e9ff</color>
+	
 	<color name="text_tab_selected">#5d5d5d</color>
 	<color name="text_tab_unselected">#838183</color>
 	
