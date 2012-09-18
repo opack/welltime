@@ -37,7 +37,7 @@ public class BinPreferencesBeanExporter extends FileExporter<PreferencesBean> {
 			// Ecriture dans le fichier de sortie
 			fos.write(buf);
 		} catch (IOException ioe) {
-			Log.e("TicTac", "Une erreur s'est produite durant la sérialisation des préférences.", ioe);
+			Log.e("Welltime", "Une erreur s'est produite durant la sérialisation des préférences.", ioe);
 			throw ioe;
 		} finally {
 			// Fermeture du fichier

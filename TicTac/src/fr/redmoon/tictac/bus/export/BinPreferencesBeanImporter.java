@@ -27,7 +27,7 @@ public class BinPreferencesBeanImporter extends FileImporter<PreferencesBean> {
 			final PreferencesBean readPrefs = (PreferencesBean)in.readObject();
 			mData.clone(readPrefs);
 		} catch(ClassNotFoundException cnfe) { 
-		      Log.e("TicTac", "Une erreur s'est produite durant la désérialisation des préférences.", cnfe); 
+		      Log.e("Welltime", "Une erreur s'est produite durant la désérialisation des préférences.", cnfe); 
 		      return false; 
 	    } finally {
 	    	// Fermeture du fichier
