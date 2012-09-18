@@ -63,10 +63,7 @@ public class EditCheckingFragment extends DialogFragment implements TimePickerDi
 		final FlexUtils flexUtils = new FlexUtils(db);
 		flexUtils.updateFlex(mDate);
 		
-		// Mise à jour de l'affichage
 		if (dbUpdated) {
-			activity.populateView(mDate);
-			
 			// Ajout du pointage dans le calendrier
 			final List<Integer> checkings = new ArrayList<Integer>();
 			db.fetchCheckings(mDate, checkings);
@@ -76,6 +73,10 @@ public class EditCheckingFragment extends DialogFragment implements TimePickerDi
 			if (mDate == DateUtils.getCurrentDayId()) {
 				WidgetProvider.updateClockinImage(activity);
 			}
+			
+			// Mise à jour de l'affichage
+			activity.populateView(mDate);
 		}
 	}
+	
 }

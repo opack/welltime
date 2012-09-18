@@ -5,6 +5,9 @@ public enum PreferenceKeys {
 // Nombre de lancements de l'application
 	isFirstLaunch("isFirstLaunch"),
 	
+// Le widget doit-il afficher un timepicker ou pointer à l'heure courante ?
+	widgetDisplayTimePicker("widget_display_timepicker"),
+	
 // Décalage entre l'horloge de la pointeuse et celle du téléphone
 	clockShift("clock_shift"),
 	

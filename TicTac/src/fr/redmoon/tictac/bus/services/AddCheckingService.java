@@ -12,8 +12,10 @@ import fr.redmoon.tictac.bus.FlexUtils;
 import fr.redmoon.tictac.bus.PreferencesUtils;
 import fr.redmoon.tictac.bus.TimeUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
+import fr.redmoon.tictac.bus.bean.PreferencesBean;
 import fr.redmoon.tictac.bus.export.tocalendar.CalendarAccess;
 import fr.redmoon.tictac.db.DbAdapter;
+import fr.redmoon.tictac.gui.activities.WidgetDisplayTimePickerActivity;
 import fr.redmoon.tictac.gui.widgets.WidgetProvider;
 
 public class AddCheckingService extends Service {
@@ -23,13 +25,19 @@ public class AddCheckingService extends Service {
 		PreferencesUtils.updatePreferencesBean(this);
 		
 		// Enregistre le pointage en base
-		final int checkingsCount = doClockin();
-		
-		// Mise à jour de l'image dans le(s) widget(s)
-		WidgetProvider.updateClockinImage(
-			getApplicationContext(),
-			intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS),
-			checkingsCount);
+		if (PreferencesBean.instance.widgetDisplayTimePicker) {
+			final Intent intent2 = new Intent(getBaseContext(), WidgetDisplayTimePickerActivity.class);
+			intent2.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+	        getApplication().startActivity(intent2);
+		} else {
+			final int checkingsCount = doClockin();
+			
+			// Mise à jour de l'image dans le(s) widget(s)
+			WidgetProvider.updateClockinImage(
+				getApplicationContext(),
+				intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS),
+				checkingsCount);
+		}
 		
 		return START_NOT_STICKY;
 	}

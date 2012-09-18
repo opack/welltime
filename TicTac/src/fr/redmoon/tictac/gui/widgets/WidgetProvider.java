@@ -34,7 +34,7 @@ public class WidgetProvider extends AppWidgetProvider {
         // Build the intent to call the service
         final Intent intent = new Intent(context.getApplicationContext(), AddCheckingService.class);
 		intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
-
+        
 		// Pour réagir à un clic il faut utiliser une pending intent car le onClickListener
 		// est exécuté par l'application Home
 		final PendingIntent pendingIntent = PendingIntent.getService(context.getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);

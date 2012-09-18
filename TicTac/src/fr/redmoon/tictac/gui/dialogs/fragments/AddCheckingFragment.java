@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.text.format.DateFormat;
@@ -14,6 +15,7 @@ import fr.redmoon.tictac.R;
 import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.bus.DayTypes;
 import fr.redmoon.tictac.bus.FlexUtils;
+import fr.redmoon.tictac.bus.TimeUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
 import fr.redmoon.tictac.bus.bean.PreferencesBean;
 import fr.redmoon.tictac.bus.export.tocalendar.CalendarAccess;
@@ -26,15 +28,21 @@ public class AddCheckingFragment extends DialogFragment implements TimePickerDia
 	public final static String TAG = AddCheckingFragment.class.getName();
 	
 	private long mDate;
+	private int mInitialChecking;
+	private boolean mFinishActivityOnDismiss;
 	
 	@Override
 	public void setArguments(Bundle args) {
 		mDate = args.getLong(DialogArgs.DATE.name());
+		mInitialChecking = args.getInt(DialogArgs.TIME.name(), 0);
+		mFinishActivityOnDismiss = args.getBoolean(DialogArgs.FINISH_ACTIVITY_ON_DISMISS.name(), false);
 	}
 	
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
-		return new TimePickerDialog(getActivity(), this, 0, 0, DateFormat.is24HourFormat(getActivity()));
+		final int hour = TimeUtils.extractHour(mInitialChecking);
+		final int minute = TimeUtils.extractMinutes(mInitialChecking);
+		return new TimePickerDialog(getActivity(), this, hour, minute, DateFormat.is24HourFormat(getActivity()));
 	}
 	
 	@Override
@@ -90,12 +98,25 @@ public class AddCheckingFragment extends DialogFragment implements TimePickerDia
 		
 		// Mise à jour de l'affichage
 		if (dbUpdated) {
-			activity.populateView(mDate);
-			
 			// Mise à jour des widgets
 			if (mDate == DateUtils.getCurrentDayId()) {
 				WidgetProvider.updateClockinImage(activity);
 			}
+			
+			// Mise à jour de l'affichage
+			if (!mFinishActivityOnDismiss) {
+				activity.populateView(mDate);
+			} else {
+				activity.finish();
+			}
+		}
+	}
+	
+	@Override
+	public void onDismiss(DialogInterface dialog) {
+		super.onDismiss(dialog);
+		if (mFinishActivityOnDismiss) {
+			getActivity().finish();
 		}
 	}
 }
