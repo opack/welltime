@@ -13,7 +13,7 @@ import fr.redmoon.tictac.bus.bean.WeekBean;
 public class DbAdapter {
 	private static final String DATABASE_NAME = "TicTac.db";
 	private static final int DATABASE_VERSION = 4;
-	private static final String LOG_TAG = "TicTac (DB)";
+	private static final String LOG_TAG = "Welltime (DB)";
 	
 	private final Context mCtx;
 	private DatabaseHelper mDbHelper;
