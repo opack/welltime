@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Titres des pages de gestion -->
+    <string name="title_manage_tools">Outils</string>
+    <string name="title_manage_import_export">Import / Export</string>
+    <string name="title_manage_preferences">Préférences</string>
+    
     <!-- Opération export des données -->
     <string-array name="export_data">
         <item>Exporter les données</item>

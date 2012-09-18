@@ -5,6 +5,14 @@
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
 	android:orientation="vertical">
+	<TextView
+		android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:textSize="20sp"
+    	android:textStyle="bold"
+    	android:gravity="center"
+    	android:background="@color/very_light_blue"
+    	android:text="@string/title_manage_import_export" />
 	<ListView
 		android:id="@+id/list"
 		android:layout_width="fill_parent"
