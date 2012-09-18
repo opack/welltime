@@ -21,6 +21,9 @@ public class PreferencesBean implements Serializable{
 // Flag indiquant s'il s'agit du premier lancement
 	public boolean isFirstLaunch;
 	
+// Le widget doit-il afficher un timepicker ou pointer à l'heure courante ?
+	public boolean widgetDisplayTimePicker;
+	
 // Flag indiquant s'il faut synchroniser les données avec le calendrier
 	public boolean syncCalendar;
 	

@@ -14,7 +14,10 @@ public class PreferencesUtils {
 		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 	// Flag de premier lancement
 		PreferencesBean.instance.isFirstLaunch = prefs.getBoolean(PreferenceKeys.isFirstLaunch.getKey(), true);
-		
+	
+	// Le widget doit-il afficher un timepicker ou pointer à l'heure courante ?
+		PreferencesBean.instance.widgetDisplayTimePicker = prefs.getBoolean(PreferenceKeys.widgetDisplayTimePicker.getKey(), false);
+				
 	// Décalage pointeuse/téléphone
 		PreferencesBean.instance.clockShift = TimeUtils.parseMinutes(prefs.getString(PreferenceKeys.clockShift.getKey(), "00:00"));
 		
@@ -102,6 +105,9 @@ public class PreferencesUtils {
 		
 	// Flag de premier lancement
 		editor.putBoolean(PreferenceKeys.isFirstLaunch.getKey(), PreferencesBean.instance.isFirstLaunch);
+		
+	// Le widget doit-il afficher un timepicker ou pointer à l'heure courante ?
+		editor.putBoolean(PreferenceKeys.widgetDisplayTimePicker.getKey(), PreferencesBean.instance.widgetDisplayTimePicker);
 		
 	// Décalage pointeuse/téléphone
 		editor.putString(PreferenceKeys.clockShift.getKey(), TimeUtils.formatMinutes(PreferencesBean.instance.clockShift));

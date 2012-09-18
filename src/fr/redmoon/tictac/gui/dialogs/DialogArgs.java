@@ -3,5 +3,6 @@ public enum DialogArgs {
 	DATE,
 	TIME,
 	DAY_TYPE,
-	NOTE;
+	NOTE,
+	FINISH_ACTIVITY_ON_DISMISS;
 }

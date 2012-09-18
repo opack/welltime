@@ -224,7 +224,7 @@ public abstract class TicTacActivity extends FragmentActivity {
 		newFragment.setArguments(args);
 	    newFragment.show(getSupportFragmentManager(), EditExtraFragment.TAG);
 	}
-	
+
 	/**
 	 * Propose une boîte de dialogue de saisie de temps et met à jour le pointage indiqué
 	 * du jour sélectionné
@@ -276,6 +276,22 @@ public abstract class TicTacActivity extends FragmentActivity {
 	protected void promptAddChecking(final long date) {
 		final Bundle args = new Bundle();
 		args.putLong(DialogArgs.DATE.name(), date);
+
+		final DialogFragment newFragment = new AddCheckingFragment();
+		newFragment.setArguments(args);
+	    newFragment.show(getSupportFragmentManager(), AddCheckingFragment.TAG);
+	}
+	
+	/**
+	 * Propose une boîte de dialogue de saisie de temps pour créer un nouveau
+	 * pointage à la date sélectionnée
+	 * @param date 
+	 */
+	protected void promptAddChecking(final long date, final int initialTime, final boolean finishActivityOnDismiss) {
+		final Bundle args = new Bundle();
+		args.putLong(DialogArgs.DATE.name(), date);
+		args.putInt(DialogArgs.TIME.name(), initialTime);
+		args.putBoolean(DialogArgs.FINISH_ACTIVITY_ON_DISMISS.name(), finishActivityOnDismiss);
 
 		final DialogFragment newFragment = new AddCheckingFragment();
 		newFragment.setArguments(args);
