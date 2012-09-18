@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.text.format.Time;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,8 +27,7 @@ import fr.redmoon.tictac.bus.bean.WeekBean;
 import fr.redmoon.tictac.gui.ViewSynchronizer;
 import fr.redmoon.tictac.gui.activities.TicTacActivity.OnDayDeletionListener;
 import fr.redmoon.tictac.gui.dialogs.DialogArgs;
-import fr.redmoon.tictac.gui.dialogs.DialogTypes;
-import fr.redmoon.tictac.gui.dialogs.WeekDialogDelegate;
+import fr.redmoon.tictac.gui.dialogs.fragments.EditFlexTimeFragment;
 import fr.redmoon.tictac.gui.listadapter.WeekAdapter;
 import fr.redmoon.tictac.gui.listadapter.WeekAdapterEntry;
 import fr.redmoon.tictac.gui.quickactions.ActionItem;
@@ -60,8 +60,6 @@ public class WeekActivity extends TicTacActivity implements OnDayDeletionListene
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
     	
-    	setDialogDelegate(new WeekDialogDelegate(this));
-
         // Création des beans de travail
         mWeekDays = new ArrayList<DayBean>();
         mWeekData = new WeekBean();
@@ -353,9 +351,12 @@ public class WeekActivity extends TicTacActivity implements OnDayDeletionListene
     
     public void updateFlexTime(final View btn) {
     	final Bundle args = new Bundle();
-		args.putLong(DialogArgs.DATE, mMonday);
-		args.putInt(DialogArgs.TIME, mWeekData.flexTime);
-		showDialog(DialogTypes.DATETIMEPICKER_EDIT_FLEXTIME, args);
+		args.putLong(DialogArgs.DATE.name(), mMonday);
+		args.putInt(DialogArgs.TIME.name(), mWeekData.flexTime);
+
+		final DialogFragment newFragment = new EditFlexTimeFragment();
+		newFragment.setArguments(args);
+	    newFragment.show(getSupportFragmentManager(), EditFlexTimeFragment.TAG);
     }
 
 	@Override

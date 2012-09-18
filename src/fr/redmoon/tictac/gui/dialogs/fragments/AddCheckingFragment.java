@@ -1,0 +1,101 @@
+package fr.redmoon.tictac.gui.dialogs.fragments;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import android.app.Dialog;
+import android.app.TimePickerDialog;
+import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.text.format.DateFormat;
+import android.widget.TimePicker;
+import android.widget.Toast;
+import fr.redmoon.tictac.R;
+import fr.redmoon.tictac.bus.DateUtils;
+import fr.redmoon.tictac.bus.DayTypes;
+import fr.redmoon.tictac.bus.FlexUtils;
+import fr.redmoon.tictac.bus.bean.DayBean;
+import fr.redmoon.tictac.bus.bean.PreferencesBean;
+import fr.redmoon.tictac.bus.export.tocalendar.CalendarAccess;
+import fr.redmoon.tictac.db.DbAdapter;
+import fr.redmoon.tictac.gui.activities.TicTacActivity;
+import fr.redmoon.tictac.gui.dialogs.DialogArgs;
+import fr.redmoon.tictac.gui.widgets.WidgetProvider;
+
+public class AddCheckingFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener {
+	public final static String TAG = AddCheckingFragment.class.getName();
+	
+	private long mDate;
+	
+	@Override
+	public void setArguments(Bundle args) {
+		mDate = args.getLong(DialogArgs.DATE.name());
+	}
+	
+	@Override
+	public Dialog onCreateDialog(Bundle savedInstanceState) {
+		return new TimePickerDialog(getActivity(), this, 0, 0, DateFormat.is24HourFormat(getActivity()));
+	}
+	
+	@Override
+	public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+		final int selectedTime = hourOfDay * 100 + minute;
+		final TicTacActivity activity = (TicTacActivity)getActivity();
+		final DbAdapter db = activity.getDbAdapter();
+		if (db == null || selectedTime == 0) {
+			return;
+		}
+		boolean dbUpdated = false;
+		
+		// Mise à jour de la base de données
+		if (db.isCheckingExisting(mDate, selectedTime)) {
+			// Le pointage existe déjà : affichage d'un message
+			Toast.makeText(
+				activity,
+				activity.getString(R.string.error_checking_already_exists),
+				Toast.LENGTH_LONG)
+			.show();
+		} else {
+			// Création du nouveau pointage
+			if (!db.isDayExisting(mDate)) {
+				// Le jour n'existe pas : on le crée.
+				final DayBean day = new DayBean();
+				day.date = mDate;
+				day.typeMorning = DayTypes.normal.ordinal();
+				day.typeAfternoon = DayTypes.normal.ordinal();
+				day.checkings.add(selectedTime);
+				db.createDay(day);
+				dbUpdated = day.isValid;
+				
+				// Ajout des évènements dans le calendrier
+				if (dbUpdated && PreferencesBean.instance.syncCalendar) {
+					CalendarAccess.getInstance().createEvents(day);
+				}
+			} else {
+				// Le jour existe : on ajoute simplement le pointage
+				dbUpdated = db.createChecking(mDate, selectedTime);
+				
+				if (dbUpdated && PreferencesBean.instance.syncCalendar) {
+					// Ajout du pointage dans le calendrier
+					final List<Integer> checkings = new ArrayList<Integer>();
+					db.fetchCheckings(mDate, checkings);
+					CalendarAccess.getInstance().createWorkEvents(mDate, checkings);
+				}
+			}
+			
+			// Mise à jour de l'HV.
+			final FlexUtils flexUtils = new FlexUtils(db);
+			flexUtils.updateFlex(mDate);
+		}
+		
+		// Mise à jour de l'affichage
+		if (dbUpdated) {
+			activity.populateView(mDate);
+			
+			// Mise à jour des widgets
+			if (mDate == DateUtils.getCurrentDayId()) {
+				WidgetProvider.updateClockinImage(activity);
+			}
+		}
+	}
+}

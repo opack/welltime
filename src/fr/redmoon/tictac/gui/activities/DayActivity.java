@@ -36,7 +36,6 @@ import fr.redmoon.tictac.bus.export.tocalendar.CalendarAccess;
 import fr.redmoon.tictac.gui.DayBiColorDrawableHelper;
 import fr.redmoon.tictac.gui.ViewSynchronizer;
 import fr.redmoon.tictac.gui.activities.TicTacActivity.OnDayDeletionListener;
-import fr.redmoon.tictac.gui.dialogs.DayDialogDelegate;
 import fr.redmoon.tictac.gui.listadapter.DayAdapter;
 import fr.redmoon.tictac.gui.quickactions.ActionItem;
 import fr.redmoon.tictac.gui.quickactions.QuickAction;
@@ -61,8 +60,6 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        setDialogDelegate(new DayDialogDelegate(this));
         
         // Création de l'interface graphique
         setContentView(R.layout.view_common_frame);
