@@ -1,6 +1,8 @@
 package fr.redmoon.tictac.bus.bean;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 import android.graphics.Color;
 import fr.redmoon.tictac.bus.DayTypes;
@@ -10,10 +12,6 @@ import fr.redmoon.tictac.bus.DayTypes;
  * Classe qui conserve la dernière version connue des préférences
  */
 public class PreferencesBean implements Serializable{
-	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 2782406634197394191L;
 	
 	public static PreferencesBean instance = new PreferencesBean();
@@ -46,6 +44,8 @@ public class PreferencesBean implements Serializable{
 	public int flexMax;	// minutes
 	
 // Types de jour
+	public Map<String, DayType> dayTypes = new HashMap<String, DayType>();
+	
 	// Normal
 	public int dayTypeNormalTime;	// minutes
 	public int dayTypeNormalColor;
@@ -134,6 +134,8 @@ public class PreferencesBean implements Serializable{
 		flexMax = otherPrefs.flexMax;
 
 		// Types de jour
+		dayTypes.clear();
+		dayTypes.putAll(otherPrefs.dayTypes);
 		dayTypeNormalTime = otherPrefs.dayTypeNormalTime;
 		dayTypeNormalColor = otherPrefs.dayTypeNormalColor;
 		dayTypeVacancyTime = otherPrefs.dayTypeVacancyTime;

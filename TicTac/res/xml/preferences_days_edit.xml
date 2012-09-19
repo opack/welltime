@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Initialisation de l'horaire variable -->
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory 
+        android:key="daytype_title" >
+		<TimePickerPreference
+			android:title="@string/pref_daytype_time"
+			android:summary="@string/pref_daytype_time_summary"
+			android:key="daytype_time"
+			android:defaultValue="00:00" />
+		<ColorPickerPreference
+			android:title="@string/pref_daytype_color"
+			android:summary="@string/pref_daytype_color_summary"
+			android:key="daytype_color"
+			android:defaultValue="-657931"/>
+		<EditTextPreference
+			android:title="@string/pref_daytype_label"
+			android:summary="@string/pref_daytype_label_summary"
+			android:key="daytype_label"
+			android:defaultValue=""/>
+	</PreferenceCategory>
+</PreferenceScreen>
