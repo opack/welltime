@@ -1,10 +1,16 @@
 package fr.redmoon.tictac.bus;
 
+import static fr.redmoon.tictac.gui.activities.PreferencesActivity.PATTERN_DAY_TYPE;
+
+import java.util.Map;
+import java.util.regex.Matcher;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import fr.redmoon.tictac.bus.bean.DayType;
 import fr.redmoon.tictac.bus.bean.PreferencesBean;
 import fr.redmoon.tictac.gui.activities.PreferencesActivity;
 
@@ -17,7 +23,7 @@ public class PreferencesUtils {
 	
 	// Le widget doit-il afficher un timepicker ou pointer à l'heure courante ?
 		PreferencesBean.instance.widgetDisplayTimePicker = prefs.getBoolean(PreferenceKeys.widgetDisplayTimePicker.getKey(), false);
-				
+
 	// Décalage pointeuse/téléphone
 		PreferencesBean.instance.clockShift = TimeUtils.parseMinutes(prefs.getString(PreferenceKeys.clockShift.getKey(), "00:00"));
 		
@@ -43,6 +49,31 @@ public class PreferencesUtils {
 		PreferencesBean.instance.flexMax = TimeUtils.parseMinutes(prefs.getString(PreferenceKeys.flexMax.getKey(), "07:00"));
 		
 	// Types de jour
+		final Map<String, DayType> dayTypes = PreferencesBean.instance.dayTypes;
+		dayTypes.clear();
+		String id;
+		String time;
+		int color;
+		DayType dayType;
+		for (String prefKey : prefs.getAll().keySet()) {
+			// Si la clé n'est pas un type de jour, on passe
+			Matcher matcher = PATTERN_DAY_TYPE.matcher(prefKey);
+			if (!matcher.matches()){
+				continue;
+			}
+			
+			// Extracton de l'id, du temps et et de la couleurdu type de jour
+			id = matcher.group(1);
+			time = prefs.getString("daytype_" + id + "_time", "00:00");
+			color = prefs.getInt("daytype_" + id + "_color", -657931);
+			
+			// Ajout de la préférence à la liste
+			dayType = new DayType(
+				TimeUtils.parseMinutes(time),
+				color);
+			dayTypes.put(id, dayType);
+		}
+		
 		// Normal
 		PreferencesBean.instance.dayTypeNormalTime = TimeUtils.parseMinutes(prefs.getString(PreferenceKeys.dayTypeNormalTime.getKey(), "00:00"));
 		PreferencesBean.instance.dayTypeNormalColor = prefs.getInt(PreferenceKeys.dayTypeNormalColor.getKey(), -657931);
@@ -134,6 +165,18 @@ public class PreferencesUtils {
 		editor.putString(PreferenceKeys.flexMax.getKey(), TimeUtils.formatMinutes(PreferencesBean.instance.flexMax));
 		
 	// Types de jour
+		final Map<String, DayType> dayTypes = PreferencesBean.instance.dayTypes;
+		dayTypes.clear();
+		String id;
+		DayType dayType;
+		for (Map.Entry<String, DayType> entry : dayTypes.entrySet()) {
+			id = entry.getKey();
+			dayType = entry.getValue();
+			
+			editor.putString("daytype_" + id + "_time", TimeUtils.formatMinutes(dayType.time));
+			editor.putInt("daytype_" + id + "_color", dayType.color);
+		}
+		
 		// Normal
 		editor.putString(PreferenceKeys.dayTypeNormalTime.getKey(), TimeUtils.formatMinutes(PreferencesBean.instance.dayTypeNormalTime));
 		editor.putInt(PreferenceKeys.dayTypeNormalColor.getKey(), PreferencesBean.instance.dayTypeNormalColor);

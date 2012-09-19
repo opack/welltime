@@ -76,4 +76,16 @@
 			android:summary="@string/pref_daytype_publicholiday_color_summary"
 			android:defaultValue="-3312092"/>
 	</PreferenceCategory>
+	
+	<PreferenceCategory 
+		android:title="DBG Types de jour"  />
+	
+	<PreferenceCategory 
+		android:title="DBG Gestion des types de jour" >
+		<EditTextPreference 
+		    android:title="Nouveau..."
+			android:key="daytype_add"
+			android:summary="Ajoute un type de jour"
+			android:dialogTitle="Choisissez un libellé pour ce type de jour :" />
+	</PreferenceCategory>
 </PreferenceScreen>
