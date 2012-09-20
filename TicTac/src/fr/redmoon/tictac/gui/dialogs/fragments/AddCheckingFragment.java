@@ -107,6 +107,7 @@ public class AddCheckingFragment extends DialogFragment implements TimePickerDia
 			if (!mFinishActivityOnDismiss) {
 				activity.populateView(mDate);
 			} else {
+				Toast.makeText(getActivity(), "Pointage à " + TimeUtils.formatTime(selectedTime) + " enregistré !", Toast.LENGTH_LONG).show();
 				activity.finish();
 			}
 		}

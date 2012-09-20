@@ -78,14 +78,16 @@
 	</PreferenceCategory>
 	
 	<PreferenceCategory 
-		android:title="DBG Types de jour"  />
+		android:title="@string/pref_daytypes_list"
+		android:key="daytype_types" />
 	
 	<PreferenceCategory 
-		android:title="DBG Gestion des types de jour" >
+		android:title="@string/pref_daytypes_manage" >
 		<EditTextPreference 
-		    android:title="Nouveau..."
+		    android:title="@string/pref_daytype_add"
+			android:summary="@string/pref_daytype_add_summary"
 			android:key="daytype_add"
-			android:summary="Ajoute un type de jour"
-			android:dialogTitle="Choisissez un libellé pour ce type de jour :" />
+			android:dialogTitle="@string/app_name"
+			android:dialogMessage="@string/pref_daytype_add_dialogmessage" />
 	</PreferenceCategory>
 </PreferenceScreen>

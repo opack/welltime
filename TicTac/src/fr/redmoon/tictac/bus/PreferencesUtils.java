@@ -1,6 +1,6 @@
 package fr.redmoon.tictac.bus;
 
-import static fr.redmoon.tictac.gui.activities.PreferencesActivity.PATTERN_DAY_TYPE;
+import static fr.redmoon.tictac.gui.activities.PreferencesActivity.PATTERN_DAY_TYPE_TITLE;
 
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -52,23 +52,26 @@ public class PreferencesUtils {
 		final Map<String, DayType> dayTypes = PreferencesBean.instance.dayTypes;
 		dayTypes.clear();
 		String id;
+		String label;
 		String time;
 		int color;
 		DayType dayType;
 		for (String prefKey : prefs.getAll().keySet()) {
 			// Si la clé n'est pas un type de jour, on passe
-			Matcher matcher = PATTERN_DAY_TYPE.matcher(prefKey);
+			Matcher matcher = PATTERN_DAY_TYPE_TITLE.matcher(prefKey);
 			if (!matcher.matches()){
 				continue;
 			}
 			
 			// Extracton de l'id, du temps et et de la couleurdu type de jour
 			id = matcher.group(1);
-			time = prefs.getString("daytype_" + id + "_time", "00:00");
-			color = prefs.getInt("daytype_" + id + "_color", -657931);
+			label = prefs.getString(PreferenceKeys.dayTypeLabel.getKey() + id, id);
+			time = prefs.getString(PreferenceKeys.dayTypeTime.getKey() + id, "00:00");
+			color = prefs.getInt(PreferenceKeys.dayTypeColor.getKey() + id, -657931);
 			
 			// Ajout de la préférence à la liste
 			dayType = new DayType(
+				label,
 				TimeUtils.parseMinutes(time),
 				color);
 			dayTypes.put(id, dayType);

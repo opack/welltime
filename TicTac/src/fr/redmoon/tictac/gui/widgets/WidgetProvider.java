@@ -42,9 +42,6 @@ public class WidgetProvider extends AppWidgetProvider {
 
 		// Mise à jour des widgets avec le nouvel intent
 		appWidgetManager.updateAppWidget(appWidgetIds, remoteViews);
-		
-		// DBG Cela semble inutile. Une fois confirmé, à supprimer.
-        //super.onUpdate(context, appWidgetManager, appWidgetIds);
     }
     
     @Override
