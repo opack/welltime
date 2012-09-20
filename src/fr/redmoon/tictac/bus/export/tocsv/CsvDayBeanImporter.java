@@ -9,10 +9,11 @@ import java.util.List;
 import java.util.Map;
 
 import android.app.Activity;
-import fr.redmoon.tictac.R;
 import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.bus.TimeUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
+import fr.redmoon.tictac.bus.bean.DayType;
+import fr.redmoon.tictac.bus.bean.PreferencesBean;
 import fr.redmoon.tictac.bus.export.FileImporter;
 
 public class CsvDayBeanImporter extends FileImporter<List<DayBean>> {
@@ -28,15 +29,16 @@ public class CsvDayBeanImporter extends FileImporter<List<DayBean>> {
 	public final static int POS_NOTE = 5;
 	public final static int POS_FIRST_CHECKINGS = 6;
 	
-	private final Map<String, Integer> mDayTypes;
+	private final Map<String, String> mDayTypesIdByLabel;
 	
 	public CsvDayBeanImporter(final Activity activity){
 		super(activity);
 		
-		final String[] dayTypes = mResources.getStringArray(R.array.dayTypesEntries);
-		mDayTypes = new HashMap<String, Integer>();
-		for (int curType = 0; curType < dayTypes.length; curType++) {
-			mDayTypes.put(dayTypes[curType], curType);
+		mDayTypesIdByLabel = new HashMap<String, String>();
+		DayType curType;
+		for (Map.Entry<String, DayType> entry : PreferencesBean.instance.dayTypes.entrySet()) {
+			curType = entry.getValue();
+			mDayTypesIdByLabel.put(curType.label, entry.getKey());
 		}
 	}
 	
@@ -69,8 +71,8 @@ public class CsvDayBeanImporter extends FileImporter<List<DayBean>> {
 		final DayBean day = new DayBean();
 		day.date = DateUtils.parseDateDDMMYYYY(data[POS_DATA]);
 		day.extra = TimeUtils.parseTime(data[POS_EXTRA]);
-		day.typeMorning = mDayTypes.get(data[POS_TYPE_MORNING]);
-		day.typeAfternoon = mDayTypes.get(data[POS_TYPE_AFTERNOON]);
+		day.typeMorning = mDayTypesIdByLabel.get(data[POS_TYPE_MORNING]);
+		day.typeAfternoon = mDayTypesIdByLabel.get(data[POS_TYPE_AFTERNOON]);
 		day.note = data[POS_NOTE].trim();
 		
 		// Ajout des pointages

@@ -11,7 +11,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
-import fr.redmoon.tictac.R;
 import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.bus.TimeUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
@@ -175,7 +174,7 @@ public class CalendarAccess implements OnDayDeletionListener {
 		}
 	}
 	
-	public void createDayTypeEvent(final long date, final int typeMorning, final int typeAfternoon) {
+	public void createDayTypeEvent(final long date, final String typeMorning, final String typeAfternoon) {
 		if (!isCalendarAvailable()) {
 			return;
 		}
@@ -188,7 +187,7 @@ public class CalendarAccess implements OnDayDeletionListener {
 		createDayTypeEvent(year, month, dayOfMonth, typeMorning, typeAfternoon);
 	}
 	
-	private void createDayTypeEvent(final int year, final int month, final int dayOfMonth, final int typeMorning, final int typeAfternoon) {
+	private void createDayTypeEvent(final int year, final int month, final int dayOfMonth, final String typeMorning, final String typeAfternoon) {
 		// Suppression de tous les évènements de ce type de la journée
 		// TODO Pour être propre il faudrait enregistrer l'ID des évènements
 		// créés pour tel et tel pointage, pour mettre à jour cet évènement
@@ -196,10 +195,9 @@ public class CalendarAccess implements OnDayDeletionListener {
 		deleteDayTypeEvents(year, month, dayOfMonth);
 		
 		// Ajout d'un évènement durant toute la journée
-		final String[] dayTypes = mActivity.getResources().getStringArray(R.array.dayTypesEntries);
-		final StringBuilder type = new StringBuilder(dayTypes[typeMorning]);
+		final StringBuilder type = new StringBuilder(PreferencesBean.getLabelByDayType(typeMorning));
 		if (typeMorning != typeAfternoon) {
-			type.append(" / ").append(dayTypes[typeAfternoon]);
+			type.append(" / ").append(PreferencesBean.getLabelByDayType(typeAfternoon));
 		}
 		addDayTypeEvent(year, month, dayOfMonth, type.toString());
 	}

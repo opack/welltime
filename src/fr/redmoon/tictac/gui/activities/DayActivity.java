@@ -27,10 +27,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 import fr.redmoon.tictac.R;
 import fr.redmoon.tictac.bus.DateUtils;
-import fr.redmoon.tictac.bus.DayTypes;
 import fr.redmoon.tictac.bus.FlexUtils;
+import fr.redmoon.tictac.bus.StandardDayTypes;
 import fr.redmoon.tictac.bus.TimeUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
+import fr.redmoon.tictac.bus.bean.DayType;
 import fr.redmoon.tictac.bus.bean.PreferencesBean;
 import fr.redmoon.tictac.bus.export.tocalendar.CalendarAccess;
 import fr.redmoon.tictac.gui.DayBiColorDrawableHelper;
@@ -71,13 +72,20 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
         
         // Remplissage de la liste des jours dans le détail
         Spinner spinner = (Spinner)pageDetails.findViewById(R.id.day_morning_type);
- 	    ArrayAdapter<CharSequence> dayTypeAdapter = ArrayAdapter.createFromResource(this, R.array.dayTypesEntries, android.R.layout.simple_spinner_item);
+        final List<DayType> dayTypes = new ArrayList<DayType>(PreferencesBean.instance.dayTypes.values());
+		ArrayAdapter<DayType> dayTypeAdapter = new ArrayAdapter<DayType>(this, android.R.layout.simple_spinner_item, dayTypes);
+//DBG 	    ArrayAdapter<CharSequence> dayTypeAdapter = ArrayAdapter.createFromResource(this, R.array.dayTypesEntries, android.R.layout.simple_spinner_item);
  	    dayTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
  	    spinner.setAdapter(dayTypeAdapter);
  	    spinner.setOnItemSelectedListener(new OnItemSelectedListener(){
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-				updateMorningDayType(pos);
+				final DayType type = (DayType)parent.getSelectedItem();
+				updateMorningDayType(type.id);
+//DBG				final String dayTypeId = dayTypesIdByLabel.get(parent.getSelectedItem());
+//				if (dayTypeId != null) {
+//					updateMorningDayType(dayTypeId);
+//				}
 			}
 
 			@Override
@@ -86,13 +94,19 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
  	    });
  	    
  	    spinner = (Spinner)pageDetails.findViewById(R.id.day_afternoon_type);
-	    dayTypeAdapter = ArrayAdapter.createFromResource(this, R.array.dayTypesEntries, android.R.layout.simple_spinner_item);
-	    dayTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+ 	   dayTypeAdapter = new ArrayAdapter<DayType>(this, android.R.layout.simple_spinner_item, dayTypes);
+//DBG	    dayTypeAdapter = ArrayAdapter.createFromResource(this, R.array.dayTypesEntries, android.R.layout.simple_spinner_item);
+//DBG	    dayTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 	    spinner.setAdapter(dayTypeAdapter);
 	    spinner.setOnItemSelectedListener(new OnItemSelectedListener(){
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-				updateAfternoonDayType(pos);
+				final DayType type = (DayType)parent.getSelectedItem();
+				updateMorningDayType(type.id);
+//DBG				final String dayTypeId = dayTypesIdByLabel.get(parent.getSelectedItem());
+//				if (dayTypeId != null) {
+//					updateAfternoonDayType(dayTypeId);
+//				}
 			}
 
 			@Override
@@ -190,8 +204,8 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
 		    	} else {
 		    		// Le jour sera créé. On vient d'ajouter un pointage, donc c'est
 		    		// un jour de type "normal"
-		    		mWorkDayBean.typeMorning = DayTypes.normal.ordinal();
-		    		mWorkDayBean.typeAfternoon = DayTypes.normal.ordinal();
+		    		mWorkDayBean.typeMorning = StandardDayTypes.normal.name();
+		    		mWorkDayBean.typeAfternoon = StandardDayTypes.normal.name();
 		    		
 		    		mDb.createDay(mWorkDayBean);
 		    	}
@@ -396,9 +410,24 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
 		// Mise à jour des composants graphiques
 		final View pageDetails = getPage(PAGE_DETAILS);
 		final Spinner spnMorning = (Spinner)pageDetails.findViewById(R.id.day_morning_type);
-		spnMorning.setSelection(day.typeMorning);
+//DBG		spnMorning.setSelection(day.typeMorning);
 		final Spinner spnAfternoon = (Spinner)pageDetails.findViewById(R.id.day_afternoon_type);
-		spnAfternoon.setSelection(day.typeAfternoon);
+//DBG		spnAfternoon.setSelection(day.typeAfternoon);
+		DayType curType;
+		for (int curItem = 0; curItem < spnMorning.getCount(); curItem++) {
+			curType = (DayType)spnMorning.getItemAtPosition(curItem);
+			if (curType.id.equals(day.typeMorning)) {
+				spnMorning.setSelection(curItem);
+				break;
+			}
+		}
+		for (int curItem = 0; curItem < spnAfternoon.getCount(); curItem++) {
+			curType = (DayType)spnAfternoon.getItemAtPosition(curItem);
+			if (curType.id.equals(day.typeAfternoon)) {
+				spnAfternoon.setSelection(curItem);
+				break;
+			}
+		}
 		setText(pageDetails, R.id.day_work_time, TimeUtils.formatMinutes(workTime));
 		setText(pageDetails, R.id.day_extra_time, TimeUtils.formatTime(day.extra));
 		setText(pageDetails, R.id.day_lost_time, TimeUtils.formatMinutes(lost));
@@ -452,19 +481,19 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
 		promptEditExtraTime(mWorkDayBean.date, mWorkDayBean.extra);
 	}
 	
-	public void updateMorningDayType(final int type) {
+	public void updateMorningDayType(final String type) {
 		updateDayType(type, mWorkDayBean.typeAfternoon);
 	}
 	
-	public void updateAfternoonDayType(final int type) {
+	public void updateAfternoonDayType(final String type) {
 		updateDayType(mWorkDayBean.typeMorning, type);
 	}
 	
-	public void updateDayType(final int typeMorning, final int typeAfternoon) {
+	public void updateDayType(final String typeMorning, final String typeAfternoon) {
 		// On teste si les types sont bien différents car lors de l'initialisation du spinner cette
 		// méthode sera appelée comme si l'utilisateur avait choisit une valeur. Or dans ce cas
 		// on ne veut pas créer un jour car le type de jour n'aura pas bougé.
-		if (typeAfternoon != mWorkDayBean.typeAfternoon || typeMorning != mWorkDayBean.typeMorning) {
+		if (!typeAfternoon.equals(mWorkDayBean.typeAfternoon) || !typeMorning.equals(mWorkDayBean.typeMorning)) {
 			if (mDb.updateDayType(mWorkDayBean.date, typeMorning, typeAfternoon)) {
 				// Mise à jour de l'HV.
 				final FlexUtils flexUtils = new FlexUtils(mDb);

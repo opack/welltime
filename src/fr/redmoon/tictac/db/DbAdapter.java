@@ -6,14 +6,12 @@ import android.content.Context;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 import fr.redmoon.tictac.bus.bean.DayBean;
 import fr.redmoon.tictac.bus.bean.WeekBean;
 
 public class DbAdapter {
 	private static final String DATABASE_NAME = "TicTac.db";
-	private static final int DATABASE_VERSION = 4;
-	private static final String LOG_TAG = "Welltime (DB)";
+	private static final int DATABASE_VERSION = 5;
 	
 	private final Context mCtx;
 	private DatabaseHelper mDbHelper;
@@ -38,10 +36,10 @@ public class DbAdapter {
 
         @Override
         public void onUpgrade(final SQLiteDatabase db, final int oldVersion, final int newVersion) {
-    		// Il faut tout casser et tout recréer
-            Log.w(LOG_TAG, "Upgrading database from version " + oldVersion + " to " + newVersion + ", which will destroy all old data");
-            dbAdapter.dropTables(db);
-            onCreate(db);
+//    		// Il faut tout casser et tout recréer
+//            Log.w(LOG_TAG, "Upgrading database from version " + oldVersion + " to " + newVersion + ", which will destroy all old data");
+//            dbAdapter.dropTables(db);
+//            onCreate(db);
         }
     }
 	
@@ -231,7 +229,7 @@ public class DbAdapter {
 		}
 	}
 	
-	public boolean updateDayType(final long date, final int typeMorning, final int typeAfternoon) {
+	public boolean updateDayType(final long date, final String typeMorning, final String typeAfternoon) {
 		final SQLiteDatabase db = mDbHelper.getWritableDatabase();
 		if (!days.exists(db, date)) {
 			final DayBean day = new DayBean();

@@ -26,9 +26,9 @@ public class MainActivity extends TabActivity {
 	
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
+	    initPrefs();
 	    setContentView(R.layout.tictac);
 	    createTabs();
-	    initPrefs();
 	    CalendarAccess.getInstance().initAccess(this);
 	}
 	

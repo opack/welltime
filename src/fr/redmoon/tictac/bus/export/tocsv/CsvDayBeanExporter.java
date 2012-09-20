@@ -10,6 +10,7 @@ import fr.redmoon.tictac.R;
 import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.bus.TimeUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
+import fr.redmoon.tictac.bus.bean.PreferencesBean;
 import fr.redmoon.tictac.bus.export.FileExporter;
 
 public class CsvDayBeanExporter extends FileExporter<List<DayBean>> {
@@ -94,8 +95,8 @@ public class CsvDayBeanExporter extends FileExporter<List<DayBean>> {
 		csv.append(DateUtils.formatDateDDMMYYYY(day.date)).append(CSV_SEPARATOR);
 		csv.append(TimeUtils.formatTime(day.extra)).append(CSV_SEPARATOR);
 		csv.append(TimeUtils.formatMinutes(total)).append(CSV_SEPARATOR);
-		csv.append(dayTypes[day.typeMorning]).append(CSV_SEPARATOR);
-		csv.append(dayTypes[day.typeAfternoon]).append(CSV_SEPARATOR);
+		csv.append(PreferencesBean.getLabelByDayType(day.typeMorning)).append(CSV_SEPARATOR);
+		csv.append(PreferencesBean.getLabelByDayType(day.typeAfternoon)).append(CSV_SEPARATOR);
 		
 		// S'il n'y a pas de note, on met un espace pour que l'import fonctionne.
 		String note = day.note;

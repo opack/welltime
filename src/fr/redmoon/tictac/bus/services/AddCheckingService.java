@@ -7,9 +7,9 @@ import android.os.IBinder;
 import android.text.format.Time;
 import android.widget.Toast;
 import fr.redmoon.tictac.bus.DateUtils;
-import fr.redmoon.tictac.bus.DayTypes;
 import fr.redmoon.tictac.bus.FlexUtils;
 import fr.redmoon.tictac.bus.PreferencesUtils;
+import fr.redmoon.tictac.bus.StandardDayTypes;
 import fr.redmoon.tictac.bus.TimeUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
 import fr.redmoon.tictac.bus.bean.PreferencesBean;
@@ -82,8 +82,8 @@ public class AddCheckingService extends Service {
 	    	} else {
 	    		// Le jour sera créé. On vient d'ajouter un pointage, donc c'est
 	    		// un jour de type "normal"
-	    		day.typeMorning = DayTypes.normal.ordinal();
-	    		day.typeAfternoon = DayTypes.normal.ordinal();
+	    		day.typeMorning = StandardDayTypes.normal.name();
+	    		day.typeAfternoon = StandardDayTypes.normal.name();
 	    		
 	    		db.createDay(day);
 	    		
