@@ -176,8 +176,9 @@ public class PreferencesUtils {
 			id = entry.getKey();
 			dayType = entry.getValue();
 			
-			editor.putString("daytype_" + id + "_time", TimeUtils.formatMinutes(dayType.time));
-			editor.putInt("daytype_" + id + "_color", dayType.color);
+			editor.putString(PreferenceKeys.dayTypeLabel.getKey() + id, dayType.label);
+			editor.putString(PreferenceKeys.dayTypeTime.getKey() + id, TimeUtils.formatMinutes(dayType.time));
+			editor.putInt(PreferenceKeys.dayTypeColor.getKey() + id, dayType.color);
 		}
 		
 		// Normal
