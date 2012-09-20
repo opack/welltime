@@ -6,7 +6,7 @@ import java.util.List;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import fr.redmoon.tictac.bus.DayTypes;
+import fr.redmoon.tictac.bus.StandardDayTypes;
 import fr.redmoon.tictac.bus.bean.DayBean;
 
 public class DaysTableHelper extends TableHelper {
@@ -46,15 +46,15 @@ public class DaysTableHelper extends TableHelper {
 				COL_NOTE},
 			new String[]{
 				SQLiteUtils.DATATYPE_INTEGER,
-				SQLiteUtils.DATATYPE_INTEGER,
-				SQLiteUtils.DATATYPE_INTEGER,
+				SQLiteUtils.DATATYPE_TEXT,
+				SQLiteUtils.DATATYPE_TEXT,
 				SQLiteUtils.DATATYPE_INTEGER,
 				SQLiteUtils.DATATYPE_TEXT
 			},
 			new String[]{
 				SQLiteUtils.CONSTRAINT_PRIMARY_KEY,
-				SQLiteUtils.CONSTRAINT_DEFAULT + DayTypes.normal.ordinal(),
-				SQLiteUtils.CONSTRAINT_DEFAULT + DayTypes.normal.ordinal(),
+				SQLiteUtils.CONSTRAINT_DEFAULT + StandardDayTypes.normal.name(),
+				SQLiteUtils.CONSTRAINT_DEFAULT + StandardDayTypes.normal.name(),
 				SQLiteUtils.CONSTRAINT_DEFAULT + "0",
 				SQLiteUtils.CONSTRAINT_NONE
 			});
@@ -161,7 +161,7 @@ public class DaysTableHelper extends TableHelper {
 		return updateRecord(db, dayId, mTempContentValues);
 	}
 	
-	public boolean updateType(final SQLiteDatabase db, final long dayId, final int typeMorning, final int typeAfternoon) {
+	public boolean updateType(final SQLiteDatabase db, final long dayId, final String typeMorning, final String typeAfternoon) {
 		mTempContentValues.clear();
 		mTempContentValues.put(COL_TYPE_MORNING, typeMorning);
 		mTempContentValues.put(COL_TYPE_AFTERNOON, typeAfternoon);
@@ -178,15 +178,15 @@ public class DaysTableHelper extends TableHelper {
 		// Comme il y a des données en base, on les lit
 		if (data.getCount() > 0) {
 			beanToFill.date = data.getLong(COL_DATE_INDEX);
-			beanToFill.typeMorning = data.getInt(COL_TYPE_MORNING_INDEX);
-			beanToFill.typeAfternoon = data.getInt(COL_TYPE_AFTERNOON_INDEX);
+			beanToFill.typeMorning = data.getString(COL_TYPE_MORNING_INDEX); // DBG
+			beanToFill.typeAfternoon = data.getString(COL_TYPE_AFTERNOON_INDEX); // DBG
 			beanToFill.extra = data.getInt(COL_EXTRA_INDEX);
 			beanToFill.note = data.getString(COL_NOTE_INDEX);
 			return true;
 		} else {
 			// Le jour n'est pas renseigné en base
-			beanToFill.typeMorning = DayTypes.not_worked.ordinal();
-			beanToFill.typeAfternoon = DayTypes.not_worked.ordinal();
+			beanToFill.typeMorning = StandardDayTypes.not_worked.name();
+			beanToFill.typeAfternoon = StandardDayTypes.not_worked.name();
 		}
 		return false;
 	}

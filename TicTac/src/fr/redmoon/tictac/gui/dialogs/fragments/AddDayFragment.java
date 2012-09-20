@@ -6,8 +6,8 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.widget.DatePicker;
 import fr.redmoon.tictac.bus.DateUtils;
-import fr.redmoon.tictac.bus.DayTypes;
 import fr.redmoon.tictac.bus.FlexUtils;
+import fr.redmoon.tictac.bus.StandardDayTypes;
 import fr.redmoon.tictac.bus.bean.DayBean;
 import fr.redmoon.tictac.bus.bean.PreferencesBean;
 import fr.redmoon.tictac.bus.export.tocalendar.CalendarAccess;
@@ -47,8 +47,8 @@ public class AddDayFragment extends DialogFragment implements DatePickerDialog.O
 		if (!db.isDayExisting(selectedDate)) {
 			final DayBean day = new DayBean();
 			day.date = selectedDate;
-			day.typeMorning = DayTypes.normal.ordinal();
-			day.typeAfternoon = DayTypes.normal.ordinal();
+			day.typeMorning = StandardDayTypes.normal.name();
+			day.typeAfternoon = StandardDayTypes.normal.name();
 			db.createDay(day);
 			dbUpdated = day.isValid;
 			

@@ -13,8 +13,8 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 import fr.redmoon.tictac.R;
 import fr.redmoon.tictac.bus.DateUtils;
-import fr.redmoon.tictac.bus.DayTypes;
 import fr.redmoon.tictac.bus.FlexUtils;
+import fr.redmoon.tictac.bus.StandardDayTypes;
 import fr.redmoon.tictac.bus.TimeUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
 import fr.redmoon.tictac.bus.bean.PreferencesBean;
@@ -69,8 +69,8 @@ public class AddCheckingFragment extends DialogFragment implements TimePickerDia
 				// Le jour n'existe pas : on le crée.
 				final DayBean day = new DayBean();
 				day.date = mDate;
-				day.typeMorning = DayTypes.normal.ordinal();
-				day.typeAfternoon = DayTypes.normal.ordinal();
+				day.typeMorning = StandardDayTypes.normal.name();
+				day.typeAfternoon = StandardDayTypes.normal.name();
 				day.checkings.add(selectedTime);
 				db.createDay(day);
 				dbUpdated = day.isValid;

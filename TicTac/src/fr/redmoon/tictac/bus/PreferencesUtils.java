@@ -9,6 +9,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.preference.PreferenceManager;
 import fr.redmoon.tictac.bus.bean.DayType;
 import fr.redmoon.tictac.bus.bean.PreferencesBean;
@@ -51,51 +52,90 @@ public class PreferencesUtils {
 	// Types de jour
 		final Map<String, DayType> dayTypes = PreferencesBean.instance.dayTypes;
 		dayTypes.clear();
-		String id;
-		String label;
-		String time;
-		int color;
-		DayType dayType;
-		for (String prefKey : prefs.getAll().keySet()) {
-			// Si la clé n'est pas un type de jour, on passe
-			Matcher matcher = PATTERN_DAY_TYPE_TITLE.matcher(prefKey);
-			if (!matcher.matches()){
-				continue;
-			}
-			
-			// Extracton de l'id, du temps et et de la couleurdu type de jour
-			id = matcher.group(1);
-			label = prefs.getString(PreferenceKeys.dayTypeLabel.getKey() + id, id);
-			time = prefs.getString(PreferenceKeys.dayTypeTime.getKey() + id, "00:00");
-			color = prefs.getInt(PreferenceKeys.dayTypeColor.getKey() + id, -657931);
-			
-			// Ajout de la préférence à la liste
-			dayType = new DayType(
-				label,
-				TimeUtils.parseMinutes(time),
-				color);
-			dayTypes.put(id, dayType);
+		// Les types de jour "normal" et "non travaillé" sont toujours présents.
+		if (!dayTypes.containsKey(StandardDayTypes.normal.name())) {
+			dayTypes.put(StandardDayTypes.normal.name(), new DayType(
+				StandardDayTypes.normal.name(),
+				"Normal",
+				0,
+				-657931)
+			);
+		}
+		if (!dayTypes.containsKey(StandardDayTypes.not_worked.name())) {
+			dayTypes.put(StandardDayTypes.not_worked.name(), new DayType(
+				StandardDayTypes.not_worked.name(),
+				"Non travaillé",
+				0,
+				Color.rgb(204, 204, 204))
+			);
 		}
 		
-		// Normal
-		PreferencesBean.instance.dayTypeNormalTime = TimeUtils.parseMinutes(prefs.getString(PreferenceKeys.dayTypeNormalTime.getKey(), "00:00"));
-		PreferencesBean.instance.dayTypeNormalColor = prefs.getInt(PreferenceKeys.dayTypeNormalColor.getKey(), -657931);
-		
-		// Congé payé
-		PreferencesBean.instance.dayTypeVacancyTime = TimeUtils.parseMinutes(prefs.getString(PreferenceKeys.dayTypeVacancyTime.getKey(), "07:00"));
-		PreferencesBean.instance.dayTypeVacancyColor = prefs.getInt(PreferenceKeys.dayTypeVacancyColor.getKey(), -5381890);
-		
-		// RTT
-		PreferencesBean.instance.dayTypeRttTime = TimeUtils.parseMinutes(prefs.getString(PreferenceKeys.dayTypeRttTime.getKey(), "07:00"));
-		PreferencesBean.instance.dayTypeRttColor = prefs.getInt(PreferenceKeys.dayTypeRttColor.getKey(), -5381890);
-		
-		// Maladie
-		PreferencesBean.instance.dayTypeIllnessTime = TimeUtils.parseMinutes(prefs.getString(PreferenceKeys.dayTypeIllnessTime.getKey(), "07:00"));
-		PreferencesBean.instance.dayTypeIllnessColor = prefs.getInt(PreferenceKeys.dayTypeIllnessColor.getKey(), -12619008);
-		
-		// Férié
-		PreferencesBean.instance.dayTypePublicHolidayTime = TimeUtils.parseMinutes(prefs.getString(PreferenceKeys.dayTypePublicHolidayTime.getKey(), "07:00"));
-		PreferencesBean.instance.dayTypePublicHolidayColor = prefs.getInt(PreferenceKeys.dayTypePublicHolidayColor.getKey(), -3312092);
+		// C'est le premier lancement de l'application : on ajoute quelques types de jour par défaut
+		// Pour des raisons de compatibilités avec l'existant, on modifie les id pour que ce soient
+		// des entiers plutôt que des chaines.
+		if (PreferencesBean.instance.isFirstLaunch) {
+			// Congé payé
+			dayTypes.put("2", new DayType(
+				"2",
+				"Congé payé",
+				420,
+				-5381890)
+			);
+			
+			// RTT
+			dayTypes.put("1", new DayType(
+				"1",
+				"Congé payé",
+				420,
+				-5381890)
+			);
+			
+			// Maladie
+			dayTypes.put("4", new DayType(
+				"4",
+				"Maladie",
+				420,
+				-12619008)
+			);
+			
+			// Férié
+			dayTypes.put("3", new DayType(
+				"3",
+				"Férié",
+				420,
+				-3312092)
+			);
+		}
+		// Si ce n'est pas le premier lancement, on charge les types de jour éventuellement définis
+		// par l'utilisateur
+		else {
+			String id;
+			String label;
+			String time;
+			int color;
+			DayType dayType;
+			for (String prefKey : prefs.getAll().keySet()) {
+				// Si la clé n'est pas un type de jour, on passe
+				Matcher matcher = PATTERN_DAY_TYPE_TITLE.matcher(prefKey);
+				if (!matcher.matches()){
+					continue;
+				}
+				
+				// Extracton de l'id, du temps et et de la couleurdu type de jour
+				id = matcher.group(1);
+				label = prefs.getString(PreferenceKeys.dayTypeLabel.getKey() + id, id);
+				time = prefs.getString(PreferenceKeys.dayTypeTime.getKey() + id, "00:00");
+				color = prefs.getInt(PreferenceKeys.dayTypeColor.getKey() + id, -657931);
+				
+				// Ajout de la préférence à la liste
+				dayType = new DayType(
+					id,
+					label,
+					TimeUtils.parseMinutes(time),
+					color);
+				dayTypes.put(id, dayType);
+			}
+		}
 	}
 	
 	public static void savePreference(final Context context, final String key, final boolean value) {

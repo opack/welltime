@@ -2,6 +2,10 @@ package fr.redmoon.tictac.gui;
 
 import static fr.redmoon.tictac.gui.activities.ManageActivity.PERIOD_CHECKIN_DIALOG;
 import static fr.redmoon.tictac.gui.activities.ManageActivity.PERIOD_SYNC_CALENDAR_DIALOG;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -15,6 +19,8 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import fr.redmoon.tictac.R;
+import fr.redmoon.tictac.bus.bean.DayType;
+import fr.redmoon.tictac.bus.bean.PreferencesBean;
 import fr.redmoon.tictac.db.DbAdapter;
 import fr.redmoon.tictac.gui.dialogs.listeners.PeriodCheckinListener;
 import fr.redmoon.tictac.gui.dialogs.listeners.PeriodSyncCalendarListener;
@@ -60,8 +66,17 @@ public class ManageOperationsHandler implements OnItemClickListener {
         //On modifie l'icône de l'AlertDialog pour le fun ;)
         //adb.setIcon(android.R.drawable.ic_dialog_alert);
         
+        final Map<String, String> dayTypesIdByLabel = new HashMap<String, String>();
+		DayType curType;
+		for (Map.Entry<String, DayType> entry : PreferencesBean.instance.dayTypes.entrySet()) {
+			curType = entry.getValue();
+			dayTypesIdByLabel.put(curType.label, entry.getKey());
+		}
+		final String[] dayTypeLabels = (String[])dayTypesIdByLabel.values().toArray();
+		
+		ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(activity, android.R.layout.simple_spinner_item, dayTypeLabels);
         final Spinner spinner = (Spinner)dialogView.findViewById(R.id.day_type);
-	    final ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(activity, R.array.dayTypesEntries, android.R.layout.simple_spinner_item);
+//DBG	    final ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(activity, R.array.dayTypesEntries, android.R.layout.simple_spinner_item);
 	    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 	    spinner.setAdapter(adapter);
  

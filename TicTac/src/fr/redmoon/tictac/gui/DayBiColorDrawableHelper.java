@@ -44,7 +44,7 @@ public class DayBiColorDrawableHelper {
 		mLowerTriangle.close();
 	}
 	
-	public Drawable getDrawableForDayTypes(final int morningDayType, final int afternoonDayType) {
+	public Drawable getDrawableForDayTypes(final String morningDayType, final String afternoonDayType) {
 		final int morningColor = PreferencesBean.getColorByDayType(morningDayType);
 		final int afternoonColor = PreferencesBean.getColorByDayType(afternoonDayType);
 		return getDrawableForColors(morningColor, afternoonColor);
