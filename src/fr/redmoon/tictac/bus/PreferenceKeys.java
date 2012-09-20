@@ -1,5 +1,7 @@
 package fr.redmoon.tictac.bus;
 
+import fr.redmoon.tictac.gui.activities.PreferencesActivity;
+
 
 public enum PreferenceKeys {
 // Nombre de lancements de l'application
@@ -46,6 +48,10 @@ public enum PreferenceKeys {
 	flexCurTime("flex_cur_time"),
 	
 // Types de jour
+	dayTypeLabel(PreferencesActivity.PREF_DAYTYPE_TITLE + "_"),
+	dayTypeTime(PreferencesActivity.PREF_DAYTYPE_TIME + "_"), // en minutes
+	dayTypeColor(PreferencesActivity.PREF_DAYTYPE_COLOR + "_"), // en entier
+	
 	// Normal
 	dayTypeNormalTime("daytype_normal_time"),		// en minutes
 	dayTypeNormalColor("daytype_normal_color"),		// en entier
