@@ -40,11 +40,10 @@ public class CsvWeekBeanExporter extends FileExporter<List<WeekBean>> {
 		writer.append(csvHeader);
 
 		// Ecriture des jours
-		final String[] dayTypes = mResources.getStringArray(R.array.dayTypesEntries);
 		String converted;
 		for (WeekBean day : mData) {
 			// Conversion des données
-			converted = convertToCsv(day, dayTypes);
+			converted = convertToCsv(day);
 
 			// Ecriture des données
 			writer.append(converted);
@@ -66,7 +65,7 @@ public class CsvWeekBeanExporter extends FileExporter<List<WeekBean>> {
 		return csv.toString();
 	}
 
-	private static String convertToCsv(final WeekBean week, final String[] dayTypes) {
+	private static String convertToCsv(final WeekBean week) {
 		// Ajout des propriétés de la semaine
 		final StringBuilder csv = new StringBuilder();
 		csv.append(DateUtils.formatDateDDMMYYYY(week.date)).append(CSV_SEPARATOR);

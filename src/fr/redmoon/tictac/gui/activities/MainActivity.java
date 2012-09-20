@@ -13,7 +13,6 @@ import android.widget.TabHost;
 import android.widget.TextView;
 import fr.redmoon.tictac.R;
 import fr.redmoon.tictac.bus.PreferencesUtils;
-import fr.redmoon.tictac.bus.bean.PreferencesBean;
 import fr.redmoon.tictac.bus.export.tocalendar.CalendarAccess;
 
 public class MainActivity extends TabActivity {
@@ -36,12 +35,7 @@ public class MainActivity extends TabActivity {
 	    // Initialisation des préférences
 	    if (PreferencesUtils.isFirstLaunch(this)) {
 	    	// Premier lancement : on initialise les préférences avec les valeurs par défaut
-	    	// Note : les 3 lignes qui suivent devraient pouvoir être remplacées par l'appel
-	    	// à PreferenceManager.setDefaultValues(this, R.xml.preferences, true), mais ça
-	    	// ne fonctionne pas donc on doit écrire les préférences à la main :'(
-	    	PreferencesUtils.updatePreferencesBean(this);
-	    	PreferencesBean.instance.isFirstLaunch = false;
-	    	PreferencesUtils.savePreferencesBean(this);
+	    	PreferencesUtils.resetPreferences(this);
 	    	
 	    	// Affichage de l'assistant de premier lancement
 	    	final AlertDialog.Builder builder = new AlertDialog.Builder(this);

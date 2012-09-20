@@ -12,8 +12,8 @@ import android.widget.Toast;
 import fr.redmoon.tictac.R;
 import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.bus.FlexUtils;
-import fr.redmoon.tictac.bus.StandardDayTypes;
 import fr.redmoon.tictac.bus.bean.DayBean;
+import fr.redmoon.tictac.bus.bean.DayType;
 import fr.redmoon.tictac.bus.bean.PreferencesBean;
 import fr.redmoon.tictac.bus.export.tocalendar.CalendarAccess;
 import fr.redmoon.tictac.db.DbAdapter;
@@ -36,8 +36,8 @@ public class PeriodCheckinListener extends AbsPeriodChooserListener {
 		// Récupération des dates et du type de jour.
 		final Calendar calendar = new GregorianCalendar(mDate1.getYear(), mDate1.getMonth(), mDate1.getDayOfMonth());
 		final long lastDay = DateUtils.getDayId(mDate2.getYear(), mDate2.getMonth(), mDate2.getDayOfMonth());
-		final String dayType = StandardDayTypes.normal.name();//DBG mDayType.getSelectedItemPosition();
 		final String note = mNote.getText().toString();
+		final DayType dayType = (DayType)mDayType.getSelectedItem();
 		
 		// Parcours des jours
 		final long firstDay = DateUtils.getDayId(calendar);
@@ -48,8 +48,8 @@ public class PeriodCheckinListener extends AbsPeriodChooserListener {
 			if (DateUtils.isWorkingWeekDay(calendar)) {
 				// On prépare le jour à créer ou mettre à jour
 				mDb.fetchDay(curDate, dayData);
-				dayData.typeMorning = dayType;
-				dayData.typeAfternoon = dayType;
+				dayData.typeMorning = dayType.id;
+				dayData.typeAfternoon = dayType.id;
 				if (note != null) {
 					dayData.note = note;
 				}

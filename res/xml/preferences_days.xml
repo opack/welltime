@@ -2,81 +2,6 @@
 <!-- Initialisation de l'horaire variable -->
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android">
-	<!-- Normal -->
-	<PreferenceCategory 
-		android:title="@string/pref_daytype_normal" >
-		<TimePickerPreference
-			android:title="@string/pref_daytype_time"
-			android:key="daytype_normal_time"
-			android:summary="@string/pref_daytype_normal_time_summary"
-			android:defaultValue="00:00" />
-		<ColorPickerPreference
-			android:title="@string/pref_daytype_color"
-			android:key="daytype_normal_color"
-			android:summary="@string/pref_daytype_normal_color_summary"
-			android:defaultValue="-657931"/>
-	</PreferenceCategory>
-	
-	<!-- Congé payé -->
-	<PreferenceCategory 
-		android:title="@string/pref_daytype_vacancy" >
-		<TimePickerPreference
-			android:title="@string/pref_daytype_time"
-			android:key="daytype_vacancy_time"
-			android:summary="@string/pref_daytype_vacancy_time_summary"
-			android:defaultValue="07:00" />
-		<ColorPickerPreference
-			android:title="@string/pref_daytype_color"
-			android:key="daytype_vacancy_color"
-			android:summary="@string/pref_daytype_vacancy_color_summary"
-			android:defaultValue="-5381890"/>
-	</PreferenceCategory>
-	
-	<!-- RTT -->
-	<PreferenceCategory 
-		android:title="@string/pref_daytype_rtt" >
-		<TimePickerPreference
-			android:title="@string/pref_daytype_time"
-			android:key="daytype_rtt_time"
-			android:summary="@string/pref_daytype_rtt_time_summary"
-			android:defaultValue="07:00" />
-		<ColorPickerPreference
-			android:title="@string/pref_daytype_color"
-			android:key="daytype_rtt_color"
-			android:summary="@string/pref_daytype_rtt_color_summary"
-			android:defaultValue="-5381890"/>
-	</PreferenceCategory>
-	
-	<!-- Maladie -->
-	<PreferenceCategory 
-		android:title="@string/pref_daytype_illness" >
-		<TimePickerPreference
-			android:title="@string/pref_daytype_time"
-			android:key="daytype_illness_time"
-			android:summary="@string/pref_daytype_illness_time_summary"
-			android:defaultValue="07:00" />
-		<ColorPickerPreference
-			android:title="@string/pref_daytype_color"
-			android:key="daytype_illness_color"
-			android:summary="@string/pref_daytype_illness_color_summary"
-			android:defaultValue="-12619008"/>
-	</PreferenceCategory>
-	
-	<!-- Férié -->
-	<PreferenceCategory 
-		android:title="@string/pref_daytype_publicholiday" >
-		<TimePickerPreference
-			android:title="@string/pref_daytype_time"
-			android:key="daytype_publicholiday_time"
-			android:summary="@string/pref_daytype_publicholiday_time_summary"
-			android:defaultValue="07:00" />
-		<ColorPickerPreference
-			android:title="@string/pref_daytype_color"
-			android:key="daytype_publicholiday_color"
-			android:summary="@string/pref_daytype_publicholiday_color_summary"
-			android:defaultValue="-3312092"/>
-	</PreferenceCategory>
-	
 	<PreferenceCategory 
 		android:title="@string/pref_daytypes_list"
 		android:key="daytype_types" />
@@ -89,5 +14,11 @@
 			android:key="daytype_add"
 			android:dialogTitle="@string/app_name"
 			android:dialogMessage="@string/pref_daytype_add_dialogmessage" />
+		<Preference 
+		    android:title="@string/pref_daytype_reset"
+			android:summary="@string/pref_daytype_reset_summary"
+			android:key="daytype_reset"
+			android:dialogTitle="@string/app_name"
+			android:dialogMessage="@string/pref_daytype_reset_dialogmessage" />
 	</PreferenceCategory>
 </PreferenceScreen>

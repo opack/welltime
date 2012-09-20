@@ -17,7 +17,7 @@
     <string name="menu_day_show_details">Détails</string>    
     
     <!-- Libellés pour les boîtes de dialogue -->
-    <string name="dlg_title_edit_day_type">Choisissez le nouveau type de jour :</string>
+    <string name="dlg_title_edit_day_type">Choisissez un type de jour :</string>
     <string name="dlg_title_edit_day_note">Saisissez une note :</string>
     <string name="dlg_title_first_launch">Premier lancement !</string>
     <string name="dlg_title_edit_flex_time">Initialisez l\'horaire variable</string>
@@ -33,22 +33,4 @@
     <string name="period_chooser_end_title">Choisissez une date de fin :</string>
     <string name="date_title">Choisissez une date :</string>
     <string name="time_title">Choisissez une heure :</string>
-    
-    <!-- Liste des types de jour -->
-    <string-array name="dayTypesEntries">
-        <item>Normal</item>
-        <item>R.T.T.</item>
-        <item>Congé payé</item>
-        <item>Férié</item>
-        <item>Maladie</item>
-        <item>Non travaillé</item>
-    </string-array>
-    <string-array name="dayTypesValues">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-        <item>5</item>
-    </string-array>
 </resources>

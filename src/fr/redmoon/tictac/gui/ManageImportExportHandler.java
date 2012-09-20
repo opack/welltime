@@ -14,9 +14,11 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.DialogInterface.OnDismissListener;
 import android.os.Build;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,6 +39,7 @@ import fr.redmoon.tictac.bus.export.tobinary.BinPreferencesBeanImporter;
 import fr.redmoon.tictac.bus.export.tocsv.CsvDayBeanImporter;
 import fr.redmoon.tictac.bus.export.tocsv.CsvWeekBeanImporter;
 import fr.redmoon.tictac.db.DbAdapter;
+import fr.redmoon.tictac.gui.activities.PreferencesActivity;
 import fr.redmoon.tictac.gui.dialogs.listeners.PeriodExporterListener;
 
 public class ManageImportExportHandler implements OnItemClickListener {
@@ -202,6 +205,17 @@ public class ManageImportExportHandler implements OnItemClickListener {
 				if (importer.importData(filename, PreferencesBean.instance)) {
 					// Les données ont bien été lues. On va à présent les écrire dans le vrai
 					// fichier de préférences pour une relecture au prochain démarrage de l'application
+					// Suppression des préférences stockées liées aux types de jour
+					final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity);
+					final SharedPreferences.Editor editor = preferences.edit();
+					for (String prefKey : preferences.getAll().keySet()) {
+						// S'il s'agit d'une préférence liée aux types de jour, alors sa clé
+						// commence par PREF_DAYTYPE_PREFIX. Le cas échéant, on la supprime.
+						if (prefKey.startsWith(PreferencesActivity.PREF_DAYTYPE_PREFIX)) {
+							editor.remove(prefKey);
+						}
+					}
+					editor.commit();
 					PreferencesUtils.savePreferencesBean(activity);
 					Toast.makeText(activity, R.string.import_prefs_success, Toast.LENGTH_LONG).show();
 				} else {

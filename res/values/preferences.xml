@@ -37,23 +37,9 @@
 	<string name="pref_daytype_remove">Supprimer&#8230;</string>
 	<string name="pref_daytype_remove_summary">Supprimez ce type de jour.</string>
 	<string name="pref_daytype_remove_dialogmessage">Voulez-vous vraiment supprimer le type de jour %1$s ?</string>
-	
-	<string name="pref_daytype_notworked">Non renseigné</string>
-	<string name="pref_daytype_normal">Journée normale</string>
-	<string name="pref_daytype_normal_time_summary">Temps de travail théorique.</string>
-	<string name="pref_daytype_normal_color_summary">Choisissez la couleur représentant les jours normaux.</string>
-	<string name="pref_daytype_vacancy">Congé payé</string>
-	<string name="pref_daytype_vacancy_time_summary">Temps crédité lorsque vous êtes en congé payé.</string>
-	<string name="pref_daytype_vacancy_color_summary">Choisissez la couleur représentant les jours de congé payé.</string>
-	<string name="pref_daytype_rtt">R.T.T.</string>
-	<string name="pref_daytype_rtt_time_summary">Temps crédité lorsque vous êtes en RTT.</string>
-	<string name="pref_daytype_rtt_color_summary">Choisissez la couleur représentant les jours de RTT.</string>
-	<string name="pref_daytype_illness">Maladie</string>
-	<string name="pref_daytype_illness_time_summary">Temps crédité lorsque vous êtes malade.</string>
-	<string name="pref_daytype_illness_color_summary">Choisissez la couleur représentant les jours de maladie.</string>
-	<string name="pref_daytype_publicholiday">Férié</string>
-	<string name="pref_daytype_publicholiday_time_summary">Temps crédité en cas de jour férié.</string>
-	<string name="pref_daytype_publicholiday_color_summary">Choisissez la couleur représentant les jours fériés.</string>
+	<string name="pref_daytype_reset">Réinitialiser&#8230;</string>
+	<string name="pref_daytype_reset_summary">Réinitialiser la liste des types de jour.</string>
+	<string name="pref_daytype_reset_dialogmessage">Voulez-vous vraiment perdre tous vos types de jour et restaurer les valeurs par défaut ?</string>
 	
 	<!-- Ecran principal -->
 	<string name="pref_clock_shift">Décalage horloge</string>
