@@ -17,10 +17,12 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
+import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import fr.redmoon.tictac.R;
 import fr.redmoon.tictac.bus.PreferenceKeys;
 import fr.redmoon.tictac.bus.PreferencesUtils;
+import fr.redmoon.tictac.bus.StandardDayTypes;
 import fr.redmoon.tictac.bus.export.tocalendar.CalendarAccess;
 
 public class PreferencesActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
@@ -29,12 +31,14 @@ public class PreferencesActivity extends PreferenceActivity implements OnSharedP
 	public static final String URI_PAGE_DAYS = "preferences://days";
 
 	// Nom des préférences dans les écrans de prefs, ou en tant que préfixe dans les préférences stockées
-	public static final String PREF_DAYTYPE_TITLE = "daytype_title";
-	public static final String PREF_DAYTYPE_TIME = "daytype_time";
-	public static final String PREF_DAYTYPE_COLOR = "daytype_color";
-	private static final String PREF_DAYTYPE_ADD = "daytype_add";
-	private static final String PREF_DAYTYPE_REMOVE = "daytype_remove";
-	private static final String PREF_DAYTYPE_LABEL = "daytype_label";
+	public static final String PREF_DAYTYPE_PREFIX = "daytype_";
+	public static final String PREF_DAYTYPE_TITLE = PREF_DAYTYPE_PREFIX + "title";
+	public static final String PREF_DAYTYPE_TIME = PREF_DAYTYPE_PREFIX + "time";
+	public static final String PREF_DAYTYPE_COLOR = PREF_DAYTYPE_PREFIX + "color";
+	private static final String PREF_DAYTYPE_LABEL = PREF_DAYTYPE_PREFIX + "label";
+	private static final String PREF_DAYTYPE_ADD = PREF_DAYTYPE_PREFIX + "add";
+	private static final String PREF_DAYTYPE_REMOVE = PREF_DAYTYPE_PREFIX + "remove";
+	private static final String PREF_DAYTYPE_RESET = PREF_DAYTYPE_PREFIX + "reset";	
 	
 	public static final Pattern PATTERN_DAY_TYPE_TITLE = Pattern.compile(PreferenceKeys.dayTypeLabel.getKey() + "(.*)");
 	
@@ -61,8 +65,8 @@ public class PreferencesActivity extends PreferenceActivity implements OnSharedP
             addPreferencesFromResource(R.xml.preferences);
         }
 		
-		final SharedPreferences prefs = getPreferenceManager().getSharedPreferences();
-		prefs.registerOnSharedPreferenceChangeListener(this);
+		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        prefs.registerOnSharedPreferenceChangeListener(this);
 	}
 
 	private void addDayTypesPreferences() {
@@ -90,6 +94,31 @@ public class PreferencesActivity extends PreferenceActivity implements OnSharedP
 			pref.setIntent(intent);
 			cat.addPreference(pref);
 		}
+		
+		// Préparation du bouton de remise à zéro
+		final Preference resetPref = getPreferenceScreen().findPreference(PREF_DAYTYPE_RESET);
+		resetPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+			@Override
+			public boolean onPreferenceClick(Preference preference) {
+				final Builder adb = new AlertDialog.Builder(PreferencesActivity.this);
+				adb.setTitle(R.string.app_name);
+				final String message = getResources().getString(R.string.pref_daytype_reset_dialogmessage);
+				adb.setMessage(message);
+				adb.setIcon(android.R.drawable.ic_dialog_alert);
+				adb.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+				    public void onClick(DialogInterface dialog, int whichButton) {
+				    	// Mise à zéro des jours
+				        PreferencesUtils.resetDayTypesPreferences(PreferencesActivity.this);
+				        
+				        // Rafraîchissement de l'interface
+						refreshContent();
+				    }
+				});
+				adb.setNegativeButton(android.R.string.no, null);
+				adb.show();
+				return false;
+			}
+		});
 	}
 		
 	/**
@@ -132,11 +161,11 @@ public class PreferencesActivity extends PreferenceActivity implements OnSharedP
 				adb.setIcon(android.R.drawable.ic_dialog_alert);
 				adb.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 				    public void onClick(DialogInterface dialog, int whichButton) {
-				    	// Suppression des préférences liées à ce type de jour
-				        removeDayType(id);
-				        
 				        // Affichage de la page précédente
 						onBackPressed();
+						
+						// Suppression des préférences liées à ce type de jour
+				        removeDayType(id);
 				    }
 				});
 				adb.setNegativeButton(android.R.string.no, null);
@@ -144,6 +173,11 @@ public class PreferencesActivity extends PreferenceActivity implements OnSharedP
 				return false;
 			}
 		});
+		// On n'active le bouton que s'il s'agit d'un jour supprimable.
+		final boolean isRemovable = 
+			!StandardDayTypes.normal.name().equals(id)
+			&& !StandardDayTypes.not_worked.name().equals(id);
+		removePref.setEnabled(isRemovable);
 	}
 	
 	@Override
@@ -220,7 +254,11 @@ public class PreferencesActivity extends PreferenceActivity implements OnSharedP
 		// Enregistrement des modifications
 		editor.commit();
 		
-		prefs.registerOnSharedPreferenceChangeListener(this);
+		// Ne surtout pas remettre ce listener !!! En effet, une fois la suppression
+		// du type de jour effectué, l'Activity n'existera plus (on fait un onBackPressed)
+		// et si on la laisse en listener, on va finir par tenter de faire un refreshContent
+		// qui échouera pour cause d'activité inexistante.
+		//prefs.registerOnSharedPreferenceChangeListener(this);
 	}
 
 	private void refreshContent() {

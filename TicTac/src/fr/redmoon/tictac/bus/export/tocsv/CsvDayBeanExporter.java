@@ -51,11 +51,10 @@ public class CsvDayBeanExporter extends FileExporter<List<DayBean>> {
 		writer.append(csvHeader);
 
 		// Ecriture des jours
-		final String[] dayTypes = mResources.getStringArray(R.array.dayTypesEntries);
 		String converted;
 		for (DayBean day : mData) {
 			// Conversion des données
-			converted = convertToCsv(day, dayTypes);
+			converted = convertToCsv(day);
 
 			// Ecriture des données
 			writer.append(converted);
@@ -86,7 +85,7 @@ public class CsvDayBeanExporter extends FileExporter<List<DayBean>> {
 		return csv.toString();
 	}
 
-	private static String convertToCsv(final DayBean day, final String[] dayTypes) {
+	private static String convertToCsv(final DayBean day) {
 		// Calcule le temps total
 		final int total = TimeUtils.computeTotal(day);
 

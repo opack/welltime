@@ -71,23 +71,6 @@ public class PreferencesBean implements Serializable{
 	 * @return
 	 */
 	public static int getTimeByDayType(final String type) {
-//DBG		if (type == DayTypes.not_worked.ordinal()) {
-//			return 0;
-//		} else if (type == DayTypes.normal.ordinal()) {
-//			return instance.dayTypeNormalTime;
-//		} else if (type == DayTypes.RTT.ordinal()) {
-//			return instance.dayTypeRttTime;
-//		} else if (type == DayTypes.vacancy.ordinal()) {
-//			return instance.dayTypeVacancyTime;
-//		} else if (type == DayTypes.publicHoliday.ordinal()) {
-//			return instance.dayTypePublicHolidayTime;
-//		} else if (type == DayTypes.illness.ordinal()) {
-//			return instance.dayTypeIllnessTime;
-//		} else {
-//			// Type de jour inconnu
-//			return 0;
-//		}
-		
 		int time = 0;
 		final DayType dayType = instance.dayTypes.get(type);
 		if (dayType != null) {
@@ -102,23 +85,6 @@ public class PreferencesBean implements Serializable{
 	 * @return
 	 */
 	public static int getColorByDayType(final String type) {
-//DBG		if (type == DayTypes.not_worked.ordinal()) {
-//			return Color.rgb(204, 204, 204);
-//		} else if (type == DayTypes.normal.ordinal()) {
-//			return instance.dayTypeNormalColor;
-//		} else if (type == DayTypes.RTT.ordinal()) {
-//			return instance.dayTypeRttColor;
-//		} else if (type == DayTypes.vacancy.ordinal()) {
-//			return instance.dayTypeVacancyColor;
-//		} else if (type == DayTypes.publicHoliday.ordinal()) {
-//			return instance.dayTypePublicHolidayColor;
-//		} else if (type == DayTypes.illness.ordinal()) {
-//			return instance.dayTypeIllnessColor;
-//		} else {
-//			// Type de jour inconnu
-//			return 0;
-//		}
-		
 		int color = 0;
 		final DayType dayType = instance.dayTypes.get(type);
 		if (dayType != null) {

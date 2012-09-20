@@ -53,7 +53,7 @@
     </string-array>
     <string name="period_checkin_title">Pointage d\'une période</string>
     <string name="period_checkin_prompt_dates">Choisissez les dates de la période à pointer :</string>
-    <string name="period_checkin_prompt_day_type">Choisissez le type des jours à créer :</string>
+    <string name="period_checkin_prompt_day_type">Choisissez le type de jours à créer :</string>
     <string name="period_checkin_prompt_note">Saissez une note à associer aux jours :</string>
     <string name="btn_checkin">Pointer</string>
     <string name="period_checkin_results">Pointage terminé.\n%1$d jour(s) créé(s).\n%2$d jour(s) mis à jour.</string>

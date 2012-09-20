@@ -3,8 +3,8 @@ package fr.redmoon.tictac.gui;
 import static fr.redmoon.tictac.gui.activities.ManageActivity.PERIOD_CHECKIN_DIALOG;
 import static fr.redmoon.tictac.gui.activities.ManageActivity.PERIOD_SYNC_CALENDAR_DIALOG;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -66,19 +66,12 @@ public class ManageOperationsHandler implements OnItemClickListener {
         //On modifie l'icône de l'AlertDialog pour le fun ;)
         //adb.setIcon(android.R.drawable.ic_dialog_alert);
         
-        final Map<String, String> dayTypesIdByLabel = new HashMap<String, String>();
-		DayType curType;
-		for (Map.Entry<String, DayType> entry : PreferencesBean.instance.dayTypes.entrySet()) {
-			curType = entry.getValue();
-			dayTypesIdByLabel.put(curType.label, entry.getKey());
-		}
-		final String[] dayTypeLabels = (String[])dayTypesIdByLabel.values().toArray();
-		
-		ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(activity, android.R.layout.simple_spinner_item, dayTypeLabels);
+        final List<DayType> dayTypes = new ArrayList<DayType>(PreferencesBean.instance.dayTypes.values());
+		ArrayAdapter<DayType> adapter = new ArrayAdapter<DayType>(activity, android.R.layout.simple_spinner_item, dayTypes);
         final Spinner spinner = (Spinner)dialogView.findViewById(R.id.day_type);
-//DBG	    final ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(activity, R.array.dayTypesEntries, android.R.layout.simple_spinner_item);
 	    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 	    spinner.setAdapter(adapter);
+	    spinner.setPromptId(R.string.dlg_title_edit_day_type);
  
         //On affecte un bouton "OK" à notre AlertDialog et on lui affecte un évènement
         adb.setPositiveButton(R.string.btn_checkin, new PeriodCheckinListener(

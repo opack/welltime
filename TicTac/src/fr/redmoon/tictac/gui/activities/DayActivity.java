@@ -5,11 +5,14 @@ import java.util.Calendar;
 import java.util.List;
 
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -42,7 +45,7 @@ import fr.redmoon.tictac.gui.quickactions.ActionItem;
 import fr.redmoon.tictac.gui.quickactions.QuickAction;
 import fr.redmoon.tictac.gui.widgets.WidgetProvider;
 
-public class DayActivity extends TicTacActivity implements OnDayDeletionListener {
+public class DayActivity extends TicTacActivity implements OnDayDeletionListener, OnSharedPreferenceChangeListener {
 	public static final int PAGE_CHECKINGS = 0;
 	public static final int PAGE_DETAILS = 1;
 	
@@ -71,48 +74,41 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
         initPages(pageCheckings, pageDetails);
         
         // Remplissage de la liste des jours dans le détail
-        Spinner spinner = (Spinner)pageDetails.findViewById(R.id.day_morning_type);
-        final List<DayType> dayTypes = new ArrayList<DayType>(PreferencesBean.instance.dayTypes.values());
-		ArrayAdapter<DayType> dayTypeAdapter = new ArrayAdapter<DayType>(this, android.R.layout.simple_spinner_item, dayTypes);
-//DBG 	    ArrayAdapter<CharSequence> dayTypeAdapter = ArrayAdapter.createFromResource(this, R.array.dayTypesEntries, android.R.layout.simple_spinner_item);
- 	    dayTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
- 	    spinner.setAdapter(dayTypeAdapter);
- 	    spinner.setOnItemSelectedListener(new OnItemSelectedListener(){
-			@Override
-			public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-				final DayType type = (DayType)parent.getSelectedItem();
-				updateMorningDayType(type.id);
-//DBG				final String dayTypeId = dayTypesIdByLabel.get(parent.getSelectedItem());
-//				if (dayTypeId != null) {
-//					updateMorningDayType(dayTypeId);
-//				}
+        refreshDayTypeSpinners();
+		final Spinner spnMorning = (Spinner)pageDetails.findViewById(R.id.day_morning_type);
+		spnMorning.setPromptId(R.string.dlg_title_edit_day_type);
+		spnMorning.post(new Runnable() {
+			public void run() {
+		 	    spnMorning.setOnItemSelectedListener(new OnItemSelectedListener(){
+					@Override
+					public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+						final DayType type = (DayType)parent.getSelectedItem();
+						updateMorningDayType(type.id);
+					}
+		
+					@Override
+					public void onNothingSelected(AdapterView<?> arg0) {
+					}
+		 	    });
 			}
-
-			@Override
-			public void onNothingSelected(AdapterView<?> arg0) {
+		});
+		final Spinner spnAfternoon = (Spinner)pageDetails.findViewById(R.id.day_afternoon_type);
+		spnAfternoon.setPromptId(R.string.dlg_title_edit_day_type);
+		spnAfternoon.post(new Runnable() {
+			public void run() {
+			    spnAfternoon.setOnItemSelectedListener(new OnItemSelectedListener(){
+					@Override
+					public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+						final DayType type = (DayType)parent.getSelectedItem();
+						updateAfternoonDayType(type.id);
+					}
+		
+					@Override
+					public void onNothingSelected(AdapterView<?> arg0) {
+					}
+			    });
 			}
- 	    });
- 	    
- 	    spinner = (Spinner)pageDetails.findViewById(R.id.day_afternoon_type);
- 	   dayTypeAdapter = new ArrayAdapter<DayType>(this, android.R.layout.simple_spinner_item, dayTypes);
-//DBG	    dayTypeAdapter = ArrayAdapter.createFromResource(this, R.array.dayTypesEntries, android.R.layout.simple_spinner_item);
-//DBG	    dayTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-	    spinner.setAdapter(dayTypeAdapter);
-	    spinner.setOnItemSelectedListener(new OnItemSelectedListener(){
-			@Override
-			public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-				final DayType type = (DayType)parent.getSelectedItem();
-				updateMorningDayType(type.id);
-//DBG				final String dayTypeId = dayTypesIdByLabel.get(parent.getSelectedItem());
-//				if (dayTypeId != null) {
-//					updateAfternoonDayType(dayTypeId);
-//				}
-			}
-
-			@Override
-			public void onNothingSelected(AdapterView<?> arg0) {
-			}
-	    });
+		});
         
         // Création de l'adapteur affichant les pointages. Pour l'instant, aucun pointage.
 	    final QuickAction mQuickAction 	= new QuickAction(this);
@@ -132,8 +128,8 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
     	mLstCheckings.setEmptyView(emptyView);
     	
     	// Création des QuickActions
-    	ActionItem editCheckingItem = new ActionItem(QAID_EDIT_CHECKING, getString(R.string.menu_checking_edit), getResources().getDrawable(android.R.drawable.ic_menu_edit));
-		ActionItem deleteCheckingItem = new ActionItem(QAID_DELETE_CHECKING, getString(R.string.menu_checking_delete), getResources().getDrawable(android.R.drawable.ic_menu_delete));
+    	final ActionItem editCheckingItem = new ActionItem(QAID_EDIT_CHECKING, getString(R.string.menu_checking_edit), getResources().getDrawable(android.R.drawable.ic_menu_edit));
+    	final ActionItem deleteCheckingItem = new ActionItem(QAID_DELETE_CHECKING, getString(R.string.menu_checking_delete), getResources().getDrawable(android.R.drawable.ic_menu_delete));
 		
 		mQuickAction.addActionItem(editCheckingItem);
 		mQuickAction.addActionItem(deleteCheckingItem);
@@ -157,9 +153,14 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
         
         // On veut être informé si la vue "Semaine" ou "Mois" supprime un jour
         TicTacActivity.registerDayDeletionListener(this);
+        
+        // Ajout de l'activité comme listener de changement de préférence
+        // pour mettre à jour la liste des jours
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		prefs.registerOnSharedPreferenceChangeListener(this);
     }
     
-    @Override
+	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
 		MenuInflater inflater = getMenuInflater();
@@ -410,9 +411,6 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
 		// Mise à jour des composants graphiques
 		final View pageDetails = getPage(PAGE_DETAILS);
 		final Spinner spnMorning = (Spinner)pageDetails.findViewById(R.id.day_morning_type);
-//DBG		spnMorning.setSelection(day.typeMorning);
-		final Spinner spnAfternoon = (Spinner)pageDetails.findViewById(R.id.day_afternoon_type);
-//DBG		spnAfternoon.setSelection(day.typeAfternoon);
 		DayType curType;
 		for (int curItem = 0; curItem < spnMorning.getCount(); curItem++) {
 			curType = (DayType)spnMorning.getItemAtPosition(curItem);
@@ -421,6 +419,7 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
 				break;
 			}
 		}
+		final Spinner spnAfternoon = (Spinner)pageDetails.findViewById(R.id.day_afternoon_type);
 		for (int curItem = 0; curItem < spnAfternoon.getCount(); curItem++) {
 			curType = (DayType)spnAfternoon.getItemAtPosition(curItem);
 			if (curType.id.equals(day.typeAfternoon)) {
@@ -522,5 +521,29 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
 			populateView(date);
 		}
 	}
+
+	@Override
+	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+		// S'il y a eut une modification sur les types de jour, on recharge les listes
+		if (key.startsWith(PreferencesActivity.PREF_DAYTYPE_TITLE)) {
+			refreshDayTypeSpinners();
+		}
+	}
+	
+	private void refreshDayTypeSpinners() {
+		final List<DayType> dayTypes = new ArrayList<DayType>(PreferencesBean.instance.dayTypes.values());
+		final View pageDetails = getPage(PAGE_DETAILS);
+		
+		final ArrayAdapter<DayType> morningAdapter = new ArrayAdapter<DayType>(this, android.R.layout.simple_spinner_item, dayTypes);
+		morningAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		final Spinner spnMorning = (Spinner)pageDetails.findViewById(R.id.day_morning_type);
+		spnMorning.setAdapter(morningAdapter);
+		
+		final ArrayAdapter<DayType> afternoonAdapter = new ArrayAdapter<DayType>(this, android.R.layout.simple_spinner_item, dayTypes);
+		afternoonAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		final Spinner spnAfternoon = (Spinner)pageDetails.findViewById(R.id.day_afternoon_type);
+		spnAfternoon.setAdapter(afternoonAdapter);
+	}
+
 }
 

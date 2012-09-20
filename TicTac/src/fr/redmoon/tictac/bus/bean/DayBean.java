@@ -3,6 +3,8 @@ package fr.redmoon.tictac.bus.bean;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.redmoon.tictac.bus.StandardDayTypes;
+
 public class DayBean {
 	public long date;
 	public String typeMorning;
@@ -19,8 +21,8 @@ public class DayBean {
 
 	public void reset() {
 		date = 0;
-		typeMorning = null;
-		typeAfternoon = null;
+		typeMorning = StandardDayTypes.not_worked.name();
+		typeAfternoon = StandardDayTypes.not_worked.name();
 		extra = 0;
 		note = null;
 		checkings.clear();

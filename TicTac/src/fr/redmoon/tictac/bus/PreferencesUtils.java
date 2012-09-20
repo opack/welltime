@@ -75,32 +75,32 @@ public class PreferencesUtils {
 		// des entiers plutôt que des chaines.
 		if (PreferencesBean.instance.isFirstLaunch) {
 			// Congé payé
-			dayTypes.put("2", new DayType(
-				"2",
+			dayTypes.put("congépayé", new DayType(
+				"congépayé",
 				"Congé payé",
 				420,
 				-5381890)
 			);
 			
 			// RTT
-			dayTypes.put("1", new DayType(
-				"1",
-				"Congé payé",
+			dayTypes.put("r.t.t.", new DayType(
+				"r.t.t.",
+				"R.T.T.",
 				420,
 				-5381890)
 			);
 			
 			// Maladie
-			dayTypes.put("4", new DayType(
-				"4",
+			dayTypes.put("maladie", new DayType(
+				"maladie",
 				"Maladie",
 				420,
 				-12619008)
 			);
 			
 			// Férié
-			dayTypes.put("3", new DayType(
-				"3",
+			dayTypes.put("férié", new DayType(
+				"férié",
 				"Férié",
 				420,
 				-3312092)
@@ -209,7 +209,6 @@ public class PreferencesUtils {
 		
 	// Types de jour
 		final Map<String, DayType> dayTypes = PreferencesBean.instance.dayTypes;
-		dayTypes.clear();
 		String id;
 		DayType dayType;
 		for (Map.Entry<String, DayType> entry : dayTypes.entrySet()) {
@@ -221,26 +220,6 @@ public class PreferencesUtils {
 			editor.putInt(PreferenceKeys.dayTypeColor.getKey() + id, dayType.color);
 		}
 		
-		// Normal
-		editor.putString(PreferenceKeys.dayTypeNormalTime.getKey(), TimeUtils.formatMinutes(PreferencesBean.instance.dayTypeNormalTime));
-		editor.putInt(PreferenceKeys.dayTypeNormalColor.getKey(), PreferencesBean.instance.dayTypeNormalColor);
-		
-		// Congé payé
-		editor.putString(PreferenceKeys.dayTypeVacancyTime.getKey(), TimeUtils.formatMinutes(PreferencesBean.instance.dayTypeVacancyTime));
-		editor.putInt(PreferenceKeys.dayTypeVacancyColor.getKey(), PreferencesBean.instance.dayTypeVacancyColor);
-		
-		// RTT
-		editor.putString(PreferenceKeys.dayTypeRttTime.getKey(), TimeUtils.formatMinutes(PreferencesBean.instance.dayTypeRttTime));
-		editor.putInt(PreferenceKeys.dayTypeRttColor.getKey(), PreferencesBean.instance.dayTypeRttColor);
-		
-		// Maladie
-		editor.putString(PreferenceKeys.dayTypeIllnessTime.getKey(), TimeUtils.formatMinutes(PreferencesBean.instance.dayTypeIllnessTime));
-		editor.putInt(PreferenceKeys.dayTypeIllnessColor.getKey(), PreferencesBean.instance.dayTypeIllnessColor);
-		
-		// Férié
-		editor.putString(PreferenceKeys.dayTypePublicHolidayTime.getKey(), TimeUtils.formatMinutes(PreferencesBean.instance.dayTypePublicHolidayTime));
-		editor.putInt(PreferenceKeys.dayTypePublicHolidayColor.getKey(), PreferencesBean.instance.dayTypePublicHolidayColor);
-		
       	editor.commit();
 	}
 
@@ -251,5 +230,88 @@ public class PreferencesUtils {
 	public static void showPreferences(final Activity activity) {
 		final Intent prefsActivity = new Intent(activity, PreferencesActivity.class);
 		activity.startActivity(prefsActivity);
+	}
+
+	/**
+	 * Réinitialise les préférences comme au premier démarrage de l'application
+	 * @param activity
+	 */
+	public static void resetPreferences(final Activity activity) {
+		// Note : les 3 lignes qui suivent devraient pouvoir être remplacées par l'appel
+    	// à PreferenceManager.setDefaultValues(this, R.xml.preferences, true), mais ça
+    	// ne fonctionne pas donc on doit écrire les préférences à la main :'(
+		PreferencesUtils.updatePreferencesBean(activity);
+    	PreferencesBean.instance.isFirstLaunch = false;
+    	PreferencesUtils.savePreferencesBean(activity);
+	}
+
+	/**
+	 * Supprime les préférences de type de jour et restaure les préférences par défaut
+	 * @param preferencesActivity
+	 */
+	public static void resetDayTypesPreferences(final Activity activity) {
+		final Map<String, DayType> dayTypes = PreferencesBean.instance.dayTypes;
+		
+		// Supprime les préférences des types de jour
+		final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity);
+		final SharedPreferences.Editor editor = preferences.edit();
+		for (String prefKey : preferences.getAll().keySet()) {
+			// S'il s'agit d'une préférence liée aux types de jour, alors sa clé
+			// commence par PREF_DAYTYPE_PREFIX. Le cas échéant, on la supprime.
+			if (prefKey.startsWith(PreferencesActivity.PREF_DAYTYPE_PREFIX)) {
+				editor.remove(prefKey);
+			}
+		}
+		editor.commit();
+		
+		// Ajoute les préférences par défaut
+		dayTypes.clear();
+		// Les types de jour "normal" et "non travaillé" sont toujours présents.
+		dayTypes.put(StandardDayTypes.normal.name(), new DayType(
+			StandardDayTypes.normal.name(),
+			"Normal",
+			0,
+			-657931)
+		);
+		dayTypes.put(StandardDayTypes.not_worked.name(), new DayType(
+			StandardDayTypes.not_worked.name(),
+			"Non travaillé",
+			0,
+			Color.rgb(204, 204, 204))
+		);
+		// Congé payé
+		dayTypes.put("congépayé", new DayType(
+			"congépayé",
+			"Congé payé",
+			420,
+			-5381890)
+		);
+		
+		// RTT
+		dayTypes.put("r.t.t.", new DayType(
+			"r.t.t.",
+			"R.T.T.",
+			420,
+			-5381890)
+		);
+		
+		// Maladie
+		dayTypes.put("maladie", new DayType(
+			"maladie",
+			"Maladie",
+			420,
+			-12619008)
+		);
+		
+		// Férié
+		dayTypes.put("férié", new DayType(
+			"férié",
+			"Férié",
+			420,
+			-3312092)
+		);
+		
+		// Sauvegarde des préférences
+		PreferencesUtils.savePreferencesBean(activity);
 	}
 }

@@ -178,8 +178,8 @@ public class DaysTableHelper extends TableHelper {
 		// Comme il y a des données en base, on les lit
 		if (data.getCount() > 0) {
 			beanToFill.date = data.getLong(COL_DATE_INDEX);
-			beanToFill.typeMorning = data.getString(COL_TYPE_MORNING_INDEX); // DBG
-			beanToFill.typeAfternoon = data.getString(COL_TYPE_AFTERNOON_INDEX); // DBG
+			beanToFill.typeMorning = data.getString(COL_TYPE_MORNING_INDEX);
+			beanToFill.typeAfternoon = data.getString(COL_TYPE_AFTERNOON_INDEX);
 			beanToFill.extra = data.getInt(COL_EXTRA_INDEX);
 			beanToFill.note = data.getString(COL_NOTE_INDEX);
 			return true;
