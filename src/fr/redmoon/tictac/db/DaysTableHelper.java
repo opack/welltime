@@ -14,23 +14,23 @@ public class DaysTableHelper extends TableHelper {
 	public static final String TABLE_NAME = "days";
 
 	// Date du jour, entier au format yyyymmdd 
-	private static final String COL_DATE = "date";
+	public static final String COL_DATE = "date";
 	private static final int COL_DATE_INDEX = 0;
 	
 	// Type de la matinée : normale, CP, RTT...
-	private static final String COL_TYPE_MORNING = "typeMorning";
+	public static final String COL_TYPE_MORNING = "typeMorning";
 	private static final int COL_TYPE_MORNING_INDEX = 1;
 	
 	// Type de la matinée : normale, CP, RTT...
-	private static final String COL_TYPE_AFTERNOON = "typeAfternoon";
+	public static final String COL_TYPE_AFTERNOON = "typeAfternoon";
 	private static final int COL_TYPE_AFTERNOON_INDEX = 2;
 	
 	// Temps supplémentaire à ajouter au jour, en minutes.
-	private static final String COL_EXTRA = "extra";
+	public static final String COL_EXTRA = "extra";
 	private static final int COL_EXTRA_INDEX = 3;
 	
 	// Note textuelle associée au jour
-	private static final String COL_NOTE = "note";
+	public static final String COL_NOTE = "note";
 	private static final int COL_NOTE_INDEX = 4;
 	
 	private final ContentValues mTempContentValues = new ContentValues();

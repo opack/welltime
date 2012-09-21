@@ -13,11 +13,11 @@ public class CheckingsTableHelper extends TableHelper {
 	public static final String TABLE_NAME = "checkings";
 
 	// Date du jour, entier au format yyyymmdd 
-	private static final String COL_DATE = "date";
+	public static final String COL_DATE = "date";
 	//private static final int COL_DATE_INDEX = 0;
 	
 	// Pointage
-	private static final String COL_TIME = "time";
+	public static final String COL_TIME = "time";
 	private static final int COL_TIME_INDEX = 1;
 		
 	public CheckingsTableHelper() {

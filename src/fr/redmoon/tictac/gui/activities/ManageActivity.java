@@ -48,7 +48,8 @@ public class ManageActivity extends TicTacActivity {
         final Resources resources = getResources();
  		final String[][] lblOperations = new String[][] {
  			resources.getStringArray(R.array.period_checkin),
- 			resources.getStringArray(R.array.period_sync_calendar)
+ 			resources.getStringArray(R.array.period_sync_calendar),
+			resources.getStringArray(R.array.period_cleaner)
  		};
  		final ListView lstOperations = (ListView)pageOperations.findViewById(R.id.list);
  		lstOperations.setAdapter(new ManageAdapter(this, R.layout.itm_manage_operation, lblOperations));
