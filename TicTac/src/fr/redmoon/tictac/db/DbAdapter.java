@@ -279,9 +279,18 @@ public class DbAdapter {
 	}
 
 	public boolean deleteDay(final long dayId) {
+		// DBG Ne faudrait-il pas aussi supprimer les semaines si elles ne contiennent plus de jour ???
 		final SQLiteDatabase db = mDbHelper.getWritableDatabase();
 		return days.delete(db, dayId)
 			&& checkings.delete(db, dayId);
+	}
+	
+	public boolean deleteDays(final long firstDay, final long lastDay) {
+		// DBG Ne faudrait-il pas aussi supprimer les semaines si elles ne contiennent plus de jour ???
+		final SQLiteDatabase db = mDbHelper.getWritableDatabase();
+		final String whereClause = DaysTableHelper.COL_DATE + ">=" + firstDay + " AND " + DaysTableHelper.COL_DATE + "<=" + lastDay;
+		return (days.deleteWhere(db, whereClause) > 0)
+			&& (checkings.deleteWhere(db, whereClause) > 0);
 	}
 
 	public long getLastDayId() {

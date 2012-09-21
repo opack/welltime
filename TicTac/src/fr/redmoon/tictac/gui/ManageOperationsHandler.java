@@ -6,10 +6,11 @@ import static fr.redmoon.tictac.gui.activities.ManageActivity.PERIOD_SYNC_CALEND
 import java.util.ArrayList;
 import java.util.List;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -22,17 +23,19 @@ import fr.redmoon.tictac.R;
 import fr.redmoon.tictac.bus.bean.DayType;
 import fr.redmoon.tictac.bus.bean.PreferencesBean;
 import fr.redmoon.tictac.db.DbAdapter;
+import fr.redmoon.tictac.gui.dialogs.fragments.CleanDaysFragment;
 import fr.redmoon.tictac.gui.dialogs.listeners.PeriodCheckinListener;
 import fr.redmoon.tictac.gui.dialogs.listeners.PeriodSyncCalendarListener;
 
 public class ManageOperationsHandler implements OnItemClickListener {
 	private final static int POS_CHECKIN_PERIOD = 0;
 	private final static int POS_SYNC_CALENDAR_PERIOD = 1;
+	private final static int POS_CLEAN_DAYS = 2;
 	
-	private final Activity activity;
+	private final FragmentActivity activity;
 	private final DbAdapter db;
 	
-	public ManageOperationsHandler(final Activity activity, final DbAdapter db) {
+	public ManageOperationsHandler(final FragmentActivity activity, final DbAdapter db) {
 		this.activity = activity;
 		this.db = db;
 	}
@@ -46,7 +49,20 @@ public class ManageOperationsHandler implements OnItemClickListener {
 		case POS_SYNC_CALENDAR_PERIOD:
 			activity.showDialog(PERIOD_SYNC_CALENDAR_DIALOG);
 			break;
+		case POS_CLEAN_DAYS:
+			promptCleanDays();
+			break;
 		}
+	}
+	
+	/**
+	 * Propose une boîte de dialogue de saisie de période pour retirer les
+	 * données de la base
+	 * @param date 
+	 */
+	protected void promptCleanDays() {
+		final DialogFragment newFragment = new CleanDaysFragment();
+	    newFragment.show(activity.getSupportFragmentManager(), CleanDaysFragment.TAG);
 	}
 	
 	public Dialog createPeriodCheckinDialog() {

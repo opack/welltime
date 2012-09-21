@@ -58,6 +58,16 @@
     <string name="btn_checkin">Pointer</string>
     <string name="period_checkin_results">Pointage terminé.\n%1$d jour(s) créé(s).\n%2$d jour(s) mis à jour.</string>
     
+    <!-- Opération nettoyage des jours -->
+    <string-array name="period_cleaner">
+        <item>Nettoyer la base</item>
+        <item>Supprime les jours d\'une certaine période.</item>
+    </string-array>
+    <string name="period_cleaner_confirm">Je confirme que je veux SUPPRIMER DEFINITIVEMENT ces jours de la base et que j\'ai fais un export avant pour sauvegarder ces données.</string>
+    <string name="period_cleaner_confirm_unchecked">Veuillez confirmer la suppression en cochant la case.</string>
+    <string name="period_cleaner_success">Les jours entre le %1$s et le %2$s (inclus) ont bien été supprimés.</string>
+    <string name="period_cleaner_failed">Aucun jour n\'a été supprimé.</string>
+    
     <!-- Opération synchronisation immédiate du calendrier sur une période -->
 	<string-array name="period_sync_calendar">
         <item>Synchroniser le calendrier maintenant</item>

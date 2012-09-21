@@ -9,16 +9,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.content.DialogInterface.OnDismissListener;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,10 +52,10 @@ public class ManageImportExportHandler implements OnItemClickListener {
 	private DbInserterThread progressThread;
 	private ProgressDialog progressDialog;
 	
-	private final Activity activity;
+	private final FragmentActivity activity;
 	private final DbAdapter db;
 	
-	public ManageImportExportHandler(final Activity activity, final DbAdapter db) {
+	public ManageImportExportHandler(final FragmentActivity activity, final DbAdapter db) {
 		this.activity = activity;
 		this.db = db;
 	}
