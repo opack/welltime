@@ -83,10 +83,11 @@
     </string-array>
     <string name="period_statistics_title">Choisissez la période sur laquelle calculer les statistiques</string>
     <string name="period_statistics_caption">Statistiques sur la période\ndu %1$s au %2$s</string>
-    <string name="total_worked_days">Nb jours travaillés</string>
-    <string name="total_worked_time">Temps travaillé</string>
-    <string name="total_lost_time">Temps écrêté</string>
-    <string name="mean_day_work_time">Temps de travail moyen</string>
+    <string name="total_worked_days">Nb jours travaillés :</string>
+    <string name="worked_days_by_type">Nb jours par type :</string>
+    <string name="total_worked_time">Temps travaillé :</string>
+    <string name="total_lost_time">Temps écrêté :</string>
+    <string name="mean_day_work_time">Temps de travail moyen :</string>
     
     <!-- Opération affichage des préférences -->
 	<string-array name="show_preferences">
