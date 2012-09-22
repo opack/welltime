@@ -24,6 +24,7 @@ import fr.redmoon.tictac.bus.bean.DayType;
 import fr.redmoon.tictac.bus.bean.PreferencesBean;
 import fr.redmoon.tictac.db.DbAdapter;
 import fr.redmoon.tictac.gui.dialogs.fragments.CleanDaysFragment;
+import fr.redmoon.tictac.gui.dialogs.fragments.StatisticsFragment;
 import fr.redmoon.tictac.gui.dialogs.listeners.PeriodCheckinListener;
 import fr.redmoon.tictac.gui.dialogs.listeners.PeriodSyncCalendarListener;
 
@@ -31,6 +32,7 @@ public class ManageOperationsHandler implements OnItemClickListener {
 	private final static int POS_CHECKIN_PERIOD = 0;
 	private final static int POS_SYNC_CALENDAR_PERIOD = 1;
 	private final static int POS_CLEAN_DAYS = 2;
+	private final static int POS_STATISTICS = 3;
 	
 	private final FragmentActivity activity;
 	private final DbAdapter db;
@@ -52,6 +54,9 @@ public class ManageOperationsHandler implements OnItemClickListener {
 		case POS_CLEAN_DAYS:
 			promptCleanDays();
 			break;
+		case POS_STATISTICS:
+			promptStatistics();
+			break;
 		}
 	}
 	
@@ -63,6 +68,16 @@ public class ManageOperationsHandler implements OnItemClickListener {
 	protected void promptCleanDays() {
 		final DialogFragment newFragment = new CleanDaysFragment();
 	    newFragment.show(activity.getSupportFragmentManager(), CleanDaysFragment.TAG);
+	}
+	
+	/**
+	 * Propose une boîte de dialogue de saisie de période pour 
+	 * afficher des statistiques sur la période
+	 * @param date 
+	 */
+	protected void promptStatistics() {
+		final DialogFragment newFragment = new StatisticsFragment();
+	    newFragment.show(activity.getSupportFragmentManager(), StatisticsFragment.TAG);
 	}
 	
 	public Dialog createPeriodCheckinDialog() {

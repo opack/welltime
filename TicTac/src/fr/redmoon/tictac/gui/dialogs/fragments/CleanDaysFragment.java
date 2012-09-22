@@ -39,7 +39,7 @@ public class CleanDaysFragment extends DialogFragment implements OnClickListener
         adb.setView(dialogView);
         
         //On donne un titre à l'AlertDialog
-        adb.setTitle(R.string.export_data_title);
+        adb.setTitle(R.string.period_cleaner_title);
  
         //On modifie l'icône de l'AlertDialog pour le fun ;)
         //adb.setIcon(android.R.drawable.ic_dialog_alert);

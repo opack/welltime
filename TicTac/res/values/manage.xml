@@ -63,6 +63,7 @@
         <item>Nettoyer la base</item>
         <item>Supprime les jours d\'une certaine période.</item>
     </string-array>
+    <string name="period_cleaner_title">Choisissez la période à EFFACER</string>
     <string name="period_cleaner_confirm">Je confirme que je veux SUPPRIMER DEFINITIVEMENT ces jours de la base et que j\'ai fais un export avant pour sauvegarder ces données.</string>
     <string name="period_cleaner_confirm_unchecked">Veuillez confirmer la suppression en cochant la case.</string>
     <string name="period_cleaner_success">Les jours entre le %1$s et le %2$s (inclus) ont bien été supprimés.</string>
@@ -74,6 +75,18 @@
         <item>Reporte dans le calendrier les informations sur les pointages.</item>
     </string-array>
     <string name="period_sync_calendar_title">Synchronisation du calendrier</string>
+    
+    <!-- Opération statistiques -->
+	<string-array name="period_statistics">
+        <item>Statistiques sur la période</item>
+        <item>Affiche des statistiques sur une période.</item>
+    </string-array>
+    <string name="period_statistics_title">Choisissez la période sur laquelle calculer les statistiques</string>
+    <string name="period_statistics_caption">Statistiques sur la période\ndu %1$s au %2$s</string>
+    <string name="total_worked_days">Nb jours travaillés</string>
+    <string name="total_worked_time">Temps travaillé</string>
+    <string name="total_lost_time">Temps écrêté</string>
+    <string name="mean_day_work_time">Temps de travail moyen</string>
     
     <!-- Opération affichage des préférences -->
 	<string-array name="show_preferences">
