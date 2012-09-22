@@ -48,6 +48,10 @@
         <activity
         	android:name=".gui.activities.PreferencesActivity"
             android:screenOrientation="portrait" />
+        
+        <activity
+        	android:name=".gui.activities.StatisticsResultsActivity"
+            android:screenOrientation="portrait" />
 
         <activity
         	android:name=".gui.activities.WidgetDisplayTimePickerActivity"
