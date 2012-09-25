@@ -27,6 +27,7 @@ import fr.redmoon.tictac.gui.dialogs.fragments.CleanDaysFragment;
 import fr.redmoon.tictac.gui.dialogs.fragments.StatisticsFragment;
 import fr.redmoon.tictac.gui.dialogs.listeners.PeriodCheckinListener;
 import fr.redmoon.tictac.gui.dialogs.listeners.PeriodSyncCalendarListener;
+import fr.redmoon.tictac.gui.listadapter.DayTypeAdapter;
 
 public class ManageOperationsHandler implements OnItemClickListener {
 	private final static int POS_CHECKIN_PERIOD = 0;
@@ -98,7 +99,7 @@ public class ManageOperationsHandler implements OnItemClickListener {
         //adb.setIcon(android.R.drawable.ic_dialog_alert);
         
         final List<DayType> dayTypes = new ArrayList<DayType>(PreferencesBean.instance.dayTypes.values());
-		ArrayAdapter<DayType> adapter = new ArrayAdapter<DayType>(activity, android.R.layout.simple_spinner_item, dayTypes);
+		ArrayAdapter<DayType> adapter = new DayTypeAdapter(activity, android.R.layout.simple_spinner_item, dayTypes);
         final Spinner spinner = (Spinner)dialogView.findViewById(R.id.day_type);
 	    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 	    spinner.setAdapter(adapter);

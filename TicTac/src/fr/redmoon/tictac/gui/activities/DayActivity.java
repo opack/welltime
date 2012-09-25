@@ -41,6 +41,7 @@ import fr.redmoon.tictac.gui.DayBiColorDrawableHelper;
 import fr.redmoon.tictac.gui.ViewSynchronizer;
 import fr.redmoon.tictac.gui.activities.TicTacActivity.OnDayDeletionListener;
 import fr.redmoon.tictac.gui.listadapter.DayAdapter;
+import fr.redmoon.tictac.gui.listadapter.DayTypeAdapter;
 import fr.redmoon.tictac.gui.quickactions.ActionItem;
 import fr.redmoon.tictac.gui.quickactions.QuickAction;
 import fr.redmoon.tictac.gui.widgets.WidgetProvider;
@@ -534,12 +535,12 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
 		final List<DayType> dayTypes = new ArrayList<DayType>(PreferencesBean.instance.dayTypes.values());
 		final View pageDetails = getPage(PAGE_DETAILS);
 		
-		final ArrayAdapter<DayType> morningAdapter = new ArrayAdapter<DayType>(this, android.R.layout.simple_spinner_item, dayTypes);
+		final ArrayAdapter<DayType> morningAdapter = new DayTypeAdapter(this, android.R.layout.simple_spinner_item, dayTypes);
 		morningAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		final Spinner spnMorning = (Spinner)pageDetails.findViewById(R.id.day_morning_type);
 		spnMorning.setAdapter(morningAdapter);
 		
-		final ArrayAdapter<DayType> afternoonAdapter = new ArrayAdapter<DayType>(this, android.R.layout.simple_spinner_item, dayTypes);
+		final ArrayAdapter<DayType> afternoonAdapter = new DayTypeAdapter(this, android.R.layout.simple_spinner_item, dayTypes);
 		afternoonAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		final Spinner spnAfternoon = (Spinner)pageDetails.findViewById(R.id.day_afternoon_type);
 		spnAfternoon.setAdapter(afternoonAdapter);
