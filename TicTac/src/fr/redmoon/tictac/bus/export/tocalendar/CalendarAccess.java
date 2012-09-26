@@ -53,7 +53,7 @@ public class CalendarAccess implements OnDayDeletionListener {
 
 	public void initAccess(final Activity activity) {
 		mCalID = -1;
-		if (!PreferencesBean.instance.syncCalendar || activity == null) {
+		if (activity == null) {
 			return;
 		}
 		mActivity = activity;
@@ -80,7 +80,7 @@ public class CalendarAccess implements OnDayDeletionListener {
 	}
 	
 	private boolean isCalendarAvailable() {
-		if (!PreferencesBean.instance.syncCalendar || mActivity == null) {
+		if (mActivity == null) {
 			return false;
 		}
 		// Si l'id du calendrier n'a pas encore été récupéré (si par exemple il a été créé entre temps)
