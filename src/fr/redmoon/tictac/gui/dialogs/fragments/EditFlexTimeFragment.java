@@ -116,7 +116,7 @@ public class EditFlexTimeFragment extends DialogFragment implements DialogInterf
 		mTimePicker.clearFocus();
 		
 		// DBG Bizarre qu'on ne mette pas à jour l'HV du jour sélectionné... A creuser.
-		final long date = DateUtils.getDayId(mDatePicker.getYear(), mDatePicker.getMonth(), mDatePicker.getDayOfMonth());
+		//final long date = DateUtils.getDayId(mDatePicker.getYear(), mDatePicker.getMonth(), mDatePicker.getDayOfMonth());
 		final int sign = (Integer)mBtnSign.getTag();
 		final int time = sign * (mTimePicker.getCurrentHour() * 60 + mTimePicker.getCurrentMinute());
 		
