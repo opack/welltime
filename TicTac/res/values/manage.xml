@@ -3,12 +3,9 @@
     <!-- Titres des pages de gestion -->
     <string-array name="manage_page_titles">
         <item>Outils</item>
-        <item>Import / Export</item>
+        <item>Import/Export</item>
         <item>Préférences</item>
     </string-array>
-    <string name="title_manage_tools">Outils</string>
-    <string name="title_manage_import_export">Import / Export</string>
-    <string name="title_manage_preferences">Préférences</string>
     
     <!-- Opération export des données -->
     <string-array name="export_data">

@@ -4,7 +4,6 @@
     <string-array name="month_page_titles">
         <item>Calendrier</item>
     </string-array>
-    <string name="title_month_calendar">Calendrier</string>
     
     <!-- Chaque valeur doit être dans l'ordre d'affichage du calendrier :
     lundi en premier, dimanche à la fin. -->

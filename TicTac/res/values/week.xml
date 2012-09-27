@@ -6,8 +6,6 @@
         <item>Détails</item>
     </string-array>
     <string name="current_week">S%1$d : %2$s - %3$s</string>
-    <string name="title_week_days">Jours</string>
-	<string name="title_week_details">Détails</string>
     <string name="week_stats_none">Aucun jour travaillé cette semaine.</string>
     <string name="week_monday_flex_time">HV au %1$s :</string>
     <string name="week_current_flex_time">HV actuel :</string>

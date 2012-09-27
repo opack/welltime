@@ -6,18 +6,6 @@
     android:layout_height="wrap_content"
     android:shrinkColumns="1"
     android:stretchColumns="1" >
-    <TableRow>
-        <TextView
-			android:layout_width="fill_parent"
-	    	android:layout_height="wrap_content"
-	    	android:layout_span="2"
-	    	android:textSize="20sp"
-	    	android:textStyle="bold"
-	    	android:textColor="@color/light_blue"
-	    	android:gravity="center"
-	    	android:background="@drawable/subtitle"
-	    	android:text="@string/title_day_details" />
-    </TableRow>
     <TableRow
         android:layout_weight="1">
 	    <TextView
