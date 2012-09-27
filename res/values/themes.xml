@@ -5,6 +5,7 @@
 		<item name="android:colorBackground">@color/app_background</item>
 		<item name="android:tabWidgetStyle">@style/LightTabWidget</item>
 		<item name="android:windowNoTitle">true</item>
+		<item name="vpiTabPageIndicatorStyle">@style/Widget.TabPageIndicator</item>
 	</style>
 	<style name="TicTacLightTheme.NoShadow">
 		<item name="android:windowContentOverlay">@null</item>
