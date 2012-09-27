@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 
 import android.app.Activity;
-import android.content.res.Resources;
 import android.os.Environment;
 import android.widget.Toast;
 import fr.redmoon.tictac.R;
@@ -12,12 +11,10 @@ import fr.redmoon.tictac.R;
 public abstract class FileImporter<DataType> {
 	
 	protected final Activity mActivity;
-	protected final Resources mResources;
 	protected DataType mData;
 	
 	public FileImporter(final Activity activity){
 		mActivity = activity;
-		mResources = activity.getResources();
 	}
 	
 	private boolean checkSDCardReadable() {

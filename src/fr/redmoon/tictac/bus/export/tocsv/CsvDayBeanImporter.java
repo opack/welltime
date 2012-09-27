@@ -17,17 +17,16 @@ import fr.redmoon.tictac.bus.bean.PreferencesBean;
 import fr.redmoon.tictac.bus.export.FileImporter;
 
 public class CsvDayBeanImporter extends FileImporter<List<DayBean>> {
-	public final static String MIME_TYPE = "text/csv";	
 	private final static String CSV_SEPARATOR = ",";
 	
-	public final static int POS_DATA = 0;
-	public final static int POS_EXTRA = 1;
+	private final static int POS_DATA = 0;
+	private final static int POS_EXTRA = 1;
 	// Cette colonne est ignorée lors de l'import, car on ne stocke pas le total en base
 	//public final static int POS_TOTAL = 2;
-	public final static int POS_TYPE_MORNING = 3;
-	public final static int POS_TYPE_AFTERNOON = 4;
-	public final static int POS_NOTE = 5;
-	public final static int POS_FIRST_CHECKINGS = 6;
+	private final static int POS_TYPE_MORNING = 3;
+	private final static int POS_TYPE_AFTERNOON = 4;
+	private final static int POS_NOTE = 5;
+	private final static int POS_FIRST_CHECKINGS = 6;
 	
 	private final Map<String, String> mDayTypesIdByLabel;
 	

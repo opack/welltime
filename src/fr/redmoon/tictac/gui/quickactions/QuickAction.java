@@ -109,7 +109,7 @@ public class QuickAction extends PopupWindows implements OnDismissListener {
 	 * 
 	 * @param mAnimateTrack flag to animate track
 	 */
-	public void mAnimateTrack(boolean mAnimateTrack) {
+	public void setAnimateTrack(boolean mAnimateTrack) {
 		this.mAnimateTrack = mAnimateTrack;
 	}
 

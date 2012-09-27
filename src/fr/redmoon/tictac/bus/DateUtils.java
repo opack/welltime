@@ -29,7 +29,7 @@ public class DateUtils {
 	/**
 	 * Nombre de millisecondes dans une journée
 	 */
-	public static final long MS_IN_A_DAY = 86400000;		// 1000 * 3600 * 24
+	private static final long MS_IN_A_DAY = 86400000;		// 1000 * 3600 * 24
 	
 	/**
 	 * String Builder utilisé pour construire des chaines
@@ -142,6 +142,10 @@ public class DateUtils {
 		return mWorkStringBuilder.toString();
 	}
 	
+	public static String formatDateDDMMYYYY(String string) {
+		return formatDateDDMMYYYY(Long.parseLong(string));
+	}
+	
 	/**
 	 * Remplit un objet Time avec la date spécifiée au format yyyymmdd, tel
 	 * qu'elle est notée en base.
@@ -230,27 +234,27 @@ public class DateUtils {
 		return Calendar.MONDAY <= dayId && dayId <= Calendar.FRIDAY;
 	}
 
-	/**
-	 * Retourne true si le jour spécifié fait partie de la semaine d'aujourd'hui.
-	 * @param date
-	 * @return
-	 */
-	public static boolean isInTodaysWeek(final long date) {
-		final Time today = new Time();
-		today.setToNow();
-		today.normalize(true);
-		
-		final Time passedDate = new Time();
-		passedDate.set(
-			extractDayOfMonth(date), 
-			extractMonth(date), 
-			extractYear(date));
-		passedDate.normalize(true);
-		
-		// On est dans la même semaine si on est dans la même année
-		// et que le numéro de semaine est identique
-		return
-			today.year == passedDate.year
-			&& today.getWeekNumber() == passedDate.getWeekNumber();
-	}
+//	/**
+//	 * Retourne true si le jour spécifié fait partie de la semaine d'aujourd'hui.
+//	 * @param date
+//	 * @return
+//	 */
+//	public static boolean isInTodaysWeek(final long date) {
+//		final Time today = new Time();
+//		today.setToNow();
+//		today.normalize(true);
+//		
+//		final Time passedDate = new Time();
+//		passedDate.set(
+//			extractDayOfMonth(date), 
+//			extractMonth(date), 
+//			extractYear(date));
+//		passedDate.normalize(true);
+//		
+//		// On est dans la même semaine si on est dans la même année
+//		// et que le numéro de semaine est identique
+//		return
+//			today.year == passedDate.year
+//			&& today.getWeekNumber() == passedDate.getWeekNumber();
+//	}
 }

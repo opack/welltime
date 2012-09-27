@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<!-- Vue jour -->
+	<string-array name="day_page_titles">
+        <item>Pointages</item>
+        <item>Détails</item>
+    </string-array>
+	<string name="title_day_checkings">Pointages</string>
+	<string name="title_day_details">Détails</string>
     <string name="day_morning_type">Matin :</string>
     <string name="day_afternoon_type">Après-midi :</string>
     <string name="day_work_time">Travail :</string>

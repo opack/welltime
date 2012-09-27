@@ -53,7 +53,7 @@ public class ManageActivity extends TicTacActivity {
         final View pageOperations = View.inflate(this, R.layout.view_manage_operations, null);
         final View pageImportExport = View.inflate(this, R.layout.view_manage_import_export, null);
         final View pagePreferences = View.inflate(this, R.layout.view_manage_preferences, null);
-        initPages(pageOperations, pageImportExport, pagePreferences);
+        initPages(getResources().getStringArray(R.array.manage_page_titles), pageOperations, pageImportExport, pagePreferences);
 
         // Préparation de la liste des opérations de gestion
         final Resources resources = getResources();
@@ -129,8 +129,6 @@ public class ManageActivity extends TicTacActivity {
         switch(id) {
         case PROGRESS_DIALOG:
             return importExportHandler.createProgressDialog();
-        case PERIOD_EXPORT_DIALOG:
-        	return importExportHandler.createPeriodExportDialog();
         default:
             return null;
         }

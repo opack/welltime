@@ -12,8 +12,6 @@ import fr.redmoon.tictac.bus.export.FileImporter;
 
 public class BinPreferencesBeanImporter extends FileImporter<PreferencesBean> {
 	
-	public static final String MIME_TYPE = "application/octet-stream";
-
 	public BinPreferencesBeanImporter(final Activity activity){
 		super(activity);
 	}
