@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Titres des pages de gestion -->
+    <string-array name="manage_page_titles">
+        <item>Outils</item>
+        <item>Import / Export</item>
+        <item>Préférences</item>
+    </string-array>
     <string name="title_manage_tools">Outils</string>
     <string name="title_manage_import_export">Import / Export</string>
     <string name="title_manage_preferences">Préférences</string>
@@ -10,10 +15,9 @@
         <item>Exporter les données</item>
         <item>Ecrire les données dans un fichier CSV sur la carte SD.</item>
     </string-array>
-    <string name="export_zip_filename_pattern">Welltime - Export du %1$d au %2$d.zip</string>
-    <string name="export_infos_filename_pattern">Welltime - Export du %1$d au %2$d.properties</string>
-    <string name="export_days_filename_pattern">Welltime - Export du %1$d au %2$d.d.csv</string>
-    <string name="export_weeks_filename_pattern">Welltime - Export du %1$d au %2$d.w.csv</string>
+    <string name="export_zip_filename_pattern">%1$d_%2$d.zip</string>
+    <string name="export_days_filename_pattern">%1$d_%2$d.d.csv</string>
+    <string name="export_weeks_filename_pattern">%1$d_%2$d.w.csv</string>
     <string name="export_data_success">L\'export des données du %1$s au %2$s a été correctement réalisé.</string>
     <string name="export_data_fail">L\'export des données a échoué.</string>
     <string name="export_data_title">Export des données sur la période</string>
@@ -23,7 +27,8 @@
         <item>Importer les données</item>
         <item>Lire les données depuis un fichier CSV sur la carte SD.</item>
     </string-array>
-	<string name="import_filechooser_title">Choisissez le fichier à importer :</string>
+	<string name="import_days_filechooser_title">Choisissez la période à importer :</string>
+	<string name="import_days_filechooser_item">%1$s - %2$s</string>
 	<string name="import_days_results">Import terminé.\n%1$d jour(s) créé(s).\n%2$d jour(s) mis à jour.</string>
 	<string name="import_days_canceled">Import annulé par l\'utilisateur.\n%1$d jour(s) créé(s).\n%2$d jour(s) mis à jour.</string>
 	<string name="import_file_not_found">Le fichier %1$s est introuvable. L\'import est abandonné.</string>
@@ -34,7 +39,7 @@
         <item>Exporter les préférences</item>
         <item>Ecrire les préférences dans un fichier sur la carte SD.</item>
     </string-array>
-	<string name="export_prefs_filename">Welltime %1$s.prefs</string>
+	<string name="export_prefs_filename">%1$d_%2$s.prefs</string>
 	<string name="export_prefs_success">Les préférences ont bien été exportées !</string>
 	<string name="export_prefs_fail">L\'export des préférences a échoué.</string>
 	
@@ -43,6 +48,8 @@
         <item>Importer les préférences</item>
         <item>Lire les préférences depuis un fichier sur la carte SD.</item>
     </string-array>
+    <string name="import_prefs_filechooser_title">Choisissez le jour de la sauvegarde à restaurer :</string>
+	<string name="import_prefs_filechooser_item">%1$s %2$s</string>
 	<string name="import_prefs_success">Les préférences ont bien été importées !</string>
 	<string name="import_prefs_fail">L\'import des préférences a échoué.</string>
 	

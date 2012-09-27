@@ -1,6 +1,5 @@
 package fr.redmoon.tictac.gui;
 
-import static fr.redmoon.tictac.gui.activities.ManageActivity.PERIOD_EXPORT_DIALOG;
 import static fr.redmoon.tictac.gui.activities.ManageActivity.PROGRESS_DIALOG;
 
 import java.io.File;
@@ -18,15 +17,15 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.DatePicker;
 import android.widget.Toast;
 import fr.redmoon.tictac.R;
+import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.bus.PreferencesUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
 import fr.redmoon.tictac.bus.bean.PreferencesBean;
@@ -40,7 +39,7 @@ import fr.redmoon.tictac.bus.export.tocsv.CsvDayBeanImporter;
 import fr.redmoon.tictac.bus.export.tocsv.CsvWeekBeanImporter;
 import fr.redmoon.tictac.db.DbAdapter;
 import fr.redmoon.tictac.gui.activities.PreferencesActivity;
-import fr.redmoon.tictac.gui.dialogs.listeners.PeriodExporterListener;
+import fr.redmoon.tictac.gui.dialogs.fragments.ExportPeriodFragment;
 
 public class ManageImportExportHandler implements OnItemClickListener {
 	private final static int POS_EXPORT_DATA = 0;
@@ -59,12 +58,13 @@ public class ManageImportExportHandler implements OnItemClickListener {
 		this.activity = activity;
 		this.db = db;
 	}
-
+	
 	@Override
 	public void onItemClick(AdapterView<?> adapter, View v, int position, long id) {
 		switch (position) {
 			case POS_EXPORT_DATA:
-				activity.showDialog(PERIOD_EXPORT_DIALOG);
+				final DialogFragment fragment = new ExportPeriodFragment();
+				fragment.show(activity.getSupportFragmentManager(), ExportPeriodFragment.TAG);
 				break;
 			case POS_IMPORT_DATA:
 				importData();
@@ -101,39 +101,6 @@ public class ManageImportExportHandler implements OnItemClickListener {
         return progressDialog;
 	}
 	
-	public Dialog createPeriodExportDialog() {
-		//On instancie notre layout en tant que View
-        LayoutInflater factory = LayoutInflater.from(activity);
-        final View dialogView = factory.inflate(R.layout.dlg_period_chooser, null);
- 
-        //Création de l'AlertDialog
-        AlertDialog.Builder adb = new AlertDialog.Builder(activity);
- 
-        //On affecte la vue personnalisé que l'on a crée à notre AlertDialog
-        adb.setView(dialogView);
-        
-        //On donne un titre à l'AlertDialog
-        adb.setTitle(R.string.export_data_title);
- 
-        //On modifie l'icône de l'AlertDialog pour le fun ;)
-        //adb.setIcon(android.R.drawable.ic_dialog_alert);
-        
-        //On affecte un bouton "OK" à notre AlertDialog et on lui affecte un évènement
-        adb.setPositiveButton(R.string.btn_ok, new PeriodExporterListener(
-        	activity, 
-        	db, 
-        	(DatePicker)dialogView.findViewById(R.id.date1), 
-        	(DatePicker)dialogView.findViewById(R.id.date2))
-        );
- 
-        //On crée un bouton "Annuler" à notre AlertDialog et on lui affecte un évènement
-        adb.setNegativeButton(R.string.btn_cancel, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {}
-        });
-        
-		return adb.create();
-	}
-	
 	/**
 	 * Exporte les préférences
 	 */
@@ -158,7 +125,7 @@ public class ManageImportExportHandler implements OnItemClickListener {
 		}
 	}
 	
-	private void importWelltimeFile(final FilenameFilter filter, final int extensionLength, final FilePickedListener onFilePickedListener) {
+	private void importDataFile(final FilenameFilter filter, final int extensionLength, final FilePickedListener onFilePickedListener) {
 		// Chargement des fichiers trouvés
 		final String rootDirName = activity.getResources().getString(R.string.app_name);
 		final File root = new File(Environment.getExternalStorageDirectory(), rootDirName);
@@ -180,10 +147,50 @@ public class ManageImportExportHandler implements OnItemClickListener {
 		String filenameWithExtension;
 		for (int curFile = 0; curFile < files.length; curFile++) {
 			filenameWithExtension = files[curFile].getName();
-			items[curFile] = filenameWithExtension.substring(0, filenameWithExtension.length() - extensionLength);
+			// Retourne une chaine au format "dd/MM/yyyy - dd/MM/yyyy" à partir d'un 
+			// nom de fichier au format "yyyyMMdd_yyyyMMdd.zip"
+			items[curFile] = activity.getResources().getString(
+				R.string.import_days_filechooser_item,
+				DateUtils.formatDateDDMMYYYY(filenameWithExtension.substring(0, 8)),
+				DateUtils.formatDateDDMMYYYY(filenameWithExtension.substring(9, 17)));
 		}
 		final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-		builder.setTitle("Choisissez un fichier :");
+		builder.setTitle(R.string.import_days_filechooser_title);
+		builder.setItems(items, onFilePickedListener);
+		builder.show();
+	}
+	
+	private void importPrefsFile(final FilenameFilter filter, final int extensionLength, final FilePickedListener onFilePickedListener) {
+		// Chargement des fichiers trouvés
+		final String rootDirName = activity.getResources().getString(R.string.app_name);
+		final File root = new File(Environment.getExternalStorageDirectory(), rootDirName);
+		if (!root.exists() && !root.mkdirs()){
+			// Erreur
+			Log.e("Welltime", "Une erreur s'est produite lors de l'accès à la carte SD.");
+			Toast.makeText(activity, "Une erreur s'est produite lors de l'accès à la carte SD.", Toast.LENGTH_SHORT).show();
+			return;
+		}
+		final File[] files = root.listFiles(filter);
+		onFilePickedListener.setFiles(files);
+		
+		// Affichage des possibilités à l'utilisateur pour qu'il choisisse
+		if (files.length == 0) {
+			Toast.makeText(activity, "Aucun fichier corresondant n'a été trouvé dans le répertoire Welltime.", Toast.LENGTH_SHORT).show();
+			return;
+		}
+		final CharSequence[] items = new String[files.length];
+		String filenameWithExtension;
+		for (int curFile = 0; curFile < files.length; curFile++) {
+			filenameWithExtension = files[curFile].getName();
+			// Retourne une chaine au format "dd/MM/yyyy" à partir d'un 
+			// nom de fichier au format "yyyyMMdd_hhmmss.prefs"
+			items[curFile] = activity.getResources().getString(
+				R.string.import_prefs_filechooser_item,
+				DateUtils.formatDateDDMMYYYY(filenameWithExtension.substring(0, 8)),
+				DateUtils.formatDateDDMMYYYY(filenameWithExtension.substring(9, 16)));
+		}
+		final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+		builder.setTitle(R.string.import_prefs_filechooser_title);
 		builder.setItems(items, onFilePickedListener);
 		builder.show();
 	}
@@ -223,7 +230,7 @@ public class ManageImportExportHandler implements OnItemClickListener {
 				}
 		    }
 		};
-		importWelltimeFile(filter, extensionLength, onFilePickedListener);
+		importPrefsFile(filter, extensionLength, onFilePickedListener);
 	}
 	
 	private void importData() {
@@ -245,8 +252,8 @@ public class ManageImportExportHandler implements OnItemClickListener {
 				ZipDecompress d = new ZipDecompress(filename, dir); 
 				d.unzip(); 
 						
-				final File unzippedDaysCsvFile = new File(dir, PeriodExporterListener.FILE_DAYS_CSV);
-				final File unzippedWeeksCsvFile = new File(dir, PeriodExporterListener.FILE_WEEKS_CSV);
+				final File unzippedDaysCsvFile = new File(dir, ExportPeriodFragment.FILE_DAYS_CSV);
+				final File unzippedWeeksCsvFile = new File(dir, ExportPeriodFragment.FILE_WEEKS_CSV);
 				
 				// Lit les jours dans le fichier CSV
 				final List<DayBean> days = new ArrayList<DayBean>();
@@ -287,7 +294,7 @@ public class ManageImportExportHandler implements OnItemClickListener {
 				activity.showDialog(PROGRESS_DIALOG);
 		    }
 		};
-		importWelltimeFile(filter, extensionLength, onFilePickedListener);
+		importDataFile(filter, extensionLength, onFilePickedListener);
 	}
 	
 	public void prepareProgressDialog() {

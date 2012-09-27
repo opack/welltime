@@ -12,7 +12,7 @@ import fr.redmoon.tictac.bus.bean.DayType;
 import fr.redmoon.tictac.gui.DayBiColorDrawableHelper;
 
 public class DayTypeAdapter extends ArrayAdapter<DayType> implements SpinnerAdapter {
-	private List<DayType> items;
+	private final List<DayType> items;
 
 	public DayTypeAdapter(
 			final Context context,

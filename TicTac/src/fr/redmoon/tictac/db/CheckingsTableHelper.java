@@ -10,14 +10,14 @@ import fr.redmoon.tictac.bus.bean.DayBean;
 
 public class CheckingsTableHelper extends TableHelper {
 
-	public static final String TABLE_NAME = "checkings";
+	private static final String TABLE_NAME = "checkings";
 
 	// Date du jour, entier au format yyyymmdd 
-	public static final String COL_DATE = "date";
+	private static final String COL_DATE = "date";
 	//private static final int COL_DATE_INDEX = 0;
 	
 	// Pointage
-	public static final String COL_TIME = "time";
+	private static final String COL_TIME = "time";
 	private static final int COL_TIME_INDEX = 1;
 		
 	public CheckingsTableHelper() {
@@ -118,5 +118,10 @@ public class CheckingsTableHelper extends TableHelper {
 		final boolean exists = result.getCount() > 0;
 		result.close();
 		return exists;
+	}
+
+	public boolean delete(final SQLiteDatabase db, final long firstDay, final long lastDay) {
+		final String whereClause = COL_DATE + ">=" + firstDay + " AND " + COL_DATE + "<=" + lastDay;
+		return deleteWhere(db, whereClause) > 0;
 	}
 }

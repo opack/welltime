@@ -7,14 +7,21 @@ import android.view.View;
 
 public class TicTacPagerAdapter extends PagerAdapter {
 	private View[] mPages;
+	private String[] mTitles;
 	
-	public TicTacPagerAdapter(View... pages) {
+	public TicTacPagerAdapter(final String[] titles, View... pages) {
 		mPages = pages;
+		mTitles = titles;
 	}
 	
 	@Override
 	public int getCount() {
 		return mPages.length;
+	}
+	
+	@Override
+	public CharSequence getPageTitle(int position) {
+		return mTitles[position];
 	}
 
 	/**

@@ -50,27 +50,7 @@ public enum PreferenceKeys {
 // Types de jour
 	dayTypeLabel(PreferencesActivity.PREF_DAYTYPE_TITLE + "_"),
 	dayTypeTime(PreferencesActivity.PREF_DAYTYPE_TIME + "_"), // en minutes
-	dayTypeColor(PreferencesActivity.PREF_DAYTYPE_COLOR + "_"), // en entier
-	
-	// Normal
-	dayTypeNormalTime("daytype_normal_time"),		// en minutes
-	dayTypeNormalColor("daytype_normal_color"),		// en entier
-	
-	// Congé payé
-	dayTypeVacancyTime("daytype_vacancy_time"),		// en minutes
-	dayTypeVacancyColor("daytype_vacancy_color"),	// en entier
-	
-	// RTT
-	dayTypeRttTime("daytype_rtt_time"),				// en minutes
-	dayTypeRttColor("daytype_rtt_color"),			// en entier
-	
-	// Maladie
-	dayTypeIllnessTime("daytype_illness_time"),		// en minutes
-	dayTypeIllnessColor("daytype_illness_color"),	// en entier
-	
-	// Férié
-	dayTypePublicHolidayTime("daytype_publicholiday_time"),		// en minutes
-	dayTypePublicHolidayColor("daytype_publicholiday_color");	// en entier
+	dayTypeColor(PreferencesActivity.PREF_DAYTYPE_COLOR + "_"); // en entier
 	
 	private final String key;
 	

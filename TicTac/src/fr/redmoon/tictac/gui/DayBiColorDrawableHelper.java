@@ -21,7 +21,7 @@ public class DayBiColorDrawableHelper {
 		initPaths();
 	}
 	
-	public void initPaths() {
+	private void initPaths() {
 		final Point upLeft = new Point(0, 0);
 		final Point upRight = new Point(100, 0);
 		final Point downLeft = new Point(0, 100);
@@ -47,16 +47,13 @@ public class DayBiColorDrawableHelper {
 	public Drawable getDrawableForDayTypes(final String morningDayType, final String afternoonDayType) {
 		final int morningColor = PreferencesBean.getColorByDayType(morningDayType);
 		final int afternoonColor = PreferencesBean.getColorByDayType(afternoonDayType);
-		return getDrawableForColors(morningColor, afternoonColor);
-	}
-	
-	public Drawable getDrawableForColors(final int upperColor, final int lowerColor) {
+
 		final Shape shape = new PathShape(mUpperTriangle, 100, 100);
         ShapeDrawable upperPart = new ShapeDrawable(shape);
         Paint paint = upperPart.getPaint();
         paint.setFlags(Paint.ANTI_ALIAS_FLAG);
 		paint.setStrokeWidth(2);
-		paint.setColor(upperColor);
+		paint.setColor(morningColor);
 		paint.setStyle(Paint.Style.FILL_AND_STROKE);
 		paint.setAntiAlias(true);
 		
@@ -65,7 +62,7 @@ public class DayBiColorDrawableHelper {
         Paint paint2 = lowerPart.getPaint();
         paint2.setFlags(Paint.ANTI_ALIAS_FLAG);
         paint2.setStrokeWidth(2);
-        paint2.setColor(lowerColor);
+        paint2.setColor(afternoonColor);
         paint2.setStyle(Paint.Style.FILL_AND_STROKE);
         paint2.setAntiAlias(true);
         

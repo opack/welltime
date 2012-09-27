@@ -65,7 +65,7 @@ public class ActionItem {
 	 * 
 	 * @param title action title
 	 */
-	public void setTitle(String title) {
+    protected void setTitle(String title) {
 		this.title = title;
 	}
 
@@ -74,7 +74,7 @@ public class ActionItem {
 	 * 
 	 * @return action title
 	 */
-	public String getTitle() {
+	protected String getTitle() {
 		return this.title;
 	}
 
@@ -83,7 +83,7 @@ public class ActionItem {
 	 * 
 	 * @param icon {@link Drawable} action icon
 	 */
-	public void setIcon(Drawable icon) {
+	protected void setIcon(Drawable icon) {
 		this.icon = icon;
 	}
 
@@ -91,7 +91,7 @@ public class ActionItem {
 	 * Get action icon
 	 * @return  {@link Drawable} action icon
 	 */
-	public Drawable getIcon() {
+	protected Drawable getIcon() {
 		return this.icon;
 	}
 
@@ -100,14 +100,14 @@ public class ActionItem {
      * 
      * @param actionId  Action id for this action
      */
-    public void setActionId(int actionId) {
+	protected void setActionId(int actionId) {
         this.actionId = actionId;
     }
     
     /**
      * @return  Our action id
      */
-    public int getActionId() {
+    protected int getActionId() {
         return actionId;
     }
     
@@ -116,14 +116,14 @@ public class ActionItem {
      * 
      * @param sticky  true for sticky, pop up sends event but does not disappear
      */
-    public void setSticky(boolean sticky) {
+    protected void setSticky(boolean sticky) {
         this.sticky = sticky;
     }
     
     /**
      * @return  true if button is sticky, menu stays visible after press
      */
-    public boolean isSticky() {
+    protected boolean isSticky() {
         return sticky;
     }
     
@@ -132,7 +132,7 @@ public class ActionItem {
 	 * 
 	 * @param selected Flag to indicate the item is selected
 	 */
-	public void setSelected(boolean selected) {
+    protected void setSelected(boolean selected) {
 		this.selected = selected;
 	}
 
@@ -141,7 +141,7 @@ public class ActionItem {
 	 * 
 	 * @return true or false
 	 */
-	public boolean isSelected() {
+    protected boolean isSelected() {
 		return this.selected;
 	}
 
@@ -150,7 +150,7 @@ public class ActionItem {
 	 * 
 	 * @param thumb Thumb image
 	 */
-	public void setThumb(Bitmap thumb) {
+    protected void setThumb(Bitmap thumb) {
 		this.thumb = thumb;
 	}
 
@@ -159,7 +159,7 @@ public class ActionItem {
 	 * 
 	 * @return Thumb image
 	 */
-	public Bitmap getThumb() {
+    protected Bitmap getThumb() {
 		return this.thumb;
 	}
 }

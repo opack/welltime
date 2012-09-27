@@ -19,10 +19,10 @@ import fr.redmoon.tictac.gui.activities.TicTacActivity;
 import fr.redmoon.tictac.gui.activities.TicTacActivity.OnDayDeletionListener;
 
 public class CalendarAccess implements OnDayDeletionListener {
-	public static final String WORKEVENT_TITLE = "Travail";
-	public static final String CALENDAR_NAME = "Welltime";
+	private static final String WORKEVENT_TITLE = "Travail";
+	private static final String CALENDAR_NAME = "Welltime";
 	
-	public static final ICalendarAPIInfos calendarInfos;
+	private static final ICalendarAPIInfos calendarInfos;
 	static {
 		final int sdkVersion = Integer.parseInt(Build.VERSION.SDK);
 		if (sdkVersion >= 14 ) {
@@ -231,7 +231,7 @@ public class CalendarAccess implements OnDayDeletionListener {
 		}
 	}
 
-	public void deleteWorkEvents(final int year, final int month, final int dayOfMonth) {
+	private void deleteWorkEvents(final int year, final int month, final int dayOfMonth) {
 		if (mActivity == null || mCalID == -1) {
 			return;
 		}
@@ -250,7 +250,7 @@ public class CalendarAccess implements OnDayDeletionListener {
 			new String[]{ String.valueOf(mCalID), String.valueOf(dayStart), String.valueOf(dayEnd), WORKEVENT_TITLE });
 	}
 	
-	public void deleteDayTypeEvents(final int year, final int month, final int dayOfMonth) {
+	private void deleteDayTypeEvents(final int year, final int month, final int dayOfMonth) {
 		if (mActivity == null || mCalID == -1) {
 			return;
 		}
@@ -275,7 +275,7 @@ public class CalendarAccess implements OnDayDeletionListener {
 		Log.d("Welltime", "CalendarAccess.deleteDayTypeEvents nbDel=" + nbDel);
 	}
 	
-	public void deleteEvents(final int year, final int month, final int dayOfMonth) {
+	private void deleteEvents(final int year, final int month, final int dayOfMonth) {
 		if (mActivity == null || mCalID == -1) {
 			return;
 		}

@@ -19,12 +19,14 @@ import fr.redmoon.tictac.bus.export.FileExporter;
 public class BinPreferencesBeanExporter extends FileExporter<PreferencesBean> {
 	public final static String EXTENSION = "prefs";
 	
-	private final String timestamp;
+	private final String filename;
 	
 	public BinPreferencesBeanExporter(final Activity activity) {
 		super(activity);
+		final long dayId = DateUtils.getCurrentDayId();
 		final Time now = TimeUtils.getNowTime();
-		timestamp = "" + DateUtils.getCurrentDayId() + " " + now.hour + now.minute + now.second;
+		final String time = TimeUtils.formatTime(now.hour, now.minute, now.second);
+		filename = activity.getResources().getString(R.string.export_prefs_filename, dayId, time);
 	}
 	
 	@Override
@@ -59,6 +61,6 @@ public class BinPreferencesBeanExporter extends FileExporter<PreferencesBean> {
 
 	@Override
 	public String getFilename() {
-		return mResources.getString(R.string.export_prefs_filename, timestamp);
+		return filename;
 	}
 }

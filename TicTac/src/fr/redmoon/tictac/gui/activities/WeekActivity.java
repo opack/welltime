@@ -71,7 +71,7 @@ public class WeekActivity extends TicTacActivity implements OnDayDeletionListene
         // Initialisation du gestionnaire de pages
         final View pageDays = View.inflate(this, R.layout.view_week_days, null);
         final View pageDetails = View.inflate(this, R.layout.view_week_details, null);
-        initPages(pageDays, pageDetails);
+        initPages(getResources().getStringArray(R.array.week_page_titles), pageDays, pageDetails);
         
         // Création de l'adapteur affichant les jours. Pour l'instant aucun jour.
         final ListAdapter adapter = new WeekAdapter(this, R.layout.itm_week_day, mDaysArray);

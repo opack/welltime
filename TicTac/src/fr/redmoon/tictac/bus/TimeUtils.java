@@ -288,4 +288,29 @@ public class TimeUtils {
 	public static int extractMinutes(final int time) {
 		return time % 100;
 	}
+
+	/**
+	 * Retourne un horaire au format hhmmss
+	 * @param hour
+	 * @param minute
+	 * @param second
+	 * @return
+	 */
+	public static String formatTime(final int hour, final int minute, final int second) {
+		mWorkStringBuilder.setLength(0);
+		if (hour < 10) {
+			mWorkStringBuilder.append("0");
+		}
+		mWorkStringBuilder.append(hour);
+		if (minute < 10) {
+			mWorkStringBuilder.append("0");
+		}
+		mWorkStringBuilder.append(minute);
+		if (second < 10) {
+			mWorkStringBuilder.append("0");
+		}
+		mWorkStringBuilder.append(second);
+		
+		return mWorkStringBuilder.toString();
+	}
 }

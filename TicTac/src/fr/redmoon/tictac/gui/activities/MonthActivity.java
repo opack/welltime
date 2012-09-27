@@ -54,7 +54,7 @@ public class MonthActivity extends TicTacActivity implements OnDayDeletionListen
         // Initialisation du gestionnaire de pages
         final View pageCalendar = View.inflate(this, R.layout.view_month_calendar, null);
      // DBG Pas encore implémenté final View pageDetails = View.inflate(this, R.layout.view_month_details, null);
-        initPages(pageCalendar);// DBG Pas encore implémenté , pageDetails);
+        initPages(getResources().getStringArray(R.array.month_page_titles), pageCalendar);// DBG Pas encore implémenté , pageDetails);
         
         // Création des QuickActions
     	ActionItem showCheckingsItem = new ActionItem(QAID_SHOW_CHECKINGS, getString(R.string.menu_day_show_checkings), getResources().getDrawable(android.R.drawable.ic_menu_recent_history));

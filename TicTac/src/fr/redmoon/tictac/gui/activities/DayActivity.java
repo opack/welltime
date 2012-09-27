@@ -72,7 +72,7 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
         // Initialisation du gestionnaire de pages
         final View pageCheckings = View.inflate(this, R.layout.view_day_checkings, null);
         final View pageDetails = View.inflate(this, R.layout.view_day_details, null);
-        initPages(pageCheckings, pageDetails);
+        initPages(getResources().getStringArray(R.array.day_page_titles), pageCheckings, pageDetails);
         
         // Remplissage de la liste des jours dans le détail
         refreshDayTypeSpinners();
@@ -399,7 +399,7 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
      * Mise à jour de la vue "Détails"
      * @param day
      */
-    protected void populateDetails(final DayBean day) {
+    private void populateDetails(final DayBean day) {
     	DateUtils.fillTime(day.date, mWorkTime);
 		mWorkTime.normalize(true);
 		
@@ -481,15 +481,15 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
 		promptEditExtraTime(mWorkDayBean.date, mWorkDayBean.extra);
 	}
 	
-	public void updateMorningDayType(final String type) {
+	private void updateMorningDayType(final String type) {
 		updateDayType(type, mWorkDayBean.typeAfternoon);
 	}
 	
-	public void updateAfternoonDayType(final String type) {
+	private void updateAfternoonDayType(final String type) {
 		updateDayType(mWorkDayBean.typeMorning, type);
 	}
 	
-	public void updateDayType(final String typeMorning, final String typeAfternoon) {
+	private void updateDayType(final String typeMorning, final String typeAfternoon) {
 		// On teste si les types sont bien différents car lors de l'initialisation du spinner cette
 		// méthode sera appelée comme si l'utilisateur avait choisit une valeur. Or dans ce cas
 		// on ne veut pas créer un jour car le type de jour n'aura pas bougé.

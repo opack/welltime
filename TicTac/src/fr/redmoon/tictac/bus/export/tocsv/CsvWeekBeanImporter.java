@@ -13,7 +13,6 @@ import fr.redmoon.tictac.bus.bean.WeekBean;
 import fr.redmoon.tictac.bus.export.FileImporter;
 
 public class CsvWeekBeanImporter extends FileImporter<List<WeekBean>> {
-	public final static String MIME_TYPE = "text/csv";	
 	private final static String CSV_SEPARATOR = ",";
 	
 	public CsvWeekBeanImporter(final Activity activity){

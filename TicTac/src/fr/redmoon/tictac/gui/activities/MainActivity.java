@@ -79,8 +79,9 @@ public class MainActivity extends TabActivity {
 		
 		View tabIndicator = LayoutInflater.from(this).inflate(R.layout.tab_indicator, getTabWidget(), false);
 		
-		TextView title = (TextView) tabIndicator.findViewById(R.id.title);
-		title.setText(labelId);
+		// DBG
+//		TextView title = (TextView) tabIndicator.findViewById(R.id.title);
+//		title.setText(labelId);
 		ImageView icon = (ImageView) tabIndicator.findViewById(R.id.icon);
 		icon.setImageResource(drawableId);
 		

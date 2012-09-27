@@ -12,13 +12,13 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
-import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.format.Time;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.viewpagerindicator.TabPageIndicator;
+
 import fr.redmoon.tictac.R;
 import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.bus.FlexUtils;
@@ -128,47 +128,51 @@ public abstract class TicTacActivity extends FragmentActivity {
 		return mDb;
 	}
     
-	protected void initPages(final View... pages) {
-		// Initialise l'indicateur de pages s'il est présent
-        int curIndicator;
-        final ViewGroup pageIndicator = (ViewGroup)findViewById(R.id.lyt_page_indicator);
-        if (pageIndicator != null) {
-        	View indicator = null;
-        	for (curIndicator = 0; curIndicator < pages.length; curIndicator++) {
-        		indicator = View.inflate(this, R.layout.itm_page_indicator_empty, pageIndicator);
-        		if (curIndicator == 0) {
-        			// Par défaut, on sélectionne le premier indicateur
-        			indicator.findViewById(R.id.img_page_indicator).setBackgroundResource(R.drawable.page_indicator_full);
-        		}
-        	}
-        }
+	protected void initPages(final String[] titles, final View... pages) {
+//DBG
+//		// Initialise l'indicateur de pages s'il est présent
+//        int curIndicator;
+//        final ViewGroup pageIndicator = (ViewGroup)findViewById(R.id.lyt_page_indicator);
+//        if (pageIndicator != null) {
+//        	View indicator = null;
+//        	for (curIndicator = 0; curIndicator < pages.length; curIndicator++) {
+//        		indicator = View.inflate(this, R.layout.itm_page_indicator_empty, pageIndicator);
+//        		if (curIndicator == 0) {
+//        			// Par défaut, on sélectionne le premier indicateur
+//        			indicator.findViewById(R.id.img_page_indicator).setBackgroundResource(R.drawable.page_indicator_full);
+//        		}
+//        	}
+//        }
         
 		// Initialise le pager
 		mPages = pages;
-		final TicTacPagerAdapter adapter = new TicTacPagerAdapter(pages);
+		final TicTacPagerAdapter adapter = new TicTacPagerAdapter(titles, pages);
 		mPager = (ViewPager)findViewById(R.id.view_pager);
         mPager.setAdapter(adapter);
-        mPager.setOnPageChangeListener(new OnPageChangeListener() {
-			@Override
-			public void onPageSelected(int position) {
-				ImageView indicator = null;
-				for (int curIndicator = 0; curIndicator < pages.length; curIndicator++) {
-					indicator = (ImageView)pageIndicator.getChildAt(curIndicator);
-					if (position == curIndicator) {
-						indicator.setBackgroundResource(R.drawable.page_indicator_full);
-					} else {
-						indicator.setBackgroundResource(R.drawable.page_indicator_empty);
-					}
-	        	}
-			}
-			
-			@Override
-			public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-			}
-			@Override
-			public void onPageScrollStateChanged(int state) {
-			}
-		});
+        TabPageIndicator titleIndicator = (TabPageIndicator)findViewById(R.id.indicator);
+		titleIndicator.setViewPager(mPager);
+		//DBG
+//		titleIndicator.setOnPageChangeListener(new OnPageChangeListener() {
+//			@Override
+//			public void onPageSelected(int position) {
+//				ImageView indicator = null;
+//				for (int curIndicator = 0; curIndicator < pages.length; curIndicator++) {
+//					indicator = (ImageView)pageIndicator.getChildAt(curIndicator);
+//					if (position == curIndicator) {
+//						indicator.setBackgroundResource(R.drawable.page_indicator_full);
+//					} else {
+//						indicator.setBackgroundResource(R.drawable.page_indicator_empty);
+//					}
+//	        	}
+//			}
+//			
+//			@Override
+//			public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+//			}
+//			@Override
+//			public void onPageScrollStateChanged(int state) {
+//			}
+//		});
 	}
 	
 	public int getCurrentPage() {
