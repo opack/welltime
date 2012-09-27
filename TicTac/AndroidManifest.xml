@@ -72,7 +72,9 @@
 		
 		<service android:name=".bus.services.AddCheckingService" />
 
-	    <receiver android:name=".gui.widgets.WidgetProvider">
+	    <receiver
+	        android:name=".gui.widgets.WidgetProvider"
+	        android:exported="false" >
 			<intent-filter>
 				<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
 			</intent-filter>

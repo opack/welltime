@@ -4,10 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
 import android.content.res.Resources;
-import android.net.Uri;
 import android.os.Environment;
 import android.widget.Toast;
 import fr.redmoon.tictac.R;
@@ -97,17 +94,18 @@ public abstract class FileExporter<DataType> {
 		return mRootDir;
 	}
 
-	private void sendMail(
-			final Context context,
-			final String mimeType,
-			final String recipiant,
-			final String subject,
-			final String attachmentFilePath) {
-		final Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
-		emailIntent.setType(mimeType);
-		emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{recipiant});
-		emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, subject);
-		emailIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(attachmentFilePath)); // i.e. "file:///sdcard/mysong.mp3"
-		context.startActivity(Intent.createChooser(emailIntent, "Send mail..."));
-	}
+	// DBG Fonction d'envoi de mail, inactif pour le moment.
+//	private void sendMail(
+//			final Context context,
+//			final String mimeType,
+//			final String recipiant,
+//			final String subject,
+//			final String attachmentFilePath) {
+//		final Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
+//		emailIntent.setType(mimeType);
+//		emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{recipiant});
+//		emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, subject);
+//		emailIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse(attachmentFilePath)); // i.e. "file:///sdcard/mysong.mp3"
+//		context.startActivity(Intent.createChooser(emailIntent, "Send mail..."));
+//	}
 }
