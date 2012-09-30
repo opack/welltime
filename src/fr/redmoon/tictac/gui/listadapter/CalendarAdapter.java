@@ -100,22 +100,29 @@ public class CalendarAdapter extends BaseAdapter {
     	if (col == 0) {
     		// La colonne 0 est celle où sont affichées les semaines. On n'aura
     		// donc pas à écrire de nom de jour dessus. On vide la case
-    		dayView.setText("");
+    		dayView.setText("SEM");
+    		dayView.setTextColor(mActivity.getResources().getColor(R.color.calendar_day_out_of_month));
+    		dayView.setTextSize(8.5f);
 	    	view.setBackgroundColor(mActivity.getResources().getColor(R.color.app_background));
     	} else {
+    		// DBG
+            dayView.setTextSize(14.0f);
 	    	dayView.setText(mDaysShortNames[col - 1]);
 	    	dayView.setTextColor(Color.WHITE);
 	    	view.setBackgroundColor(mActivity.getResources().getColor(R.color.light_blue));
     	}
 	}
 
-	private void adaptColHeaderView(int row, View view) {
+	private void adaptColHeaderView(final int row, final View view) {
 		final TextView dayView = (TextView)view.findViewById(R.id.day_num);
+		// DBG
+        dayView.setTextSize(14.0f);
+		view.setBackgroundColor(mActivity.getResources().getColor(R.color.app_background));
 		if (row == 0) {
     		// La ligne 0 est celle où sont affichées les noms des jours. On n'aura
     		// donc pas à écrire de numéro de semaine dessus.
 			dayView.setText("");
-	    	view.setBackgroundColor(mActivity.getResources().getColor(R.color.app_background));
+	    	//DBGview.setBackgroundColor(mActivity.getResources().getColor(R.color.app_background));
     	} else {
     		// Pour déterminer le numéro de la semaine, on se base sur le premier jour du mois,
     		// auquel on ajoute 7 jours pour chaque ligne. Ca nous donne donc le 1er, le 8 etc...
@@ -129,8 +136,8 @@ public class CalendarAdapter extends BaseAdapter {
     		final int weekNumber = mWorkTime.getWeekNumber();
     		
 	    	dayView.setText(String.valueOf(weekNumber));
-	    	dayView.setTextColor(Color.WHITE);
-	    	view.setBackgroundColor(mActivity.getResources().getColor(R.color.light_blue));
+	    	dayView.setTextColor(mActivity.getResources().getColor(R.color.calendar_day_out_of_month));
+	    	//DBGview.setBackgroundColor(mActivity.getResources().getColor(R.color.light_blue));
     	}
 	}
 
@@ -146,7 +153,9 @@ public class CalendarAdapter extends BaseAdapter {
     	final TextView dayLabel = (TextView)view.findViewById(R.id.day_num);
     	final DayBean dayData = mDaysData.get(position);
     	final boolean isWithinCurrentMonth = mHelper.isWithinCurrentMonth(row, col);
-    	
+    	// DBG
+    	dayLabel.setTextSize(14.0f);
+        
     	// Ecriture du numéro du jour
     	final int dayNumber = mHelper.getDayAt(row, col);
     	dayLabel.setText(String.valueOf(dayNumber));
@@ -178,7 +187,7 @@ public class CalendarAdapter extends BaseAdapter {
         	view.setBackgroundColor(mActivity.getResources().getColor(R.color.calendar_day_out_of_month));
         }
         // Les jours normaux prennent la couleur du type du jour
-        // ou gris si aucun nour n'a été pointé
+        // ou gris si aucun jour n'a été pointé
         else {
 	        dayLabel.setTextColor(mActivity.getResources().getColor(R.color.calendar_day_standard));
 	        // Coloration du fond avec la couleur du type de jour

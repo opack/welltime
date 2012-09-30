@@ -10,8 +10,8 @@
 	<color name="text_tab_selected">#5d5d5d</color>
 	<color name="text_tab_unselected">#838183</color>
 	
-	<color name="calendar_day_standard">#64bdff</color>
-	<color name="calendar_day_with_note">#ffdd00</color>
+	<color name="calendar_day_standard">#000000</color>
+	<color name="calendar_day_with_note">#BB0FFF</color>
 	<color name="calendar_day_not_worked">#cccccc</color>
-	<color name="calendar_day_out_of_month">#808080</color>
+	<color name="calendar_day_out_of_month">#E5E5E5</color>
 </resources>
