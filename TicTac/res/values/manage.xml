@@ -30,6 +30,7 @@
 	<string name="import_days_canceled">Import annulé par l\'utilisateur.\n%1$d jour(s) créé(s).\n%2$d jour(s) mis à jour.</string>
 	<string name="import_file_not_found">Le fichier %1$s est introuvable. L\'import est abandonné.</string>
 	<string name="import_io_exception">Le fichier %1$s n\'a pas pu être lu. L\'import est abandonné.</string>
+	<string name="import_days_unknown_daytype">Le type de jour %1$s est inconnu. Veuillez sélectionner un type de jour existant à la place :</string>
 	
 	<!-- Opération export des préférences -->
 	<string-array name="export_prefs">

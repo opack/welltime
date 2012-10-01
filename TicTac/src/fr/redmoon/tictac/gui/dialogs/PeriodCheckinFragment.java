@@ -1,4 +1,4 @@
-package fr.redmoon.tictac.gui.dialogs.fragments;
+package fr.redmoon.tictac.gui.dialogs;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -27,7 +27,7 @@ import fr.redmoon.tictac.bus.bean.PreferencesBean;
 import fr.redmoon.tictac.bus.export.tocalendar.CalendarAccess;
 import fr.redmoon.tictac.db.DbAdapter;
 import fr.redmoon.tictac.gui.activities.TicTacActivity;
-import fr.redmoon.tictac.gui.listadapter.DayTypeAdapter;
+import fr.redmoon.tictac.gui.adapters.DayTypeAdapter;
 
 public class PeriodCheckinFragment extends DialogFragment implements OnClickListener {
 	public final static String TAG = PeriodCheckinFragment.class.getName();

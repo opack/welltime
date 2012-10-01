@@ -11,14 +11,20 @@ import fr.redmoon.tictac.R;
  * Définit le Handler qui reçoit les messages du thread et met à jour la barre de progression
  */
 public class ProgressDialogHandler extends Handler {
+	public interface OnProgressFinishedListener {
+		void onProgressFinished();
+	}
+	
 	private final int mDialogId;
 	private final Activity mActivity;
 	private final ProgressDialog mProgressDialog;
+	private final OnProgressFinishedListener mListener;
 	
-	public ProgressDialogHandler(final Activity activity, final ProgressDialog progressDialog, final int dialogId) {
+	public ProgressDialogHandler(final Activity activity, final ProgressDialog progressDialog, final int dialogId, final OnProgressFinishedListener listener) {
 		mActivity = activity;
 		mProgressDialog = progressDialog;
 		mDialogId = dialogId;
+		mListener = listener;
 	}
 	
     public void handleMessage(Message msg) {
@@ -53,6 +59,11 @@ public class ProgressDialogHandler extends Handler {
 	    					nbDaysUpdated),
 	    				Toast.LENGTH_LONG)
 	    			.show();
+        	}
+        	
+        	// Quoi qu'il en soit, le traitement est achevé
+        	if (mListener != null) {
+        		mListener.onProgressFinished();
         	}
         }
     }

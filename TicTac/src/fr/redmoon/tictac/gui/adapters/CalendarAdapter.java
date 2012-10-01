@@ -1,4 +1,4 @@
-package fr.redmoon.tictac.gui.listadapter;
+package fr.redmoon.tictac.gui.adapters;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -21,6 +21,9 @@ import fr.redmoon.tictac.bus.bean.DayBean;
 import fr.redmoon.tictac.gui.DayBiColorDrawableHelper;
 
 public class CalendarAdapter extends BaseAdapter {
+	private static final float TEXTSIZE_SMALL = 8.5f;
+    private static final float TEXTSIZE_NORMAL = 14f;
+    
 	private final Activity mActivity;
 
 	private MonthDisplayHelper mHelper;
@@ -97,17 +100,15 @@ public class CalendarAdapter extends BaseAdapter {
     
     private void adaptRowHeaderView(final int col, final View view) {
     	final TextView dayView = (TextView)view.findViewById(R.id.day_num);
+    	dayView.setText(mDaysShortNames[col]);
     	if (col == 0) {
-    		// La colonne 0 est celle où sont affichées les semaines. On n'aura
-    		// donc pas à écrire de nom de jour dessus. On vide la case
-    		dayView.setText("SEM");
+    		// La colonne 0 est celle où sont affichées les semaines.
+    		// Sur la première ligne on écrit "SEM".
+    		dayView.setTextSize(TEXTSIZE_SMALL);
     		dayView.setTextColor(mActivity.getResources().getColor(R.color.calendar_day_out_of_month));
-    		dayView.setTextSize(8.5f);
 	    	view.setBackgroundColor(mActivity.getResources().getColor(R.color.app_background));
     	} else {
-    		// DBG
-            dayView.setTextSize(14.0f);
-	    	dayView.setText(mDaysShortNames[col - 1]);
+            dayView.setTextSize(TEXTSIZE_NORMAL);
 	    	dayView.setTextColor(Color.WHITE);
 	    	view.setBackgroundColor(mActivity.getResources().getColor(R.color.light_blue));
     	}
@@ -115,15 +116,13 @@ public class CalendarAdapter extends BaseAdapter {
 
 	private void adaptColHeaderView(final int row, final View view) {
 		final TextView dayView = (TextView)view.findViewById(R.id.day_num);
-		// DBG
-        dayView.setTextSize(14.0f);
+        dayView.setTextSize(TEXTSIZE_NORMAL);
 		view.setBackgroundColor(mActivity.getResources().getColor(R.color.app_background));
-		if (row == 0) {
-    		// La ligne 0 est celle où sont affichées les noms des jours. On n'aura
-    		// donc pas à écrire de numéro de semaine dessus.
-			dayView.setText("");
-	    	//DBGview.setBackgroundColor(mActivity.getResources().getColor(R.color.app_background));
-    	} else {
+		if (row != 0) {
+//DBG    		// La ligne 0 est celle où sont affichées les noms des jours. On n'aura
+//    		// donc pas à écrire de numéro de semaine dessus.
+//			dayView.setText("");
+//    	} else {
     		// Pour déterminer le numéro de la semaine, on se base sur le premier jour du mois,
     		// auquel on ajoute 7 jours pour chaque ligne. Ca nous donne donc le 1er, le 8 etc...
     		// Chaque jour étant forcément sur une ligne différente, on peut en déduire le numéro
@@ -137,7 +136,6 @@ public class CalendarAdapter extends BaseAdapter {
     		
 	    	dayView.setText(String.valueOf(weekNumber));
 	    	dayView.setTextColor(mActivity.getResources().getColor(R.color.calendar_day_out_of_month));
-	    	//DBGview.setBackgroundColor(mActivity.getResources().getColor(R.color.light_blue));
     	}
 	}
 
@@ -153,8 +151,7 @@ public class CalendarAdapter extends BaseAdapter {
     	final TextView dayLabel = (TextView)view.findViewById(R.id.day_num);
     	final DayBean dayData = mDaysData.get(position);
     	final boolean isWithinCurrentMonth = mHelper.isWithinCurrentMonth(row, col);
-    	// DBG
-    	dayLabel.setTextSize(14.0f);
+    	dayLabel.setTextSize(TEXTSIZE_NORMAL);
         
     	// Ecriture du numéro du jour
     	final int dayNumber = mHelper.getDayAt(row, col);

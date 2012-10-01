@@ -1,4 +1,4 @@
-package fr.redmoon.tictac.gui.dialogs.fragments;
+package fr.redmoon.tictac.gui.dialogs;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -13,7 +13,6 @@ import fr.redmoon.tictac.bus.bean.PreferencesBean;
 import fr.redmoon.tictac.bus.export.tocalendar.CalendarAccess;
 import fr.redmoon.tictac.db.DbAdapter;
 import fr.redmoon.tictac.gui.activities.TicTacActivity;
-import fr.redmoon.tictac.gui.dialogs.DialogArgs;
 
 public class AddDayFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
 	public final static String TAG = AddDayFragment.class.getName();

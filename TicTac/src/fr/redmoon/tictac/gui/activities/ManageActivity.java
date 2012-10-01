@@ -12,11 +12,11 @@ import android.widget.ListView;
 import fr.redmoon.tictac.R;
 import fr.redmoon.tictac.db.DbAdapter;
 import fr.redmoon.tictac.gui.ManageImportExportHandler;
-import fr.redmoon.tictac.gui.dialogs.fragments.CleanDaysFragment;
-import fr.redmoon.tictac.gui.dialogs.fragments.PeriodCheckinFragment;
-import fr.redmoon.tictac.gui.dialogs.fragments.StatisticsFragment;
-import fr.redmoon.tictac.gui.dialogs.fragments.SyncCalendarPeriodFragment;
-import fr.redmoon.tictac.gui.listadapter.ManageAdapter;
+import fr.redmoon.tictac.gui.adapters.ManageAdapter;
+import fr.redmoon.tictac.gui.dialogs.CleanDaysFragment;
+import fr.redmoon.tictac.gui.dialogs.PeriodCheckinFragment;
+import fr.redmoon.tictac.gui.dialogs.StatisticsFragment;
+import fr.redmoon.tictac.gui.dialogs.SyncCalendarPeriodFragment;
 
 public class ManageActivity extends TicTacActivity {
 	

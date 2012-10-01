@@ -33,4 +33,12 @@
     <string name="period_chooser_end_title">Choisissez une date de fin :</string>
     <string name="date_title">Choisissez une date :</string>
     <string name="time_title">Choisissez une heure :</string>
+    
+    <!-- Libellés par défaut des types de jour -->
+    <string name="daytype_normal_default">Normal</string>
+	<string name="daytype_not_worked_default">Non travaillé</string>
+	<string name="daytype_vacation_default">Congés payés</string>
+	<string name="daytype_personal_time_default">RTT</string>
+	<string name="daytype_public_holiday_default">Férié</string>
+	<string name="daytype_illness_default">Maladie</string>
 </resources>

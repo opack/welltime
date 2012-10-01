@@ -6,7 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 
-import android.app.Activity;
+import android.support.v4.app.FragmentActivity;
 import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.bus.TimeUtils;
 import fr.redmoon.tictac.bus.bean.WeekBean;
@@ -15,7 +15,7 @@ import fr.redmoon.tictac.bus.export.FileImporter;
 public class CsvWeekBeanImporter extends FileImporter<List<WeekBean>> {
 	private final static String CSV_SEPARATOR = ",";
 	
-	public CsvWeekBeanImporter(final Activity activity){
+	public CsvWeekBeanImporter(final FragmentActivity activity){
 		super(activity);
 	}
 	

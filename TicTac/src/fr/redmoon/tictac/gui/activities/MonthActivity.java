@@ -17,7 +17,7 @@ import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
 import fr.redmoon.tictac.gui.ViewSynchronizer;
 import fr.redmoon.tictac.gui.activities.TicTacActivity.OnDayDeletionListener;
-import fr.redmoon.tictac.gui.listadapter.CalendarAdapter;
+import fr.redmoon.tictac.gui.adapters.CalendarAdapter;
 import fr.redmoon.tictac.gui.quickactions.ActionItem;
 import fr.redmoon.tictac.gui.quickactions.QuickAction;
 

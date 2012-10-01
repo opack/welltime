@@ -1,4 +1,4 @@
-package fr.redmoon.tictac.gui.dialogs.fragments;
+package fr.redmoon.tictac.gui.dialogs;
 
 import java.util.ArrayList;
 import java.util.List;

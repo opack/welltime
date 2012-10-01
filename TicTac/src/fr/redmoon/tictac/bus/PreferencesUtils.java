@@ -9,8 +9,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
+import fr.redmoon.tictac.R;
 import fr.redmoon.tictac.bus.bean.DayType;
 import fr.redmoon.tictac.bus.bean.PreferencesBean;
 import fr.redmoon.tictac.gui.activities.PreferencesActivity;
@@ -50,6 +52,7 @@ public class PreferencesUtils {
 		PreferencesBean.instance.flexMax = TimeUtils.parseMinutes(prefs.getString(PreferenceKeys.flexMax.getKey(), "07:00"));
 		
 	// Types de jour
+		final Resources res = context.getResources();
 		final Map<String, DayType> dayTypes = PreferencesBean.instance.dayTypes;
 		dayTypes.clear();
 		// Les types de jour "normal" et "non travaillé" sont toujours présents.
@@ -58,7 +61,7 @@ public class PreferencesUtils {
 				StandardDayTypes.normal.name(),
 				"Normal",
 				0,
-				-657931)
+				res.getColor(R.color.daytype_normal_default))
 			);
 		}
 		if (!dayTypes.containsKey(StandardDayTypes.not_worked.name())) {
@@ -66,7 +69,7 @@ public class PreferencesUtils {
 				StandardDayTypes.not_worked.name(),
 				"Non travaillé",
 				0,
-				Color.rgb(204, 204, 204))
+				res.getColor(R.color.daytype_not_worked_default))
 			);
 		}
 		
@@ -74,37 +77,7 @@ public class PreferencesUtils {
 		// Pour des raisons de compatibilités avec l'existant, on modifie les id pour que ce soient
 		// des entiers plutôt que des chaines.
 		if (PreferencesBean.instance.isFirstLaunch) {
-			// Congé payé
-			dayTypes.put("congépayé", new DayType(
-				"congépayé",
-				"Congé payé",
-				420,
-				-5381890)
-			);
-			
-			// RTT
-			dayTypes.put("r.t.t.", new DayType(
-				"r.t.t.",
-				"R.T.T.",
-				420,
-				-5381890)
-			);
-			
-			// Maladie
-			dayTypes.put("maladie", new DayType(
-				"maladie",
-				"Maladie",
-				420,
-				-12619008)
-			);
-			
-			// Férié
-			dayTypes.put("férié", new DayType(
-				"férié",
-				"Férié",
-				420,
-				-3312092)
-			);
+			addDefaultDayTypes(dayTypes, res);
 		}
 		// Si ce n'est pas le premier lancement, on charge les types de jour éventuellement définis
 		// par l'utilisateur
@@ -125,7 +98,7 @@ public class PreferencesUtils {
 				id = matcher.group(1);
 				label = prefs.getString(PreferenceKeys.dayTypeLabel.getKey() + id, id);
 				time = prefs.getString(PreferenceKeys.dayTypeTime.getKey() + id, "00:00");
-				color = prefs.getInt(PreferenceKeys.dayTypeColor.getKey() + id, -657931);
+				color = prefs.getInt(PreferenceKeys.dayTypeColor.getKey() + id, Color.rgb(245, 245, 245));
 				
 				// Ajout de la préférence à la liste
 				dayType = new DayType(
@@ -138,6 +111,53 @@ public class PreferencesUtils {
 		}
 	}
 	
+	private static void addDefaultDayTypes(final Map<String, DayType> dayTypes, final Resources res) {
+		// Les types de jour "normal" et "non travaillé" sont toujours présents.
+		dayTypes.put(StandardDayTypes.normal.name(), new DayType(
+			StandardDayTypes.normal.name(),
+			res.getString(R.string.daytype_normal_default),
+			0,
+			res.getColor(R.color.daytype_normal_default))
+		);
+		dayTypes.put(StandardDayTypes.not_worked.name(), new DayType(
+			StandardDayTypes.not_worked.name(),
+			res.getString(R.string.daytype_not_worked_default),
+			0,
+			res.getColor(R.color.daytype_not_worked_default))
+		);
+		// Congé payé
+		dayTypes.put(StandardDayTypes.vacation.name(), new DayType(
+			StandardDayTypes.vacation.name(),
+			res.getString(R.string.daytype_vacation_default),
+			420,
+			res.getColor(R.color.daytype_vacation_default))
+		);
+		
+		// RTT
+		dayTypes.put(StandardDayTypes.personaltime.name(), new DayType(
+			StandardDayTypes.personaltime.name(),
+			res.getString(R.string.daytype_personal_time_default),
+			420,
+			res.getColor(R.color.daytype_personal_time_default))
+		);
+		
+		// Maladie
+		dayTypes.put(StandardDayTypes.illness.name(), new DayType(
+			StandardDayTypes.illness.name(),
+			res.getString(R.string.daytype_illness_default),
+			420,
+			res.getColor(R.color.daytype_illness_default))
+		);
+		
+		// Férié
+		dayTypes.put(StandardDayTypes.publicholiday.name(), new DayType(
+			StandardDayTypes.publicholiday.name(),
+			res.getString(R.string.daytype_public_holiday_default),
+			420,
+			res.getColor(R.color.daytype_public_holiday_default))
+		);
+	}
+
 	public static void savePreference(final Context context, final String key, final boolean value) {
 		final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
 		final SharedPreferences.Editor editor = preferences.edit();
@@ -266,50 +286,7 @@ public class PreferencesUtils {
 		
 		// Ajoute les préférences par défaut
 		dayTypes.clear();
-		// Les types de jour "normal" et "non travaillé" sont toujours présents.
-		dayTypes.put(StandardDayTypes.normal.name(), new DayType(
-			StandardDayTypes.normal.name(),
-			"Normal",
-			0,
-			-657931)
-		);
-		dayTypes.put(StandardDayTypes.not_worked.name(), new DayType(
-			StandardDayTypes.not_worked.name(),
-			"Non travaillé",
-			0,
-			Color.rgb(204, 204, 204))
-		);
-		// Congé payé
-		dayTypes.put("congépayé", new DayType(
-			"congépayé",
-			"Congé payé",
-			420,
-			-5381890)
-		);
-		
-		// RTT
-		dayTypes.put("r.t.t.", new DayType(
-			"r.t.t.",
-			"R.T.T.",
-			420,
-			-5381890)
-		);
-		
-		// Maladie
-		dayTypes.put("maladie", new DayType(
-			"maladie",
-			"Maladie",
-			420,
-			-12619008)
-		);
-		
-		// Férié
-		dayTypes.put("férié", new DayType(
-			"férié",
-			"Férié",
-			420,
-			-3312092)
-		);
+		addDefaultDayTypes(dayTypes, activity.getResources());
 		
 		// Sauvegarde des préférences
 		PreferencesUtils.savePreferencesBean(activity);

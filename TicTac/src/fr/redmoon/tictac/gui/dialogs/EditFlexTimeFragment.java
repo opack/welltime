@@ -1,4 +1,4 @@
-package fr.redmoon.tictac.gui.dialogs.fragments;
+package fr.redmoon.tictac.gui.dialogs;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -18,7 +18,6 @@ import fr.redmoon.tictac.bus.FlexUtils;
 import fr.redmoon.tictac.bus.TimeUtils;
 import fr.redmoon.tictac.db.DbAdapter;
 import fr.redmoon.tictac.gui.activities.TicTacActivity;
-import fr.redmoon.tictac.gui.dialogs.DialogArgs;
 
 public class EditFlexTimeFragment extends DialogFragment implements DialogInterface.OnClickListener {
 	public final static String TAG = EditFlexTimeFragment.class.getName();

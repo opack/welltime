@@ -1,4 +1,4 @@
-package fr.redmoon.tictac.gui.dialogs.fragments;
+package fr.redmoon.tictac.gui.dialogs;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +21,6 @@ import fr.redmoon.tictac.bus.bean.PreferencesBean;
 import fr.redmoon.tictac.bus.export.tocalendar.CalendarAccess;
 import fr.redmoon.tictac.db.DbAdapter;
 import fr.redmoon.tictac.gui.activities.TicTacActivity;
-import fr.redmoon.tictac.gui.dialogs.DialogArgs;
 import fr.redmoon.tictac.gui.widgets.WidgetProvider;
 
 public class AddCheckingFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener {

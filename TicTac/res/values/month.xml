@@ -8,6 +8,7 @@
     <!-- Chaque valeur doit être dans l'ordre d'affichage du calendrier :
     lundi en premier, dimanche à la fin. -->
     <string-array name="days_short_names">
+        <item>SEM</item>
         <item>L</item>
         <item>M</item>
         <item>M</item>

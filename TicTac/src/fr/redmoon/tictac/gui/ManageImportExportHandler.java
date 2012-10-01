@@ -5,7 +5,9 @@ import static fr.redmoon.tictac.gui.activities.ManageActivity.PROGRESS_DIALOG;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
@@ -15,6 +17,7 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.SharedPreferences;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
@@ -27,6 +30,7 @@ import android.widget.Toast;
 import fr.redmoon.tictac.R;
 import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.bus.PreferencesUtils;
+import fr.redmoon.tictac.bus.TimeUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
 import fr.redmoon.tictac.bus.bean.PreferencesBean;
 import fr.redmoon.tictac.bus.bean.WeekBean;
@@ -38,10 +42,14 @@ import fr.redmoon.tictac.bus.export.tobinary.BinPreferencesBeanImporter;
 import fr.redmoon.tictac.bus.export.tocsv.CsvDayBeanImporter;
 import fr.redmoon.tictac.bus.export.tocsv.CsvWeekBeanImporter;
 import fr.redmoon.tictac.db.DbAdapter;
+import fr.redmoon.tictac.gui.ProgressDialogHandler.OnProgressFinishedListener;
 import fr.redmoon.tictac.gui.activities.PreferencesActivity;
-import fr.redmoon.tictac.gui.dialogs.fragments.ExportPeriodFragment;
+import fr.redmoon.tictac.gui.dialogs.DialogArgs;
+import fr.redmoon.tictac.gui.dialogs.ExportPeriodFragment;
+import fr.redmoon.tictac.gui.dialogs.SelectDayTypeReplacementFragment;
+import fr.redmoon.tictac.gui.dialogs.SelectDayTypeReplacementFragment.OnDayTypeReplacedListener;
 
-public class ManageImportExportHandler implements OnItemClickListener {
+public class ManageImportExportHandler implements OnItemClickListener, OnDayTypeReplacedListener, OnProgressFinishedListener {
 	private final static int POS_EXPORT_DATA = 0;
 	private final static int POS_IMPORT_DATA = 1;
 	private final static int POS_EXPORT_PREFS = 2;
@@ -53,6 +61,8 @@ public class ManageImportExportHandler implements OnItemClickListener {
 	
 	private final FragmentActivity activity;
 	private final DbAdapter db;
+	
+	private Map<String, String> unknownDayTypes;
 	
 	public ManageImportExportHandler(final FragmentActivity activity, final DbAdapter db) {
 		this.activity = activity;
@@ -96,7 +106,7 @@ public class ManageImportExportHandler implements OnItemClickListener {
 		});
         
         // On profite de cette étape pour créer le handler
-        progressHandler = new ProgressDialogHandler(activity, progressDialog, PROGRESS_DIALOG);
+        progressHandler = new ProgressDialogHandler(activity, progressDialog, PROGRESS_DIALOG, this);
         progressThread.setHandler(progressHandler);
         return progressDialog;
 	}
@@ -182,12 +192,12 @@ public class ManageImportExportHandler implements OnItemClickListener {
 		String filenameWithExtension;
 		for (int curFile = 0; curFile < files.length; curFile++) {
 			filenameWithExtension = files[curFile].getName();
-			// Retourne une chaine au format "dd/MM/yyyy" à partir d'un 
+			// Retourne une chaine au format "dd/MM/yyyy hh:mm:ss" à partir d'un 
 			// nom de fichier au format "yyyyMMdd_hhmmss.prefs"
 			items[curFile] = activity.getResources().getString(
 				R.string.import_prefs_filechooser_item,
 				DateUtils.formatDateDDMMYYYY(filenameWithExtension.substring(0, 8)),
-				DateUtils.formatDateDDMMYYYY(filenameWithExtension.substring(9, 16)));
+				TimeUtils.formatTimeWithSeconds(filenameWithExtension.substring(9, 15)));
 		}
 		final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 		builder.setTitle(R.string.import_prefs_filechooser_title);
@@ -257,7 +267,7 @@ public class ManageImportExportHandler implements OnItemClickListener {
 				
 				// Lit les jours dans le fichier CSV
 				final List<DayBean> days = new ArrayList<DayBean>();
-				final FileImporter<List<DayBean>> daysImporter = new CsvDayBeanImporter(activity);
+				final CsvDayBeanImporter daysImporter = new CsvDayBeanImporter(activity);
 				if (!daysImporter.importData(unzippedDaysCsvFile, days)) {
 					Toast.makeText(
 							activity, 
@@ -265,6 +275,9 @@ public class ManageImportExportHandler implements OnItemClickListener {
 							Toast.LENGTH_LONG)
 						.show();
 				}
+
+				// On conserve les jours inconnus pour les importer à la fin du traitement
+				unknownDayTypes = daysImporter.getUnknownDayTypes();
 				
 				// Lit les semaines dans le fichier CSV
 				final List<WeekBean> weeks = new ArrayList<WeekBean>();
@@ -302,5 +315,50 @@ public class ManageImportExportHandler implements OnItemClickListener {
         progressDialog.setSecondaryProgress(0);
         progressDialog.setMax(progressThread.getMax());
         progressThread.start();
+	}
+	
+	/**
+	 * Affiche une boîte de dialogue demandant à l'utilisateur de choisir un type
+	 * de jour pour remplacer le type passé en paramètre, qui n'est pas connu.
+	 * @param unknownDayTypeId
+	 * @return identifiant du type de jour remplaçant celui qui n'est pas connu
+	 */
+	private void promptForUnknownDayTypes() {
+		// S'il n'y a plus de types de jour à traiter, on arrête
+		if (unknownDayTypes.isEmpty()) {
+			return;
+		}
+		
+		// Récupère un des types de jour inconnus
+		final Iterator<Map.Entry<String, String>> iterator = unknownDayTypes.entrySet().iterator();
+		final Map.Entry<String, String> unknownDayType = iterator.next();
+		final String unknownDayTypeLabel = unknownDayType.getKey();
+		final String tempDayTypeId = unknownDayType.getValue();
+		iterator.remove();
+		
+		// Affichage d'une boîte de dialogue
+		final Bundle args = new Bundle();
+		args.putString(DialogArgs.UNKNOWN_DAYTYPE.name(), unknownDayTypeLabel);
+		args.putString(DialogArgs.TEMP_DAYTYPE_ID.name(), tempDayTypeId);
+
+		final SelectDayTypeReplacementFragment newFragment = new SelectDayTypeReplacementFragment();
+		newFragment.setListener(this);
+		newFragment.setArguments(args);
+	    newFragment.show(activity.getSupportFragmentManager(), SelectDayTypeReplacementFragment.TAG);
+	}
+	
+	@Override
+	public void onDayTypeReplaced() {
+		// On recommence avec le prochain type de jour inconnu
+		promptForUnknownDayTypes();
+	}
+	
+	@Override
+	public void onProgressFinished() {
+		// S'il y a eut des types de jour inconnus, on affiche une boîte de dialogue pour
+		// leur trouver une correspondance
+		if (!unknownDayTypes.isEmpty()) {
+			promptForUnknownDayTypes();
+		}
 	}
 }

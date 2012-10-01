@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import android.util.Log;
+
 /**
  * Classe qui conserve la dernière version connue des préférences
  */
@@ -103,6 +105,8 @@ public class PreferencesBean implements Serializable{
 		final DayType dayType = instance.dayTypes.get(type);
 		if (dayType != null) {
 			label = dayType.label;
+		} else {
+			Log.w(PreferencesBean.class.getName(), "getLabelByDayType : type inconnu : " + type);
 		}
 		return label;
 	}
