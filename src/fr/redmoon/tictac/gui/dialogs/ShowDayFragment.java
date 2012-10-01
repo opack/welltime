@@ -1,4 +1,4 @@
-package fr.redmoon.tictac.gui.dialogs.fragments;
+package fr.redmoon.tictac.gui.dialogs;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -8,7 +8,6 @@ import android.widget.DatePicker;
 import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.gui.ViewSynchronizer;
 import fr.redmoon.tictac.gui.activities.TicTacActivity;
-import fr.redmoon.tictac.gui.dialogs.DialogArgs;
 
 public class ShowDayFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
 	public final static String TAG = ShowDayFragment.class.getName();

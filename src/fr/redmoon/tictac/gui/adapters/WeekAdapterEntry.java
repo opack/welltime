@@ -1,4 +1,4 @@
-package fr.redmoon.tictac.gui.listadapter;
+package fr.redmoon.tictac.gui.adapters;
 public class WeekAdapterEntry {
 	public String date;
 	public String total;

@@ -242,6 +242,11 @@ public class DbAdapter {
 		}
 	}
 	
+	public int updateDayType(final String oldType, final String newType) {
+		final SQLiteDatabase db = mDbHelper.getWritableDatabase();
+		return days.updateType(db, oldType, newType);
+	}
+	
 	public boolean updateDayNote(final long date, final String note) {
 		final SQLiteDatabase db = mDbHelper.getWritableDatabase();
 		if (!days.exists(db, date)) {

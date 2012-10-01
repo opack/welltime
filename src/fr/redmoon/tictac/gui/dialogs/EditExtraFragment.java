@@ -1,4 +1,4 @@
-package fr.redmoon.tictac.gui.dialogs.fragments;
+package fr.redmoon.tictac.gui.dialogs;
 
 import android.app.Dialog;
 import android.app.TimePickerDialog;
@@ -9,7 +9,6 @@ import android.widget.TimePicker;
 import fr.redmoon.tictac.bus.TimeUtils;
 import fr.redmoon.tictac.db.DbAdapter;
 import fr.redmoon.tictac.gui.activities.TicTacActivity;
-import fr.redmoon.tictac.gui.dialogs.DialogArgs;
 
 public class EditExtraFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener {
 	public final static String TAG = EditExtraFragment.class.getName();

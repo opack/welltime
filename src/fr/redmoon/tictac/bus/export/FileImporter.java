@@ -3,17 +3,17 @@ package fr.redmoon.tictac.bus.export;
 import java.io.File;
 import java.io.IOException;
 
-import android.app.Activity;
 import android.os.Environment;
+import android.support.v4.app.FragmentActivity;
 import android.widget.Toast;
 import fr.redmoon.tictac.R;
 
 public abstract class FileImporter<DataType> {
 	
-	protected final Activity mActivity;
+	protected final FragmentActivity mActivity;
 	protected DataType mData;
 	
-	public FileImporter(final Activity activity){
+	public FileImporter(final FragmentActivity activity){
 		mActivity = activity;
 	}
 	

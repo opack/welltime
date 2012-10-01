@@ -42,9 +42,13 @@ public class PreferencesActivity extends PreferenceActivity implements OnSharedP
 	
 	public static final Pattern PATTERN_DAY_TYPE_TITLE = Pattern.compile(PreferenceKeys.dayTypeLabel.getKey() + "(.*)");
 	
+	private Bundle mLastSavedInstanceState;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		mLastSavedInstanceState = savedInstanceState;
 		
 		// Pour contourner le bug Android 4611, on décide ici quel layout de préférences on va utiliser
 		// si on souhaite afficher un sous-menu de préférences.
@@ -141,7 +145,7 @@ public class PreferencesActivity extends PreferenceActivity implements OnSharedP
 		// Modification de la clé et valeur par défaut de la préférence Color
 		final Preference colorPref = prefScreen.findPreference(PREF_DAYTYPE_COLOR);
 		colorPref.setKey(PreferenceKeys.dayTypeColor.getKey() + id);
-		colorPref.setDefaultValue(-657931);
+		colorPref.setDefaultValue(getResources().getColor(R.color.daytype_normal_default));
 		
 		// Modification de la clé et valeur par défaut de la préférence Label
 		final EditTextPreference labelPref = (EditTextPreference)prefScreen.findPreference(PREF_DAYTYPE_LABEL);
@@ -217,7 +221,7 @@ public class PreferencesActivity extends PreferenceActivity implements OnSharedP
 			// Ajout des préférences pour ce jour
 			editor.putString(PreferenceKeys.dayTypeLabel.getKey() + id, title);
 			editor.putString(PreferenceKeys.dayTypeTime.getKey() + id, "00:00");
-			editor.putInt(PreferenceKeys.dayTypeColor.getKey() + id, -657931);
+			editor.putInt(PreferenceKeys.dayTypeColor.getKey() + id, getResources().getColor(R.color.daytype_normal_default));
 		}
 		
 		// Suppression de la valeur du jour à ajouter
@@ -269,6 +273,6 @@ public class PreferencesActivity extends PreferenceActivity implements OnSharedP
 		// Une autre technique existe : finir l'activité et la redémarrer
 		// avec le même Intent. Le problème est que cette méthode met le
 		// bazar dans l'historique du bouton back.
-		onCreate(null);
+		onCreate(mLastSavedInstanceState);
 	}
 }

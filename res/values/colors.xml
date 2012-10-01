@@ -14,4 +14,11 @@
 	<color name="calendar_day_with_note">#BB0FFF</color>
 	<color name="calendar_day_not_worked">#cccccc</color>
 	<color name="calendar_day_out_of_month">#E5E5E5</color>
+	
+	<color name="daytype_normal_default">#f5f5f5</color>
+	<color name="daytype_not_worked_default">#cccccc</color>
+	<color name="daytype_vacation_default">#d6ecf8</color>
+	<color name="daytype_personal_time_default">#d6ecf8</color>
+	<color name="daytype_public_holiday_default">#f7cfa8</color>
+	<color name="daytype_illness_default">#dbf5bb</color>
 </resources>

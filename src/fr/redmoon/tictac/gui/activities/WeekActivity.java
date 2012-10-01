@@ -26,10 +26,10 @@ import fr.redmoon.tictac.bus.bean.PreferencesBean;
 import fr.redmoon.tictac.bus.bean.WeekBean;
 import fr.redmoon.tictac.gui.ViewSynchronizer;
 import fr.redmoon.tictac.gui.activities.TicTacActivity.OnDayDeletionListener;
+import fr.redmoon.tictac.gui.adapters.WeekAdapter;
+import fr.redmoon.tictac.gui.adapters.WeekAdapterEntry;
 import fr.redmoon.tictac.gui.dialogs.DialogArgs;
-import fr.redmoon.tictac.gui.dialogs.fragments.EditFlexTimeFragment;
-import fr.redmoon.tictac.gui.listadapter.WeekAdapter;
-import fr.redmoon.tictac.gui.listadapter.WeekAdapterEntry;
+import fr.redmoon.tictac.gui.dialogs.EditFlexTimeFragment;
 import fr.redmoon.tictac.gui.quickactions.ActionItem;
 import fr.redmoon.tictac.gui.quickactions.QuickAction;
 

@@ -58,6 +58,16 @@ public class TimeUtils {
 	}
 	
 	/**
+	 * Retourne un horaire au format hh:mm:ss à partir d'une
+	 * heure au format hhmmss
+	 * @param time
+	 * @return
+	 */
+	public static String formatTimeWithSeconds(final String time) {
+		return time.replaceAll("(\\d\\d)(\\d\\d)(\\d\\d)", "$1:$2:$3");
+	}
+	
+	/**
 	 * Formatte un nombre de minutes en hh:mm, pour l'affichage.
 	 * @param time
 	 * @return

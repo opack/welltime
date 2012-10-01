@@ -5,14 +5,14 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
-import android.app.Activity;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import fr.redmoon.tictac.bus.bean.PreferencesBean;
 import fr.redmoon.tictac.bus.export.FileImporter;
 
 public class BinPreferencesBeanImporter extends FileImporter<PreferencesBean> {
 	
-	public BinPreferencesBeanImporter(final Activity activity){
+	public BinPreferencesBeanImporter(final FragmentActivity activity){
 		super(activity);
 	}
 	

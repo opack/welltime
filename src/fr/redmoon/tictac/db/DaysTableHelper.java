@@ -173,6 +173,20 @@ public class DaysTableHelper extends TableHelper {
 		return updateRecord(db, dayId, mTempContentValues);
 	}
 	
+	public int updateType(final SQLiteDatabase db, final String oldType, final String newType) {
+		// Mise à jour des types pour la matinée
+		mTempContentValues.clear();
+		mTempContentValues.put(COL_TYPE_MORNING, newType);
+		final int nbMorningsUpdated = db.update(TABLE_NAME, mTempContentValues, COL_TYPE_MORNING + "='" + oldType + "'", null);
+		
+		// Mise à jour des types pour l'après-midi
+		mTempContentValues.clear();
+		mTempContentValues.put(COL_TYPE_AFTERNOON, newType);
+		final int nbAfternoonsUpdated = db.update(TABLE_NAME, mTempContentValues, COL_TYPE_AFTERNOON + "='" + oldType + "'", null);
+		
+		return nbMorningsUpdated + nbAfternoonsUpdated;
+	}
+	
 	public boolean updateNote(final SQLiteDatabase db, final long dayId, final String note) {
 		mTempContentValues.clear();
 		mTempContentValues.put(COL_NOTE, note);

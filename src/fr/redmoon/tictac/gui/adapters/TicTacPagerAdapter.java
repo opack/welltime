@@ -1,4 +1,4 @@
-package fr.redmoon.tictac.gui.listadapter;
+package fr.redmoon.tictac.gui.adapters;
 
 import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;

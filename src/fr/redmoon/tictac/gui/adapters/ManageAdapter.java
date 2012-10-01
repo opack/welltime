@@ -1,4 +1,4 @@
-package fr.redmoon.tictac.gui.listadapter;
+package fr.redmoon.tictac.gui.adapters;
 
 import android.app.Activity;
 import android.content.Context;

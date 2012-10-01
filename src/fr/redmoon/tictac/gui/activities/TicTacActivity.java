@@ -26,14 +26,14 @@ import fr.redmoon.tictac.bus.TimeUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
 import fr.redmoon.tictac.db.DbAdapter;
 import fr.redmoon.tictac.gui.ViewSynchronizer;
+import fr.redmoon.tictac.gui.adapters.TicTacPagerAdapter;
+import fr.redmoon.tictac.gui.dialogs.AddCheckingFragment;
+import fr.redmoon.tictac.gui.dialogs.AddDayFragment;
 import fr.redmoon.tictac.gui.dialogs.DialogArgs;
-import fr.redmoon.tictac.gui.dialogs.fragments.AddCheckingFragment;
-import fr.redmoon.tictac.gui.dialogs.fragments.AddDayFragment;
-import fr.redmoon.tictac.gui.dialogs.fragments.EditCheckingFragment;
-import fr.redmoon.tictac.gui.dialogs.fragments.EditExtraFragment;
-import fr.redmoon.tictac.gui.dialogs.fragments.EditNoteFragment;
-import fr.redmoon.tictac.gui.dialogs.fragments.ShowDayFragment;
-import fr.redmoon.tictac.gui.listadapter.TicTacPagerAdapter;
+import fr.redmoon.tictac.gui.dialogs.EditCheckingFragment;
+import fr.redmoon.tictac.gui.dialogs.EditExtraFragment;
+import fr.redmoon.tictac.gui.dialogs.EditNoteFragment;
+import fr.redmoon.tictac.gui.dialogs.ShowDayFragment;
 import fr.redmoon.tictac.gui.widgets.WidgetProvider;
 
 /**

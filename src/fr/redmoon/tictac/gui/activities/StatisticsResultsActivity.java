@@ -16,7 +16,7 @@ import fr.redmoon.tictac.bus.TimeUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
 import fr.redmoon.tictac.bus.bean.PreferencesBean;
 import fr.redmoon.tictac.db.DbAdapter;
-import fr.redmoon.tictac.gui.listadapter.WorkedDaysByTypeAdapter;
+import fr.redmoon.tictac.gui.adapters.WorkedDaysByTypeAdapter;
 
 public class StatisticsResultsActivity extends Activity {
 	public static final String EXTRA_FIRST_DAY = StatisticsResultsActivity.class.getCanonicalName() + "FirstDay";
