@@ -92,6 +92,23 @@ public class WeeksTableHelper extends TableHelper {
 		}
 		cursor.close();
 	}
+	
+	public void fetchFirstFlexTime(final SQLiteDatabase db, final WeekBean weekData) {
+		final String whereClause = COL_FLEX_TIME + " is not null";
+		final String orderClause = COL_DATE + " asc LIMIT 1";
+		final Cursor cursor = fetchWhere(db, whereClause, orderClause);
+		
+		if (cursor.getCount() > 0) {
+			weekData.date = cursor.getInt(COL_DATE_INDEX);
+			weekData.flexTime = cursor.getInt(COL_FLEX_TIME_INDEX);
+			weekData.isValid = true;
+		} else {
+			weekData.date = 0;
+			weekData.flexTime = TimeUtils.UNKNOWN_TIME;
+			weekData.isValid = false;
+		}
+		cursor.close();
+	}
 
 	public int fetchFlexTime(final SQLiteDatabase db, final long dayId) {
 		final Cursor cursor = fetch(db, dayId);
