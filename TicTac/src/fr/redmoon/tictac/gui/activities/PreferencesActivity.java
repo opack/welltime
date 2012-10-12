@@ -20,10 +20,12 @@ import android.preference.PreferenceCategory;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import fr.redmoon.tictac.R;
+import fr.redmoon.tictac.bus.FlexUtils;
 import fr.redmoon.tictac.bus.PreferenceKeys;
 import fr.redmoon.tictac.bus.PreferencesUtils;
 import fr.redmoon.tictac.bus.StandardDayTypes;
 import fr.redmoon.tictac.bus.export.tocalendar.CalendarAccess;
+import fr.redmoon.tictac.db.DbAdapter;
 
 public class PreferencesActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
 	public static final String URI_PAGE_MAIN = "preferences://main";
@@ -193,6 +195,12 @@ public class PreferencesActivity extends PreferenceActivity implements OnSharedP
 		// Mise à jour de l'affichage si on a modifié les libellés
 		else if (key.matches(PATTERN_DAY_TYPE_TITLE.pattern())) {
 			refreshContent();
+		}
+		// S'il y a eut une mise à jour de la durée d'un type de jour, on recalcule l'HV
+		else if (key.startsWith(PreferencesActivity.PREF_DAYTYPE_TIME)) {
+			final DbAdapter db = new DbAdapter(this);
+			final FlexUtils flexUtils = new FlexUtils(db);
+		   	flexUtils.updateFlex();
 		}
 		
 		// Mise à jour du bean faisant proxy pour les préférences

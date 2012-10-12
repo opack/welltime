@@ -166,6 +166,14 @@ public class DbAdapter {
 		weeks.fetchLastFlexTime(db, dayId, weekData);
 	}
 	
+	/**
+	 * Retourne le premier HV enregistré dans la base
+	 */
+	public void fetchLastFlexTime(final WeekBean weekData) {
+		final SQLiteDatabase db = mDbHelper.getReadableDatabase();
+		weeks.fetchFirstFlexTime(db, weekData);
+	}
+	
 	public void fetchPreviousDay(final long date, final DayBean beanToFill) {
 		final SQLiteDatabase db = mDbHelper.getReadableDatabase();
 		beanToFill.isValid = days.getPreviousDay(db, date, beanToFill);

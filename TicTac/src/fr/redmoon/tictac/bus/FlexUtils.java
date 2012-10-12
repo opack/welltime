@@ -23,6 +23,16 @@ public class FlexUtils {
 	}
 	
 	/**
+	 * Appelle updateFlex(long) en lui passant le premier
+	 * jour possédant un HV en base
+	 */
+	public void updateFlex() {
+		final WeekBean weekData = new WeekBean();
+		mDb.fetchLastFlexTime(weekData);
+		updateFlex(weekData.date);
+	}
+	
+	/**
 	 * Met à jour l'HV de toutes les semaines depuis la date indiquée jusqu'au
 	 * lundi de la semaine du dernier jour présent en base.
 	 * @param initialDay
@@ -47,11 +57,14 @@ public class FlexUtils {
 		DateUtils.getDateOfDayOfWeek(mWorkTime, Time.SUNDAY, mWorkTime);
 		calendar.set(mWorkTime.year, mWorkTime.month, mWorkTime.monthDay);
 		long lastDay = DateUtils.getDayId(calendar);
+		
+		// Récupération du dernier jour en base
+		long lastExistingDay = mDb.fetchPreviousDay(99999999);
 
 		// Récupération des jours entre cette date et le prochain dimanche
 		mDb.fetchDays(firstDay, lastDay, days);
 		int curWeekTotal = 0;
-		while (!days.isEmpty()){
+		while (lastDay <= lastExistingDay){
 			// Calcul de l'HV accumulé au cours de ces jours
 			curWeekTotal = computeWeekTotal(days);
 			
