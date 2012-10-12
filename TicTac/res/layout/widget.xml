@@ -13,13 +13,4 @@
 		android:adjustViewBounds="true"
 		android:src="@drawable/clock_blue"
 		android:clickable="true" />
-		
-	<!-- TextView
-		android:layout_margin="4dip"
-		android:text="00:00"
-		android:id="@+id/TextView01"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		style="@android:style/TextAppearance.Medium"
-		android:layout_gravity="center" /-->
 </LinearLayout>

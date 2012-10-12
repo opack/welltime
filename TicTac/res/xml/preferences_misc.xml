@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Divers -->
+<PreferenceScreen
+	xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<!-- Décalage entre l'heure du téléphone et l'heure de la pointeuse -->
+	<SignedTimePickerPreference
+		android:title="@string/pref_clock_shift"
+		android:summary="@string/pref_clock_shift_summary"
+		android:key="clock_shift"
+		android:defaultValue="00:00" />
+	
+	<!-- Synchronisation avec la calendrier -->
+	<CheckBoxPreference
+	    android:title="@string/pref_sync_calendar"
+		android:summary="@string/pref_sync_calendar_summary"
+		android:key="sync_calendar"
+		android:defaultValue="false" />
+	
+	<!-- Affichage d'un timepicker pour pointer -->
+	<CheckBoxPreference
+	    android:title="@string/pref_widget_displaytimepicker"
+		android:summary="@string/pref_widget_displaytimepicker_summary"
+		android:key="widget_displaytimepicker"
+		android:defaultValue="false" />
+	
+	<!-- Affichage de la version de l'application -->
+	<Preference
+		android:summary="@string/app_version"
+		android:title="Version"
+		android:selectable="false"
+		android:enabled="false" />
+</PreferenceScreen>

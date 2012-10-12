@@ -1,7 +1,6 @@
 package fr.redmoon.tictac.bus.services;
 
 import android.app.Service;
-import android.appwidget.AppWidgetManager;
 import android.content.Intent;
 import android.os.IBinder;
 import android.text.format.Time;
@@ -20,7 +19,7 @@ import fr.redmoon.tictac.gui.widgets.WidgetProvider;
 
 public class AddCheckingService extends Service {
 	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
+	public void onStart(Intent intent, int startId) {
 		// Chargement des préférences
 		PreferencesUtils.updatePreferencesBean(this);
 		
@@ -30,16 +29,11 @@ public class AddCheckingService extends Service {
 			intent2.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 	        getApplication().startActivity(intent2);
 		} else {
-			final int checkingsCount = doClockin();
+			doClockin();
 			
 			// Mise à jour de l'image dans le(s) widget(s)
-			WidgetProvider.updateClockinImage(
-				getApplicationContext(),
-				intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS),
-				checkingsCount);
+			WidgetProvider.updateDisplay(getApplicationContext());
 		}
-		
-		return START_NOT_STICKY;
 	}
 
 	@Override
@@ -109,11 +103,5 @@ public class AddCheckingService extends Service {
     	db.closeDatabase();
     	
     	return checkingsCount;
-    }
-    
-    @Override
-    public void onDestroy() {
-    	Toast.makeText(this, "Destruction du service", Toast.LENGTH_SHORT).show();
-    	super.onDestroy();
     }
 }

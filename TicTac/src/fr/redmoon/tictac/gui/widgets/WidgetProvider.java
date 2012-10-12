@@ -28,12 +28,11 @@ public class WidgetProvider extends AppWidgetProvider {
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
     	final RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget);
         
-        // Mise à jour de l'image dans les widgets
-        updateClockinImage(context,appWidgetIds, getCheckingCount(context));
+        // Mise à jour de l'affichage des widgets
+        updateDisplay(context);
 
         // Build the intent to call the service
         final Intent intent = new Intent(context.getApplicationContext(), AddCheckingService.class);
-		intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
         
 		// Pour réagir à un clic il faut utiliser une pending intent car le onClickListener
 		// est exécuté par l'application Home
@@ -53,15 +52,7 @@ public class WidgetProvider extends AppWidgetProvider {
     	super.onReceive(context, intent);
     }
 
-    /**
-     * Retourne l'image de statut à afficher en fonction du nombre de pointages du
-     * jour :
-     * 	- nombre pair : l'utilisateur n'est pas en train de travailler.
-     * 	- nombre impair : l'utilisateur est en train de travailler.
-     * @param context
-     * @return
-     */
-    private static int getCheckingCount(final Context context) {
+    private static DayBean getCurrentDay(final Context context) {
     	// Ouverture d'un accès à la base.
     	final DbAdapter db = new DbAdapter(context);
         db.openDatabase();
@@ -73,21 +64,37 @@ public class WidgetProvider extends AppWidgetProvider {
         db.closeDatabase();
         
         // Compte le nombre de pointages
-        return day.checkings.size();
+        return day;
 	}
     
-    public static int[] getAppWidgetIds(final Context context) {
+    private static int[] getAppWidgetIds(final Context context) {
     	// Récupère les Id des widgets
 		final AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
 		return appWidgetManager.getAppWidgetIds(new ComponentName(context, WidgetProvider.class));
     }
+    
+    /**
+     * Mise à jour de l'image de statut dans le(s) widget(s)
+     * @param context
+     * @param checkingsCount 
+     */
+	public static void updateDisplay(final Context context) {
+		// Récupère les identifiants des widgets
+		final int[] appWidgetIds = getAppWidgetIds(context);
+		
+		// Récupération du jour courant
+    	final DayBean day = getCurrentDay(context);
+    	
+        // Mise à jour de l'image dans les widgets
+        updateClockinImage(context, appWidgetIds, day.checkings.size());
+	}
 
     /**
      * Mise à jour de l'image dans le(s) widget(s)
      * @param context
      * @param checkingsCount 
      */
-	public static void updateClockinImage(final Context context, final int[] appWidgetIds, final int checkingsCount) {
+	private static void updateClockinImage(final Context context, final int[] appWidgetIds, final int checkingsCount) {
 		// L'utilisateur est en train de travailler si on a un nombre impair de pointages.
 		int img = R.drawable.clockin_working;
 		if (checkingsCount % 2 == 0) {
@@ -105,22 +112,6 @@ public class WidgetProvider extends AppWidgetProvider {
 		}
 	}
 	
-	/**
-     * Mise à jour de l'image de statut dans le(s) widget(s)
-     * @param context
-     * @param checkingsCount 
-     */
-	public static void updateClockinImage(final Context context) {
-		// Récupère le nombre de pointage pour cette journée
-		final int count = getCheckingCount(context);
-		
-		// Récupère les identifiants des widgets
-		final int[] appWidgetIds = getAppWidgetIds(context);
-		
-		// Mise à jour de l'image de statut
-		updateClockinImage(context, appWidgetIds, count);
-	}
-
 //	@Override
 //    public void onDeleted(Context context, int[] appWidgetIds) {
 //        Log.d(LOG_TAG, "onDelete()");
@@ -147,54 +138,5 @@ public class WidgetProvider extends AppWidgetProvider {
 //        }
 //
 //        super.onDeleted(context, appWidgetIds);
-//    }
-
-//    @Override
-//    public void onReceive(Context context, Intent intent) {
-//
-//        final String action = intent.getAction();
-//        Log.d(LOG_TAG, "OnReceive:Action: " + action);
-//        if (AppWidgetManager.ACTION_APPWIDGET_DELETED.equals(action)) {
-//            final int appWidgetId = intent.getExtras().getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
-//            if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
-//                this.onDeleted(context, new int[] { appWidgetId });
-//            }
-//        } else if (AppWidgetManager.ACTION_APPWIDGET_UPDATE.equals(action)) {
-//
-//            if (!URI_SCHEME.equals(intent.getScheme())) {
-//                // if the scheme doesn't match, that means it wasn't from the
-//                // alarm
-//                // either it's the first time in (even before the configuration
-//                // is done) or after a reboot or update
-//
-//                final int[] appWidgetIds = intent.getExtras().getIntArray(AppWidgetManager.EXTRA_APPWIDGET_IDS);
-//
-//                for (int appWidgetId : appWidgetIds) {
-//
-//                    // get the user settings for how long to schedule the update
-//                    // time for
-//                    SharedPreferences config = context.getSharedPreferences(WidgetConfigurationActivity.PREFS_NAME, 0);
-//                    int updateRateSeconds = config.getInt(String.format(WidgetConfigurationActivity.PREFS_UPDATE_RATE_FIELD_PATTERN, appWidgetId), -1);
-//                    if (updateRateSeconds != -1) {
-//                        Log.i(LOG_TAG, "Starting recurring alarm for id " + appWidgetId);
-//                        Intent widgetUpdate = new Intent();
-//                        widgetUpdate.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-//                        widgetUpdate.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, new int[] { appWidgetId });
-//
-//                        // make this pending intent unique by adding a scheme to
-//                        // it
-//                        widgetUpdate.setData(Uri.withAppendedPath(Uri.parse(WidgetProvider.URI_SCHEME + "://widget/id/"), String.valueOf(appWidgetId)));
-//                        PendingIntent newPending = PendingIntent.getBroadcast(context, 0, widgetUpdate, PendingIntent.FLAG_UPDATE_CURRENT);
-//
-//                        // schedule the updating
-//                        AlarmManager alarms = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-//                        alarms.setRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime(), updateRateSeconds * 1000, newPending);
-//                    }
-//                }
-//            }
-//            super.onReceive(context, intent);
-//        } else {
-//            super.onReceive(context, intent);
-//        }
 //    }
 }
