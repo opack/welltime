@@ -225,10 +225,7 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
 					}
 		    		
 		    		// Mise à jour des widgets
-					WidgetProvider.updateClockinImage(
-						this,
-						WidgetProvider.getAppWidgetIds(this),
-						mWorkDayBean.checkings.size());
+					WidgetProvider.updateDisplay(this);
 		    	} else {
 		    		Toast.makeText(this, "Oups ! Le pointage n'a pas été enregistré. Merci de réessayer.", Toast.LENGTH_SHORT).show();
 		    	}
@@ -462,7 +459,7 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
             	
             	// Si on a supprimé un pointage d'aujourd'hui, on met à jour le widget
             	if (mToday == date) {
-            		WidgetProvider.updateClockinImage(DayActivity.this);
+            		WidgetProvider.updateDisplay(DayActivity.this);
             	}
             }
         };

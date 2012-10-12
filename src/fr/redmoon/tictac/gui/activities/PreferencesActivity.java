@@ -28,7 +28,7 @@ import fr.redmoon.tictac.bus.export.tocalendar.CalendarAccess;
 import fr.redmoon.tictac.db.DbAdapter;
 
 public class PreferencesActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
-	public static final String URI_PAGE_MAIN = "preferences://main";
+	public static final String URI_PAGE_MISC = "preferences://misc";
 	public static final String URI_PAGE_LIMITS = "preferences://limits";
 	public static final String URI_PAGE_DAYS = "preferences://days";
 
@@ -68,7 +68,7 @@ public class PreferencesActivity extends PreferenceActivity implements OnSharedP
         	addPreferencesFromResource(R.xml.preferences_days_edit);
         	customizeDayTypeEditPreferences(target.substring(URI_PAGE_DAYS.length() + 1));
         } else {
-            addPreferencesFromResource(R.xml.preferences);
+            addPreferencesFromResource(R.xml.preferences_misc);
         }
 		
 		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);

@@ -396,7 +396,7 @@ public abstract class TicTacActivity extends FragmentActivity {
             	
             	// Si on a supprimé le jour d'aujourd'hui, on met à jour le widget
             	if (mToday == date) {
-            		WidgetProvider.updateClockinImage(TicTacActivity.this);
+            		WidgetProvider.updateDisplay(TicTacActivity.this);
             	}
             	
             	// Si on a supprimé le jour actuellement affiché dans la vue "Jour", on l'en informe

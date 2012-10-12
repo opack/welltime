@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="pref_title">Préférences</string>
-    
     <!-- Ecran "Limites" -->
-    <string name="pref_limites">Limites</string>
-    <string name="pref_limites_summary">Définissez les limites de temps.</string>
     <string name="pref_dailyworktime">Temps de travail quotidien</string>
     <string name="pref_weeklyworktime">Temps de travail hebdomadaire</string>
     <string name="pref_lunch">Pause repas</string>
@@ -27,8 +23,6 @@
 	<string name="pref_daytype_color_summary">Choisissez la couleur représentant ces type de jour.</string>
 	<string name="pref_daytype_label">Libellé</string>
 	<string name="pref_daytype_label_summary">Libellé associé à ce type de jour.</string>
-	<string name="pref_daytypes">Types de jour</string>
-	<string name="pref_daytypes_summary">Modifiez les propriétés des types de jour.</string>
 	<string name="pref_daytypes_list">Types de jour</string>
 	<string name="pref_daytypes_manage">Gestion</string>
 	<string name="pref_daytype_add">Nouveau&#8230;</string>
@@ -41,11 +35,11 @@
 	<string name="pref_daytype_reset_summary">Réinitialiser la liste des types de jour.</string>
 	<string name="pref_daytype_reset_dialogmessage">Voulez-vous vraiment perdre tous vos types de jour et restaurer les valeurs par défaut ?</string>
 	
-	<!-- Ecran principal -->
+	<!-- Ecran "Divers" -->
 	<string name="pref_clock_shift">Décalage horloge</string>
 	<string name="pref_clock_shift_summary">Indiquez le décalage entre la pointeuse et l\'heure du téléphone.</string>
-	<string name="pref_widget_display_timepicker">Le widget propose la saisie</string>
-	<string name="pref_widget_display_timepicker_summary">Cochez si le widget doit afficher une boîte de saisie d\'heure.</string>
 	<string name="pref_sync_calendar">Synchroniser avec le calendrier</string>
 	<string name="pref_sync_calendar_summary">Activer la création d\'évènements dans le calendrier nommé \"Welltime\".</string>
+	<string name="pref_widget_displaytimepicker">Le widget propose la saisie</string>
+	<string name="pref_widget_displaytimepicker_summary">Cochez si le widget doit afficher une boîte de saisie d\'heure.</string>
 </resources>

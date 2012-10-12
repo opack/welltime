@@ -95,9 +95,21 @@
     <string name="mean_day_work_time">Temps de travail moyen :</string>
     
     <!-- Opération affichage des préférences -->
-	<string-array name="show_preferences">
-        <item>Afficher les préférences</item>
-        <item>Afficher les préférences de l\'application</item>
+    <string-array name="show_preferences_misc">
+        <item>Divers</item>
+        <item>Préférences générales de l\'application</item>
+    </string-array>
+    <string-array name="show_preferences_limits">
+        <item>Limites</item>
+        <item>Définissez les limites de temps.</item>
+    </string-array>
+    <string-array name="show_preferences_daytypes">
+        <item>Types de jour</item>
+        <item>Modifiez les propriétés des types de jour.</item>
+    </string-array>
+    <string-array name="show_preferences_widget">
+        <item>Widget</item>
+        <item>Paramétrer le comportement du widget</item>
     </string-array>
     
     <!-- Erreurs -->

@@ -70,7 +70,7 @@ public class EditCheckingFragment extends DialogFragment implements TimePickerDi
 			
 			// Mise à jour des widgets
 			if (mDate == DateUtils.getCurrentDayId()) {
-				WidgetProvider.updateClockinImage(activity);
+				WidgetProvider.updateDisplay(activity);
 			}
 			
 			// Mise à jour de l'affichage

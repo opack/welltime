@@ -3,6 +3,7 @@ package fr.redmoon.tictac.gui.activities;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.View;
@@ -30,7 +31,9 @@ public class ManageActivity extends TicTacActivity {
 	private final static int POS_STATISTICS = 3;
 	
 	// Position des éléments dans la liste préférences
-	private final static int POS_SHOW_PREFS = 0;
+	private final static int POS_SHOW_PREFS_MISC = 0;
+	private final static int POS_SHOW_PREFS_LIMITS = 1;
+	private final static int POS_SHOW_PREFS_DAYTYPES = 2;
 	
 	private DbAdapter mDb;
 	private ManageImportExportHandler importExportHandler;
@@ -97,18 +100,24 @@ public class ManageActivity extends TicTacActivity {
  				new OnItemClickListener() {
 				@Override
 				public void onItemClick(AdapterView<?> adapter, View v, int position, long id) {
+					final Intent prefsActivity = new Intent(ManageActivity.this, PreferencesActivity.class);
 		 			switch (position) {
-			 			case POS_SHOW_PREFS:
-			 				final Intent prefsActivity = new Intent(ManageActivity.this, PreferencesActivity.class);
-			 				// On pourrait appeler directement telle ou telle page de préférence,
-			 				// mais comme on veut afficher la page principale inutile de mettre une URI.
-			 				//intent.setData(Uri.parse("preferences://main"));
-			 				ManageActivity.this.startActivity(prefsActivity);
+			 			case POS_SHOW_PREFS_MISC:
+			 				prefsActivity.setData(Uri.parse(PreferencesActivity.URI_PAGE_MISC));
+			 				break;
+			 			case POS_SHOW_PREFS_LIMITS:
+			 				prefsActivity.setData(Uri.parse(PreferencesActivity.URI_PAGE_LIMITS));
+			 				break;
+			 			case POS_SHOW_PREFS_DAYTYPES:
+			 				prefsActivity.setData(Uri.parse(PreferencesActivity.URI_PAGE_DAYS));
 			 				break;
 		 			}
+		 			ManageActivity.this.startActivity(prefsActivity);
 				}
 			},
-			resources.getStringArray(R.array.show_preferences)
+			resources.getStringArray(R.array.show_preferences_misc),
+			resources.getStringArray(R.array.show_preferences_limits),
+			resources.getStringArray(R.array.show_preferences_daytypes)
 		);
 	}
 	
