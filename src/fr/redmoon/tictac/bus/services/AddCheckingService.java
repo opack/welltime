@@ -19,7 +19,7 @@ import fr.redmoon.tictac.gui.widgets.WidgetProvider;
 
 public class AddCheckingService extends Service {
 	@Override
-	public void onStart(Intent intent, int startId) {
+	public int onStartCommand(Intent intent, int flags, int startId) {
 		// Chargement des préférences
 		PreferencesUtils.updatePreferencesBean(this);
 		
@@ -34,6 +34,8 @@ public class AddCheckingService extends Service {
 			// Mise à jour de l'image dans le(s) widget(s)
 			WidgetProvider.updateDisplay(getApplicationContext());
 		}
+		
+		return START_NOT_STICKY;
 	}
 
 	@Override
