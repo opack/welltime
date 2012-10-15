@@ -2,6 +2,7 @@ package fr.redmoon.tictac.bus.services;
 
 import android.app.Service;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.IBinder;
 import android.text.format.Time;
 import android.widget.Toast;
@@ -18,6 +19,16 @@ import fr.redmoon.tictac.gui.activities.WidgetDisplayTimePickerActivity;
 import fr.redmoon.tictac.gui.widgets.WidgetProvider;
 
 public class AddCheckingService extends Service {
+	
+	private static int mOldOrientation = 0;
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		if (newConfig.orientation != mOldOrientation) {
+			WidgetProvider.updateWidgets(this);
+			mOldOrientation = newConfig.orientation;
+		}
+	}
+	
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		// Chargement des préférences
@@ -32,7 +43,7 @@ public class AddCheckingService extends Service {
 			doClockin();
 			
 			// Mise à jour de l'image dans le(s) widget(s)
-			WidgetProvider.updateDisplay(getApplicationContext());
+			WidgetProvider.updateWidgets(getApplicationContext());
 		}
 		
 		return START_NOT_STICKY;
@@ -74,7 +85,9 @@ public class AddCheckingService extends Service {
 	    		db.updateDay(day);
 	    		
 	    		// Ajout du pointage dans le calendrier
-				CalendarAccess.getInstance().createWorkEvents(day.date, day.checkings);
+	    		if (PreferencesBean.instance.syncCalendar) {
+	    			CalendarAccess.getInstance().createWorkEvents(day.date, day.checkings);
+	    		}
 	    	} else {
 	    		// Le jour sera créé. On vient d'ajouter un pointage, donc c'est
 	    		// un jour de type "normal"
@@ -84,7 +97,9 @@ public class AddCheckingService extends Service {
 	    		db.createDay(day);
 	    		
 	    		// Ajout des évènements dans le calendrier
-	    		CalendarAccess.getInstance().createEvents(day);
+	    		if (PreferencesBean.instance.syncCalendar) {
+	    			CalendarAccess.getInstance().createEvents(day);
+	    		}
 	    	}
 	    	// Mise à jour de l'HV.
 	    	final FlexUtils flexUtils = new FlexUtils(db);

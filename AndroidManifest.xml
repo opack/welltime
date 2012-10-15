@@ -70,7 +70,8 @@
 			</intent-filter>
 		</activity -->
 		
-		<service android:name=".bus.services.AddCheckingService" />
+		<service android:name=".bus.services.AddCheckingService"
+		    android:configChanges="keyboardHidden|orientation" />
 
 	    <receiver
 	        android:name=".gui.widgets.WidgetProvider"
