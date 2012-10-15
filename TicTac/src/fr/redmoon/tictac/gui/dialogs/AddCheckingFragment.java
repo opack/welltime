@@ -99,7 +99,7 @@ public class AddCheckingFragment extends DialogFragment implements TimePickerDia
 		if (dbUpdated) {
 			// Mise à jour des widgets
 			if (mDate == DateUtils.getCurrentDayId()) {
-				WidgetProvider.updateDisplay(activity);
+				WidgetProvider.updateWidgets(activity);
 			}
 			
 			// Mise à jour de l'affichage

@@ -12,6 +12,7 @@ import android.widget.TimePicker;
 import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.bus.FlexUtils;
 import fr.redmoon.tictac.bus.TimeUtils;
+import fr.redmoon.tictac.bus.bean.PreferencesBean;
 import fr.redmoon.tictac.bus.export.tocalendar.CalendarAccess;
 import fr.redmoon.tictac.db.DbAdapter;
 import fr.redmoon.tictac.gui.activities.TicTacActivity;
@@ -64,13 +65,15 @@ public class EditCheckingFragment extends DialogFragment implements TimePickerDi
 		
 		if (dbUpdated) {
 			// Ajout du pointage dans le calendrier
-			final List<Integer> checkings = new ArrayList<Integer>();
-			db.fetchCheckings(mDate, checkings);
-			CalendarAccess.getInstance().createWorkEvents(mDate, checkings);
+			if (PreferencesBean.instance.syncCalendar) {
+				final List<Integer> checkings = new ArrayList<Integer>();
+				db.fetchCheckings(mDate, checkings);
+				CalendarAccess.getInstance().createWorkEvents(mDate, checkings);
+			}
 			
 			// Mise à jour des widgets
 			if (mDate == DateUtils.getCurrentDayId()) {
-				WidgetProvider.updateDisplay(activity);
+				WidgetProvider.updateWidgets(activity);
 			}
 			
 			// Mise à jour de l'affichage

@@ -225,7 +225,7 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
 					}
 		    		
 		    		// Mise à jour des widgets
-					WidgetProvider.updateDisplay(this);
+					WidgetProvider.updateWidgets(this);
 		    	} else {
 		    		Toast.makeText(this, "Oups ! Le pointage n'a pas été enregistré. Merci de réessayer.", Toast.LENGTH_SHORT).show();
 		    	}
@@ -455,11 +455,13 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
         		populateView(date);
         		
         		// Suppression du pointage dans le calendrier
-				CalendarAccess.getInstance().createWorkEvents(workBean.date, workBean.checkings);
+        		if (PreferencesBean.instance.syncCalendar) {
+        			CalendarAccess.getInstance().createWorkEvents(workBean.date, workBean.checkings);
+        		}
             	
             	// Si on a supprimé un pointage d'aujourd'hui, on met à jour le widget
             	if (mToday == date) {
-            		WidgetProvider.updateDisplay(DayActivity.this);
+            		WidgetProvider.updateWidgets(DayActivity.this);
             	}
             }
         };
