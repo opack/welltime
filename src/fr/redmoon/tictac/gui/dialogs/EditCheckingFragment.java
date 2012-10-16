@@ -41,8 +41,7 @@ public class EditCheckingFragment extends DialogFragment implements TimePickerDi
 	public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
 		final int newTime = hourOfDay * 100 + minute;
 		final TicTacActivity activity = (TicTacActivity)getActivity();
-		final DbAdapter db = activity.getDbAdapter();
-		if (db == null || newTime == 0) {
+		if (newTime == 0) {
 			return;
 		}
 		boolean dbUpdated = false;
@@ -50,24 +49,24 @@ public class EditCheckingFragment extends DialogFragment implements TimePickerDi
 		// Si on a choisit un pointage valide et qu'il n'existe
 		// pas encore, on le crée et on supprime l'ancien.
 		if (newTime != 0
-		&& !db.isCheckingExisting(mDate, newTime)) {
-			dbUpdated = db.createChecking(mDate, newTime);
+		&& !DbAdapter.getInstance().isCheckingExisting(mDate, newTime)) {
+			dbUpdated = DbAdapter.getInstance().createChecking(mDate, newTime);
 		}
 		
 		// On souhaite supprimer l'ancien pointage s'il est différent du nouveau
 		if (mOldCheckingValue != TimeUtils.UNKNOWN_TIME && mOldCheckingValue != newTime) {
-			dbUpdated = db.deleteChecking(mDate, mOldCheckingValue);
+			dbUpdated = DbAdapter.getInstance().deleteChecking(mDate, mOldCheckingValue);
 		}
 		
 		// Mise à jour de l'HV.
-		final FlexUtils flexUtils = new FlexUtils(db);
+		final FlexUtils flexUtils = new FlexUtils();
 		flexUtils.updateFlex(mDate);
 		
 		if (dbUpdated) {
 			// Ajout du pointage dans le calendrier
 			if (PreferencesBean.instance.syncCalendar) {
 				final List<Integer> checkings = new ArrayList<Integer>();
-				db.fetchCheckings(mDate, checkings);
+				DbAdapter.getInstance().fetchCheckings(mDate, checkings);
 				CalendarAccess.getInstance().createWorkEvents(mDate, checkings);
 			}
 			

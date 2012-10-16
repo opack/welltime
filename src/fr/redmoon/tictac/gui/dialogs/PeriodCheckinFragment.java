@@ -91,7 +91,6 @@ public class PeriodCheckinFragment extends DialogFragment implements OnClickList
 		
 		// Parcours des jours
 		final TicTacActivity activity = (TicTacActivity)getActivity();
-		final DbAdapter db = activity.getDbAdapter();
 		final long firstDay = DateUtils.getDayId(calendar);
 		long curDate = firstDay;
 		final DayBean dayData = new DayBean();
@@ -99,7 +98,7 @@ public class PeriodCheckinFragment extends DialogFragment implements OnClickList
 			// On vérifie s'il s'agit d'un jour travaillé dans la semaine
 			if (DateUtils.isWorkingWeekDay(calendar)) {
 				// On prépare le jour à créer ou mettre à jour
-				db.fetchDay(curDate, dayData);
+				DbAdapter.getInstance().fetchDay(curDate, dayData);
 				dayData.typeMorning = dayType.id;
 				dayData.typeAfternoon = dayType.id;
 				if (note != null) {
@@ -109,12 +108,12 @@ public class PeriodCheckinFragment extends DialogFragment implements OnClickList
 				// On crée ce jour en base s'il n'existe pas, sinon on le
 				// met à jour
 				if (dayData.isValid) {
-					db.updateDay(dayData);
+					DbAdapter.getInstance().updateDay(dayData);
 					if (dayData.isValid) {
 						nbDaysUpdated++;
 					}
 				} else {
-					db.createDay(dayData);
+					DbAdapter.getInstance().createDay(dayData);
 					if (dayData.isValid) {
 						nbDaysCreated++;
 					}
@@ -133,7 +132,7 @@ public class PeriodCheckinFragment extends DialogFragment implements OnClickList
 		}
 		
 		// Mise à jour de l'HV.
-    	final FlexUtils flexUtils = new FlexUtils(db);
+    	final FlexUtils flexUtils = new FlexUtils();
     	flexUtils.updateFlex(firstDay);
 		
 		// Affichage des résultats

@@ -13,7 +13,9 @@ public class DbAdapter {
 	private static final String DATABASE_NAME = "TicTac.db";
 	private static final int DATABASE_VERSION = 5;
 	
-	private final Context mCtx;
+	private static final DbAdapter INSTANCE = new DbAdapter();
+	
+	private Context mCtx;
 	private DatabaseHelper mDbHelper;
 
 	private DaysTableHelper days;
@@ -43,14 +45,23 @@ public class DbAdapter {
         }
     }
 	
-	/**
-     * Constructeur : prend le contexte pour permettre la création
-     * ou l'ouverture de la base de données. 
-     * 
-     * @param ctx Le Context dans lequel travailler
-     */
-    public DbAdapter(final Context ctx) {
-        this.mCtx = ctx;
+	public static DbAdapter getInstance() {
+		return INSTANCE;
+	}
+	
+    private DbAdapter() {
+    	// Crée les objets permettant la manipulation des tables
+    	// Ils doivent être créés AVANT le DatabaseHelper, car
+    	// celui-ci les utilise pour connaître et créer la structure
+    	// des tables.
+    	weeks = new WeeksTableHelper();
+        days = new DaysTableHelper();
+        checkings = new CheckingsTableHelper();
+    }
+    
+    public void setContext(final Context ctx) {
+        // Crée les objets permettant la manipulation de la base
+        mDbHelper = new DatabaseHelper(ctx, this);
     }
 	
 	/**
@@ -63,17 +74,7 @@ public class DbAdapter {
      * @throws SQLException si la DB n'a pu être ni ouverte ni créée
      */
     public DbAdapter openDatabase() throws SQLException {
-    	// Crée les objets permettant la manipulation des tables
-    	// Ils doivent être créés AVANT le DatabaseHelper, car
-    	// celui-ci les utilise pour connaître et créer la structure
-    	// des tables.
-    	weeks = new WeeksTableHelper();
-        days = new DaysTableHelper();
-        checkings = new CheckingsTableHelper();
     	
-    	// Crée les objets permettant la manipulation de la base
-        mDbHelper = new DatabaseHelper(mCtx, this);
-        
         return this;
     }
     

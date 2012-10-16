@@ -59,9 +59,8 @@ public class CalendarAccess implements OnDayDeletionListener {
 		mActivity = activity;
 		
 		// Run query
-		Cursor cur = null;
-		ContentResolver cr = mActivity.getContentResolver();
-        cur = cr.query(calendarInfos.getCalendarUri(), new String[]{ calendarInfos.getColumnNameID(), calendarInfos.getColumnNameCalendarDisplayName() }, null, null, null);
+		final ContentResolver cr = mActivity.getContentResolver();
+		final Cursor cur = cr.query(calendarInfos.getCalendarUri(), new String[]{ calendarInfos.getColumnNameID(), calendarInfos.getColumnNameCalendarDisplayName() }, null, null, null);
 		
 		// Use the cursor to step through the returned records
 		if (cur != null) {
@@ -76,6 +75,7 @@ public class CalendarAccess implements OnDayDeletionListener {
 			    	break;
 			    }
 			}
+			cur.close();
 		}
 	}
 	

@@ -70,10 +70,9 @@ public class CleanDaysFragment extends DialogFragment implements OnClickListener
 		builder.setPositiveButton(R.string.btn_ok, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
 				// Suppression des jours
-				final DbAdapter db = activity.getDbAdapter();
-				if (db.deleteDays(firstDay, lastDay)) {
+				if (DbAdapter.getInstance().deleteDays(firstDay, lastDay)) {
 					// Mise à jour de l'HV.
-			    	final FlexUtils flexUtils = new FlexUtils(db);
+			    	final FlexUtils flexUtils = new FlexUtils();
 			    	flexUtils.updateFlex(firstDay);
 			    	
 					final String message = activity.getResources().getString(

@@ -33,10 +33,7 @@ public class StatisticsResultsActivity extends Activity {
         final long firstDay = getIntent().getExtras().getLong(EXTRA_FIRST_DAY);
         final long lastDay = getIntent().getExtras().getLong(EXTRA_LAST_DAY);
         final List<DayBean> days = new ArrayList<DayBean>();
-        final DbAdapter db = new DbAdapter(this);
-        db.openDatabase();
-        db.fetchDays(firstDay, lastDay, days);
-        db.closeDatabase();
+        DbAdapter.getInstance().fetchDays(firstDay, lastDay, days);
 		
 		// Calcul des statistiques et affichage des résultats
 		computePeriodStatistics(days, firstDay, lastDay);

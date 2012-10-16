@@ -6,13 +6,11 @@ import java.util.List;
 
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -37,8 +35,10 @@ import fr.redmoon.tictac.bus.bean.DayBean;
 import fr.redmoon.tictac.bus.bean.DayType;
 import fr.redmoon.tictac.bus.bean.PreferencesBean;
 import fr.redmoon.tictac.bus.export.tocalendar.CalendarAccess;
+import fr.redmoon.tictac.db.DbAdapter;
 import fr.redmoon.tictac.gui.DayBiColorDrawableHelper;
 import fr.redmoon.tictac.gui.ViewSynchronizer;
+import fr.redmoon.tictac.gui.activities.PreferencesActivity.OnPreferenceChangedListener;
 import fr.redmoon.tictac.gui.activities.TicTacActivity.OnDayDeletionListener;
 import fr.redmoon.tictac.gui.adapters.DayAdapter;
 import fr.redmoon.tictac.gui.adapters.DayTypeAdapter;
@@ -46,7 +46,7 @@ import fr.redmoon.tictac.gui.quickactions.ActionItem;
 import fr.redmoon.tictac.gui.quickactions.QuickAction;
 import fr.redmoon.tictac.gui.widgets.WidgetProvider;
 
-public class DayActivity extends TicTacActivity implements OnDayDeletionListener, OnSharedPreferenceChangeListener {
+public class DayActivity extends TicTacActivity implements OnDayDeletionListener, OnPreferenceChangedListener {
 	public static final int PAGE_CHECKINGS = 0;
 	public static final int PAGE_DETAILS = 1;
 	
@@ -157,8 +157,7 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
         
         // Ajout de l'activité comme listener de changement de préférence
         // pour mettre à jour la liste des jours
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		prefs.registerOnSharedPreferenceChangeListener(this);
+        PreferencesActivity.registerPreferenceChangeListener(this);
     }
     
 	@Override
@@ -202,17 +201,17 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
 	    	
 		    	// Ajout ou mise à jour du jour dans la base
 		    	if (mWorkDayBean.isValid) {
-		    		mDb.updateDay(mWorkDayBean);
+		    		DbAdapter.getInstance().updateDay(mWorkDayBean);
 		    	} else {
 		    		// Le jour sera créé. On vient d'ajouter un pointage, donc c'est
 		    		// un jour de type "normal"
 		    		mWorkDayBean.typeMorning = StandardDayTypes.normal.name();
 		    		mWorkDayBean.typeAfternoon = StandardDayTypes.normal.name();
 		    		
-		    		mDb.createDay(mWorkDayBean);
+		    		DbAdapter.getInstance().createDay(mWorkDayBean);
 		    	}
 		    	// Mise à jour de l'HV.
-		    	final FlexUtils flexUtils = new FlexUtils(mDb);
+		    	final FlexUtils flexUtils = new FlexUtils();
 		    	flexUtils.updateFlex(mWorkDayBean.date);
 		    	
 		    	// Rafraîchissement de l'interface
@@ -296,7 +295,7 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
      */
     public void populateView(final long day) {
     	// On récupère le jour en base
-    	mDb.fetchDay(day, mWorkDayBean);
+    	DbAdapter.getInstance().fetchDay(day, mWorkDayBean);
     	
     	// Rafraîchit l'interface graphique.
     	populateView(mWorkDayBean);
@@ -445,10 +444,10 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
             @Override
             public void onClick(DialogInterface dialog, int which) {
             	// Suppression du jour en base
-            	mDb.deleteChecking(date, time);
+            	DbAdapter.getInstance().deleteChecking(date, time);
             	
             	// Mise à jour de l'HV.
-				final FlexUtils flexUtils = new FlexUtils(mDb);
+				final FlexUtils flexUtils = new FlexUtils();
 				flexUtils.updateFlex(date);
             	
             	// Mise à jour de l'affichage
@@ -493,9 +492,9 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
 		// méthode sera appelée comme si l'utilisateur avait choisit une valeur. Or dans ce cas
 		// on ne veut pas créer un jour car le type de jour n'aura pas bougé.
 		if (!typeAfternoon.equals(mWorkDayBean.typeAfternoon) || !typeMorning.equals(mWorkDayBean.typeMorning)) {
-			if (mDb.updateDayType(mWorkDayBean.date, typeMorning, typeAfternoon)) {
+			if (DbAdapter.getInstance().updateDayType(mWorkDayBean.date, typeMorning, typeAfternoon)) {
 				// Mise à jour de l'HV.
-				final FlexUtils flexUtils = new FlexUtils(mDb);
+				final FlexUtils flexUtils = new FlexUtils();
 		    	flexUtils.updateFlex(mWorkDayBean.date);
 		    	
 		    	// Ajout des évènements dans le calendrier
@@ -523,7 +522,7 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
 	}
 
 	@Override
-	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+	public void onPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 		// S'il y a eut une modification sur les types de jour, on recharge les listes
 		if (key.startsWith(PreferencesActivity.PREF_DAYTYPE_TITLE)) {
 			refreshDayTypeSpinners();

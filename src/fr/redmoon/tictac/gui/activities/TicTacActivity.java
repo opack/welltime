@@ -56,8 +56,6 @@ public abstract class TicTacActivity extends FragmentActivity {
 	protected long mToday = -1;
 	protected final Time mWorkTime = new Time();
 	
-	protected DbAdapter mDb;
-	
 	protected DayBean mWorkDayBean;
 	protected Calendar mWorkCal;
 
@@ -67,10 +65,6 @@ public abstract class TicTacActivity extends FragmentActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        // Ouverture de l'accès à la base de données
-        mDb = new DbAdapter(this);
-        mDb.openDatabase();
         
         // Création du bean de travail
         mWorkDayBean = new DayBean();
@@ -120,14 +114,10 @@ public abstract class TicTacActivity extends FragmentActivity {
 	
 	@Override
 	protected void onDestroy() {
-		mDb.closeDatabase();
+		DbAdapter.getInstance().closeDatabase();
 		super.onDestroy();
 	}
 	
-    public DbAdapter getDbAdapter() {
-		return mDb;
-	}
-    
 	protected void initPages(final String[] titles, final View... pages) {
 		mPages = pages;
 		final TicTacPagerAdapter adapter = new TicTacPagerAdapter(titles, pages);
@@ -373,7 +363,7 @@ public abstract class TicTacActivity extends FragmentActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
             	// Suppression du jour en base
-            	mDb.deleteDay(date);
+            	DbAdapter.getInstance().deleteDay(date);
             	
             	// Si la semaine de ce jour est vide, on la supprime
             	updateFlexAfterDeletion(date);
@@ -386,7 +376,7 @@ public abstract class TicTacActivity extends FragmentActivity {
 //            		populateView(mWeek.get(0).date);
 //            	} else {
 //            		// La semaine est vide : on affiche la semaine précédente
-//            		long previous = mDb.fetchPreviousDay(date);
+//            		long previous = DbAdapter.getInstance().fetchPreviousDay(date);
 //            		if (previous == -1) {
 //            			// S'il n'y a pas de jour précédent, alors on affiche la semaine d'aujourd'hui.
 //            			previous = mToday;
@@ -415,12 +405,12 @@ public abstract class TicTacActivity extends FragmentActivity {
 				final long lastDay = DateUtils.getDayId(mWorkTime);
 				
 				// Si la semaine est vide, on supprime l'enregistrement correspondant
-				if (mDb.countDaysBetween(firstDay, lastDay) == 0) {
-					mDb.deleteFlexTime(firstDay);
+				if (DbAdapter.getInstance().countDaysBetween(firstDay, lastDay) == 0) {
+					DbAdapter.getInstance().deleteFlexTime(firstDay);
 				}
 				
 				// Puis on met à jour l'HV
-				final FlexUtils flexUtils = new FlexUtils(mDb);
+				final FlexUtils flexUtils = new FlexUtils();
     			flexUtils.updateFlex(date);
 			}
         };

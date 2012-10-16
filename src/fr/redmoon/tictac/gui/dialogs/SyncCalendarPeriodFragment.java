@@ -16,7 +16,7 @@ import fr.redmoon.tictac.R;
 import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
 import fr.redmoon.tictac.bus.export.tocalendar.CalendarAccess;
-import fr.redmoon.tictac.gui.activities.TicTacActivity;
+import fr.redmoon.tictac.db.DbAdapter;
 
 public class SyncCalendarPeriodFragment extends DialogFragment implements OnClickListener {
 	public final static String TAG = SyncCalendarPeriodFragment.class.getName();
@@ -64,9 +64,8 @@ public class SyncCalendarPeriodFragment extends DialogFragment implements OnClic
 		final long lastDay = DateUtils.getDayId(mDate2.getYear(), mDate2.getMonth(), mDate2.getDayOfMonth());
 		
 		// Récupération des jours à synchroniser
-		final TicTacActivity activity = (TicTacActivity)getActivity();
 		final List<DayBean> days = new ArrayList<DayBean>();
-		activity.getDbAdapter().fetchDays(firstDay, lastDay, days);
+		DbAdapter.getInstance().fetchDays(firstDay, lastDay, days);
 		
 		// Synchronisation des jours
 		for (DayBean day : days) {

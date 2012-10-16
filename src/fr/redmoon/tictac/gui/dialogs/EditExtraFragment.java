@@ -33,12 +33,11 @@ public class EditExtraFragment extends DialogFragment implements TimePickerDialo
 	public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
 		final int newTime = hourOfDay * 100 + minute;
 		final TicTacActivity activity = (TicTacActivity)getActivity();
-		final DbAdapter db = activity.getDbAdapter();
-		if (db == null || newTime == mOldValue) {
+		if (newTime == mOldValue) {
 			return;
 		}
 		// Mise à jour de la base de données
-		if (db.updateDayExtra(mDate, newTime)) {
+		if (DbAdapter.getInstance().updateDayExtra(mDate, newTime)) {
 			// Mise à jour de l'affichage
 			activity.populateView(mDate);
 		}

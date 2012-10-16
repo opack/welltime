@@ -60,13 +60,11 @@ public class ManageImportExportHandler implements OnItemClickListener, OnDayType
 	private ProgressDialog progressDialog;
 	
 	private final FragmentActivity activity;
-	private final DbAdapter db;
 	
 	private Map<String, String> unknownDayTypes;
 	
-	public ManageImportExportHandler(final FragmentActivity activity, final DbAdapter db) {
+	public ManageImportExportHandler(final FragmentActivity activity) {
 		this.activity = activity;
-		this.db = db;
 	}
 	
 	@Override
@@ -299,7 +297,7 @@ public class ManageImportExportHandler implements OnItemClickListener, OnDayType
 				// Ecrit ces données dans la base en utilisant un Thread et une belle
 				// boîte de dialogue avec une barre de progression pour montrer où on
 				// en est.
-				progressThread = new DbInserterThread(days, weeks, db);
+				progressThread = new DbInserterThread(days, weeks);
 				// Si le handler existe déjà (c'est le cas si la boîte de dialogue a déjà été créée
 				// via createDialog) alors on l'assigne ici. Sinon, ce sera fait lors de la création
 				// de la boîte de dialogue.

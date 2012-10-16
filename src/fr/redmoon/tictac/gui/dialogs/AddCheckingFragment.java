@@ -3,6 +3,7 @@ package fr.redmoon.tictac.gui.dialogs;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
@@ -48,14 +49,13 @@ public class AddCheckingFragment extends DialogFragment implements TimePickerDia
 	public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
 		final int selectedTime = hourOfDay * 100 + minute;
 		final TicTacActivity activity = (TicTacActivity)getActivity();
-		final DbAdapter db = activity.getDbAdapter();
-		if (db == null || selectedTime == 0) {
+		if (selectedTime == 0) {
 			return;
 		}
 		boolean dbUpdated = false;
 		
 		// Mise à jour de la base de données
-		if (db.isCheckingExisting(mDate, selectedTime)) {
+		if (DbAdapter.getInstance().isCheckingExisting(mDate, selectedTime)) {
 			// Le pointage existe déjà : affichage d'un message
 			Toast.makeText(
 				activity,
@@ -64,14 +64,14 @@ public class AddCheckingFragment extends DialogFragment implements TimePickerDia
 			.show();
 		} else {
 			// Création du nouveau pointage
-			if (!db.isDayExisting(mDate)) {
+			if (!DbAdapter.getInstance().isDayExisting(mDate)) {
 				// Le jour n'existe pas : on le crée.
 				final DayBean day = new DayBean();
 				day.date = mDate;
 				day.typeMorning = StandardDayTypes.normal.name();
 				day.typeAfternoon = StandardDayTypes.normal.name();
 				day.checkings.add(selectedTime);
-				db.createDay(day);
+				DbAdapter.getInstance().createDay(day);
 				dbUpdated = day.isValid;
 				
 				// Ajout des évènements dans le calendrier
@@ -80,18 +80,18 @@ public class AddCheckingFragment extends DialogFragment implements TimePickerDia
 				}
 			} else {
 				// Le jour existe : on ajoute simplement le pointage
-				dbUpdated = db.createChecking(mDate, selectedTime);
+				dbUpdated = DbAdapter.getInstance().createChecking(mDate, selectedTime);
 				
 				if (dbUpdated && PreferencesBean.instance.syncCalendar) {
 					// Ajout du pointage dans le calendrier
 					final List<Integer> checkings = new ArrayList<Integer>();
-					db.fetchCheckings(mDate, checkings);
+					DbAdapter.getInstance().fetchCheckings(mDate, checkings);
 					CalendarAccess.getInstance().createWorkEvents(mDate, checkings);
 				}
 			}
 			
 			// Mise à jour de l'HV.
-			final FlexUtils flexUtils = new FlexUtils(db);
+			final FlexUtils flexUtils = new FlexUtils();
 			flexUtils.updateFlex(mDate);
 		}
 		
@@ -116,7 +116,10 @@ public class AddCheckingFragment extends DialogFragment implements TimePickerDia
 	public void onDismiss(DialogInterface dialog) {
 		super.onDismiss(dialog);
 		if (mFinishActivityOnDismiss) {
-			getActivity().finish();
+			final Activity activity = getActivity();
+			if (activity != null) {
+				activity.finish();
+			}
 		}
 	}
 }

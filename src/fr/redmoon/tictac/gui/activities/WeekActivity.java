@@ -24,6 +24,7 @@ import fr.redmoon.tictac.bus.TimeUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
 import fr.redmoon.tictac.bus.bean.PreferencesBean;
 import fr.redmoon.tictac.bus.bean.WeekBean;
+import fr.redmoon.tictac.db.DbAdapter;
 import fr.redmoon.tictac.gui.ViewSynchronizer;
 import fr.redmoon.tictac.gui.activities.TicTacActivity.OnDayDeletionListener;
 import fr.redmoon.tictac.gui.adapters.WeekAdapter;
@@ -121,7 +122,7 @@ public class WeekActivity extends TicTacActivity implements OnDayDeletionListene
 				
 				// Si le jour n'existe pas en base, on masque certaines options
 				final DayBean day = mWeekDays.get(mSelectedDay);
-				final boolean isDayExisting = mDb.isDayExisting(day.date);
+				final boolean isDayExisting = DbAdapter.getInstance().isDayExisting(day.date);
 				mQuickAction.setActionVisible(QAID_SHOW_CHECKINGS, isDayExisting);
 				mQuickAction.setActionVisible(QAID_DELETE_DAY, isDayExisting);
 				
@@ -209,7 +210,7 @@ public class WeekActivity extends TicTacActivity implements OnDayDeletionListene
     	// On récupère le jour en base
     	mMonday = DateUtils.getDayId(monday);
     	mSunday = DateUtils.getDayId(sunday);
-    	mDb.fetchDays(mMonday, mSunday, mWeekDays);
+    	DbAdapter.getInstance().fetchDays(mMonday, mSunday, mWeekDays);
 
     	// On conserve le jour de travail (notamment pour le sweep)
     	final Set<Long> daysById = new HashSet<Long>();
@@ -333,11 +334,11 @@ public class WeekActivity extends TicTacActivity implements OnDayDeletionListene
 		final int lost = Math.max(0, mWeekWorked - PreferencesBean.instance.weekMax);
 		
 		// Récupération du temps HV en début de semaine
-		mDb.fetchLastFlexTime(mMonday, mWeekData);
+		DbAdapter.getInstance().fetchLastFlexTime(mMonday, mWeekData);
 		
 		// Calcul du nouvel HV en ajoutant le temps effectué cette semaine
 		// à l'HV en début de semaine
-		final FlexUtils flexUtils = new FlexUtils(mDb);
+		final FlexUtils flexUtils = new FlexUtils();
 		final int curWeekFlex = flexUtils.computeFlexTime(mWeekWorked, mWeekData.flexTime);
 		
         // Mise à jour des composants graphiques
