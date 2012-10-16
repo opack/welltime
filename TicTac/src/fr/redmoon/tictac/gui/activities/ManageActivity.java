@@ -11,7 +11,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import fr.redmoon.tictac.R;
-import fr.redmoon.tictac.db.DbAdapter;
 import fr.redmoon.tictac.gui.ManageImportExportHandler;
 import fr.redmoon.tictac.gui.adapters.ManageAdapter;
 import fr.redmoon.tictac.gui.dialogs.CleanDaysFragment;
@@ -35,7 +34,6 @@ public class ManageActivity extends TicTacActivity {
 	private final static int POS_SHOW_PREFS_LIMITS = 1;
 	private final static int POS_SHOW_PREFS_DAYTYPES = 2;
 	
-	private DbAdapter mDb;
 	private ManageImportExportHandler importExportHandler;
 	
 	/** Called when the activity is first created. */
@@ -48,10 +46,6 @@ public class ManageActivity extends TicTacActivity {
         findViewById(R.id.lyt_total_worked).setVisibility(View.GONE);
         findViewById(R.id.lyt_clockin).setVisibility(View.GONE);
 		
-		// Ouverture d'una accès à la base
-		mDb = new DbAdapter(this);
-        mDb.openDatabase();
-        
         // Initialisation du gestionnaire de pages
         final View pageOperations = View.inflate(this, R.layout.view_manage_operations, null);
         final View pageImportExport = View.inflate(this, R.layout.view_manage_import_export, null);
@@ -86,7 +80,7 @@ public class ManageActivity extends TicTacActivity {
  		);
  		
 		// Préparation de la liste des opérations d'import / export
- 		importExportHandler = new ManageImportExportHandler(this, mDb);
+ 		importExportHandler = new ManageImportExportHandler(this);
  		prepareList(pageImportExport,
  			importExportHandler,
  			resources.getStringArray(R.array.export_data),
@@ -127,12 +121,6 @@ public class ManageActivity extends TicTacActivity {
  		list.setOnItemClickListener(listener);
 	}
 
-	@Override
-	protected void onDestroy() {
-		mDb.closeDatabase();
-		super.onDestroy();
-	}
-	
 	@Override
 	protected Dialog onCreateDialog(int id) {
         switch(id) {

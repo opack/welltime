@@ -31,15 +31,10 @@ public class WidgetProvider extends AppWidgetProvider {
     }
     
     private static DayBean getCurrentDay(final Context context) {
-    	// Ouverture d'un accès à la base.
-    	final DbAdapter db = new DbAdapter(context);
-        db.openDatabase();
-        
         // Récupération du jour courant.
         final long today = DateUtils.getCurrentDayId();
         final DayBean day = new DayBean();
-        db.fetchDay(today, day);
-        db.closeDatabase();
+        DbAdapter.getInstance().fetchDay(today, day);
         
         // Compte le nombre de pointages
         return day;

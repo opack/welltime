@@ -24,6 +24,7 @@ import fr.redmoon.tictac.bus.export.FileExporter;
 import fr.redmoon.tictac.bus.export.ZipCompress;
 import fr.redmoon.tictac.bus.export.tocsv.CsvDayBeanExporter;
 import fr.redmoon.tictac.bus.export.tocsv.CsvWeekBeanExporter;
+import fr.redmoon.tictac.db.DbAdapter;
 import fr.redmoon.tictac.gui.activities.TicTacActivity;
 
 public class ExportPeriodFragment extends DialogFragment implements OnClickListener {
@@ -117,7 +118,7 @@ public class ExportPeriodFragment extends DialogFragment implements OnClickListe
 	private boolean exportDays(final long firstDay, final long lastDay) {
 		// Récupération des jours à extraire
 		final List<DayBean> days = new ArrayList<DayBean>();
-		mActivity.getDbAdapter().fetchDays(firstDay, lastDay, days);
+		DbAdapter.getInstance().fetchDays(firstDay, lastDay, days);
 		
 		// Export des jours vers le fichier texte
 		final FileExporter<List<DayBean>> daysExporter = new CsvDayBeanExporter(mActivity, firstDay, lastDay);
@@ -130,7 +131,7 @@ public class ExportPeriodFragment extends DialogFragment implements OnClickListe
 	private boolean exportWeeks(final long firstDay, final long lastDay) {
 		// Récupération des jours à extraire
 		final List<WeekBean> weeks = new ArrayList<WeekBean>();
-		mActivity.getDbAdapter().fetchWeeks(firstDay, lastDay, weeks);
+		DbAdapter.getInstance().fetchWeeks(firstDay, lastDay, weeks);
 		
 		// Export des jours vers le fichier texte
 		final FileExporter<List<WeekBean>> weeksExporter = new CsvWeekBeanExporter(mActivity, firstDay, lastDay);

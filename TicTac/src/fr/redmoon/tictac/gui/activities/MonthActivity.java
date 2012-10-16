@@ -15,6 +15,7 @@ import android.widget.GridView;
 import fr.redmoon.tictac.R;
 import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
+import fr.redmoon.tictac.db.DbAdapter;
 import fr.redmoon.tictac.gui.ViewSynchronizer;
 import fr.redmoon.tictac.gui.activities.TicTacActivity.OnDayDeletionListener;
 import fr.redmoon.tictac.gui.adapters.CalendarAdapter;
@@ -117,7 +118,7 @@ public class MonthActivity extends TicTacActivity implements OnDayDeletionListen
 				mSelectedDay = associatedTag;
 				
 				// Si le jour n'existe pas en base, on masque certaines options
-				final boolean isDayExisting = mDb.isDayExisting(mSelectedDay);
+				final boolean isDayExisting = DbAdapter.getInstance().isDayExisting(mSelectedDay);
 				mQuickAction.setActionVisible(QAID_SHOW_CHECKINGS, isDayExisting);
 				mQuickAction.setActionVisible(QAID_DELETE_DAY, isDayExisting);
 				
@@ -186,7 +187,7 @@ public class MonthActivity extends TicTacActivity implements OnDayDeletionListen
 		final int month = mAdapter.getMonth();
 		final long firstDay = DateUtils.getDayId(year, month, 1);
 		final long lastDay = DateUtils.getDayId(year, month, mAdapter.getNumberOfDaysInMonth());
-		mDb.fetchDays(firstDay, lastDay, mMonthDays);
+		DbAdapter.getInstance().fetchDays(firstDay, lastDay, mMonthDays);
 		
 		// Ajout des jours dans l'adapteur
 		items.clear();

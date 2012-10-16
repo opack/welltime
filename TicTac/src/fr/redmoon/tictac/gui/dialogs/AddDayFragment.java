@@ -36,23 +36,22 @@ public class AddDayFragment extends DialogFragment implements DatePickerDialog.O
 	public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
 		final long selectedDate = DateUtils.getDayId(year, month, dayOfMonth);
 		final TicTacActivity activity = (TicTacActivity)getActivity();
-		final DbAdapter db = activity.getDbAdapter();
-		if (db == null || selectedDate == 0) {
+		if (selectedDate == 0) {
 			return;
 		}
 		boolean dbUpdated = false;
 		
 		// Mise à jour de la base de données
-		if (!db.isDayExisting(selectedDate)) {
+		if (!DbAdapter.getInstance().isDayExisting(selectedDate)) {
 			final DayBean day = new DayBean();
 			day.date = selectedDate;
 			day.typeMorning = StandardDayTypes.normal.name();
 			day.typeAfternoon = StandardDayTypes.normal.name();
-			db.createDay(day);
+			DbAdapter.getInstance().createDay(day);
 			dbUpdated = day.isValid;
 			
 			// Mise à jour de l'HV.
-	    	final FlexUtils flexUtils = new FlexUtils(db);
+	    	final FlexUtils flexUtils = new FlexUtils();
 	    	flexUtils.updateFlex(day.date);
 	    	
 	    	// Ajout des évènements dans le calendrier

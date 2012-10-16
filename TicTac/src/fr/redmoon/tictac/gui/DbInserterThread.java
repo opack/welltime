@@ -17,7 +17,6 @@ public class DbInserterThread extends Thread {
 	public final static int STATE_IMPORTING_WEEKS = 2;
 	public final static int STATE_CANCEL = 3;
     
-	private final DbAdapter mDb;
     private Handler mHandler;
     private int mState;
     
@@ -32,9 +31,7 @@ public class DbInserterThread extends Thread {
     private int nbWeeksProcessed;
     private final int nbWeeksToProcess;
    
-    public DbInserterThread(final List<DayBean> days, final List<WeekBean> weeks, final DbAdapter db) {
-        mDb = db;
-
+    public DbInserterThread(final List<DayBean> days, final List<WeekBean> weeks) {
         mState = STATE_DONE;
         
         mDays = days;
@@ -85,10 +82,10 @@ public class DbInserterThread extends Thread {
     		// Notez qu'on ne tient pas le compte des semaines ajoutées.
     		// C'est transparent pour l'utilisateur.
         	final WeekBean week = mWeekIterator.next();
-			if (mDb.isWeekExisting(week.date)) {
-				mDb.updateWeek(week);
+			if (DbAdapter.getInstance().isWeekExisting(week.date)) {
+				DbAdapter.getInstance().updateWeek(week);
 			} else {
-				mDb.createWeek(week);
+				DbAdapter.getInstance().createWeek(week);
 			}
 			nbWeeksProcessed++;
 			
@@ -120,13 +117,13 @@ public class DbInserterThread extends Thread {
     	if (mDayIterator.hasNext()) {
     		// Il reste des jours à écrire : on écrit le suivant
         	final DayBean day = mDayIterator.next();
-			if (mDb.isDayExisting(day.date)) {
-				mDb.updateDay(day);
+			if (DbAdapter.getInstance().isDayExisting(day.date)) {
+				DbAdapter.getInstance().updateDay(day);
 				if (day.isValid) {
 					nbDaysUpdated++;
 				}
 			} else {
-				mDb.createDay(day);
+				DbAdapter.getInstance().createDay(day);
 				if (day.isValid) {
 					nbDaysCreated++;
 				}

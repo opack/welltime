@@ -59,16 +59,12 @@ public class AddCheckingService extends Service {
      * @param btn Bouton qui a été cliqué.
      */
     private int doClockin() {
-    	// Ouverture d'un accès à la base.
-    	final DbAdapter db = new DbAdapter(this);
-        db.openDatabase();
-        
         // Récupération du jour courant.
         final Time now = TimeUtils.getNowTime();
         final long today = DateUtils.getDayId(now);
         final DayBean day = new DayBean();
         day.date = today;
-        db.fetchDay(today, day);
+        DbAdapter.getInstance().fetchDay(today, day);
         
     	// On met à jour le nombre de pointages. Ca sera utilisé comme valeur de retour
     	// pour mettre à jour l'image du widget.
@@ -82,7 +78,7 @@ public class AddCheckingService extends Service {
     		
    			// Ajout ou mise à jour du jour dans la base
 	    	if (day.isValid) {
-	    		db.updateDay(day);
+	    		DbAdapter.getInstance().updateDay(day);
 	    		
 	    		// Ajout du pointage dans le calendrier
 	    		if (PreferencesBean.instance.syncCalendar) {
@@ -94,7 +90,7 @@ public class AddCheckingService extends Service {
 	    		day.typeMorning = StandardDayTypes.normal.name();
 	    		day.typeAfternoon = StandardDayTypes.normal.name();
 	    		
-	    		db.createDay(day);
+	    		DbAdapter.getInstance().createDay(day);
 	    		
 	    		// Ajout des évènements dans le calendrier
 	    		if (PreferencesBean.instance.syncCalendar) {
@@ -102,7 +98,7 @@ public class AddCheckingService extends Service {
 	    		}
 	    	}
 	    	// Mise à jour de l'HV.
-	    	final FlexUtils flexUtils = new FlexUtils(db);
+	    	final FlexUtils flexUtils = new FlexUtils();
 	    	flexUtils.updateFlex(day.date);
 	    	
 	    	// Incrément du nombre de jour si l'ajout en base s'est correctement déroulé.
@@ -117,7 +113,6 @@ public class AddCheckingService extends Service {
     		// Le pointage existe déjà : affichage d'un message à l'utilisateur
     		Toast.makeText(this, "Impossible de pointer à " + now.hour + ":" + now.minute + " car ce pointage existe déjà !", Toast.LENGTH_LONG).show();
     	}
-    	db.closeDatabase();
     	
     	return checkingsCount;
     }
