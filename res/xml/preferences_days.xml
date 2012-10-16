@@ -20,5 +20,10 @@
 			android:key="daytype_reset"
 			android:dialogTitle="@string/app_name"
 			android:dialogMessage="@string/pref_daytype_reset_dialogmessage" />
+		<ListPreference
+		    android:title="@string/pref_daytype_remove"
+			android:summary="@string/pref_daytype_remove_summary"
+			android:key="daytype_remove"
+			android:dialogTitle="@string/app_name" />
 	</PreferenceCategory>
 </PreferenceScreen>

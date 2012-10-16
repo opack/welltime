@@ -1,6 +1,7 @@
 package fr.redmoon.tictac.gui.activities;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -15,6 +16,7 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
@@ -27,7 +29,6 @@ import fr.redmoon.tictac.bus.PreferenceKeys;
 import fr.redmoon.tictac.bus.PreferencesUtils;
 import fr.redmoon.tictac.bus.StandardDayTypes;
 import fr.redmoon.tictac.bus.export.tocalendar.CalendarAccess;
-import fr.redmoon.tictac.db.DbAdapter;
 
 public class PreferencesActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
 	public static final String URI_PAGE_MISC = "preferences://misc";
@@ -102,9 +103,11 @@ public class PreferencesActivity extends PreferenceActivity implements OnSharedP
 		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         prefs.registerOnSharedPreferenceChangeListener(this);
 	}
-
 	private void addDayTypesPreferences() {
 		final PreferenceCategory cat = (PreferenceCategory)getPreferenceScreen().findPreference("daytype_types");
+		
+		final List<String> ids = new ArrayList<String>();
+		final List<String> titles = new ArrayList<String>();
 		
 		// Récupération des jours actuellement définis
 		final SharedPreferences prefs = getPreferenceManager().getSharedPreferences();
@@ -123,10 +126,15 @@ public class PreferencesActivity extends PreferenceActivity implements OnSharedP
 			
 			// Ajout de la préférence à l'écran
 			Preference pref = new Preference(this);
+			pref.setKey(id);
 			pref.setTitle(title);
 			Intent intent = new Intent("android.intent.action.VIEW", Uri.parse(URI_PAGE_DAYS + "/" + id), this, PreferencesActivity.class);
 			pref.setIntent(intent);
 			cat.addPreference(pref);
+			
+			// On conserve l'id et le titre de côté pour la liste de suppression
+			ids.add(id);
+			titles.add(title);
 		}
 		
 		// Préparation du bouton de remise à zéro
@@ -145,7 +153,7 @@ public class PreferencesActivity extends PreferenceActivity implements OnSharedP
 				        PreferencesUtils.resetDayTypesPreferences(PreferencesActivity.this);
 				        
 				        // Rafraîchissement de l'interface
-						refreshContent();
+//						refreshContent();
 				    }
 				});
 				adb.setNegativeButton(android.R.string.no, null);
@@ -153,6 +161,11 @@ public class PreferencesActivity extends PreferenceActivity implements OnSharedP
 				return false;
 			}
 		});
+		
+		// Préparation de la liste pour le bouton de suppression
+		final ListPreference removePref = (ListPreference)getPreferenceScreen().findPreference(PREF_DAYTYPE_REMOVE);
+		removePref.setEntries(titles.toArray(new CharSequence[]{}));
+		removePref.setEntryValues(ids.toArray(new CharSequence[]{}));
 	}
 		
 	/**
@@ -199,7 +212,7 @@ public class PreferencesActivity extends PreferenceActivity implements OnSharedP
 						//DBGonBackPressed();
 						
 						// Suppression des préférences liées à ce type de jour
-				        removeDayType(id);
+//				        removeDayType(id);
 				    }
 				});
 				adb.setNegativeButton(android.R.string.no, null);
@@ -220,22 +233,26 @@ public class PreferencesActivity extends PreferenceActivity implements OnSharedP
 		if (PREF_DAYTYPE_ADD.equals(key)) {
 			addDayType(sharedPreferences);
 		}
+		// Si on a demandé à supprimer un type de jour
+		else if (PREF_DAYTYPE_REMOVE.equals(key)) {
+			removeDayType(sharedPreferences);
+		}
 		// S'il y a eut une mise à jour de la durée d'un type de jour, on recalcule l'HV
 		else if (key.startsWith(PreferencesActivity.PREF_DAYTYPE_TIME)) {
 			final FlexUtils flexUtils = new FlexUtils();
 		   	flexUtils.updateFlex();
 		}
 		
-//		// Mise à jour du bean faisant proxy pour les préférences
-//		PreferencesUtils.updatePreferencesBean(this);
-//		
-//		// Si on a activé la synchro calendrier, il faut s'assurer qu'on a accès au calendrier
-//		CalendarAccess.getInstance().initAccess(this);
-//		
-//		// Mise à jour de l'interface
-//		fireOnPreferenceChanged(sharedPreferences, key);
-//		
-//		// Mise à jour de l'affichage si on a modifié les libellés
+		// Mise à jour du bean faisant proxy pour les préférences
+		PreferencesUtils.updatePreferencesBean(this);
+		
+		// Si on a activé la synchro calendrier, il faut s'assurer qu'on a accès au calendrier
+		CalendarAccess.getInstance().initAccess(this);
+		
+		// Mise à jour de l'interface
+		fireOnPreferenceChanged(sharedPreferences, key);
+		
+////		// Mise à jour de l'affichage si on a modifié les libellés
 //		if (key.matches(PATTERN_DAY_TYPE_TITLE.pattern())) {
 //			refreshContent();
 //		}
@@ -260,6 +277,14 @@ public class PreferencesActivity extends PreferenceActivity implements OnSharedP
 			editor.putString(PreferenceKeys.dayTypeLabel.getKey() + id, title);
 			editor.putString(PreferenceKeys.dayTypeTime.getKey() + id, "00:00");
 			editor.putInt(PreferenceKeys.dayTypeColor.getKey() + id, getResources().getColor(R.color.daytype_normal_default));
+			
+			// Ajout de la préférence dans la liste
+			final PreferenceCategory cat = (PreferenceCategory)getPreferenceScreen().findPreference("daytype_types");
+			Preference pref = new Preference(this);
+			pref.setTitle(title);
+			Intent intent = new Intent("android.intent.action.VIEW", Uri.parse(URI_PAGE_DAYS + "/" + id), this, PreferencesActivity.class);
+			pref.setIntent(intent);
+			cat.addPreference(pref);
 		}
 		
 		// Suppression de la valeur du jour à ajouter
@@ -271,10 +296,10 @@ public class PreferencesActivity extends PreferenceActivity implements OnSharedP
 //		sharedPreferences.registerOnSharedPreferenceChangeListener(this);
 		
 		// Si l'identifiant est correct, on va éditer les propriétés du jour
-//DBG		if (id.length() > 0) {
-//			Intent intent = new Intent("android.intent.action.VIEW", Uri.parse(URI_PAGE_DAYS + "/" + id), this, PreferencesActivity.class);
-//			startActivity(intent);
-//		}
+		if (id.length() > 0) {
+			Intent intent = new Intent("android.intent.action.VIEW", Uri.parse(URI_PAGE_DAYS + "/" + id), this, PreferencesActivity.class);
+			startActivity(intent);
+		}
 		
 		//DBGrefreshContent();
 	}
@@ -284,9 +309,10 @@ public class PreferencesActivity extends PreferenceActivity implements OnSharedP
 	 * Ne fait rien si cette valeur vaut null.
 	 * @param sharedPreferences
 	 */
-	private void removeDayType(final String id) {
-		final SharedPreferences prefs = getPreferenceManager().getSharedPreferences();
+	private void removeDayType(final SharedPreferences prefs) {
 		prefs.unregisterOnSharedPreferenceChangeListener(this);
+		
+		final String id = prefs.getString(PREF_DAYTYPE_REMOVE, "");
 		
 		// Suppression des préférences associées à ce jour
 		final Editor editor = prefs.edit();
@@ -294,6 +320,36 @@ public class PreferencesActivity extends PreferenceActivity implements OnSharedP
 			editor.remove(PreferenceKeys.dayTypeLabel.getKey() + id);
 			editor.remove(PreferenceKeys.dayTypeTime.getKey() + id);
 			editor.remove(PreferenceKeys.dayTypeColor.getKey() + id);
+			
+			// Suppression de la préférence dans la liste de jours
+			final PreferenceCategory cat = (PreferenceCategory)getPreferenceScreen().findPreference("daytype_types");
+			final Preference pref = cat.findPreference(id);
+			cat.removePreference(pref);
+			
+			// Suppression de la valeur dans la liste des suppressions possibles
+			final ListPreference removePref = (ListPreference)getPreferenceScreen().findPreference(PREF_DAYTYPE_REMOVE);
+			final CharSequence choosenId = removePref.getValue();
+			final CharSequence[] entryValues = removePref.getEntryValues();
+			final CharSequence[] ids = new CharSequence[entryValues.length - 1];
+			int curId = 0;
+			for (int curValue = 0; curValue < entryValues.length; curValue++) {
+				if (!choosenId.equals(entryValues[curValue])) {
+					ids[curId] = entryValues[curValue];
+					curId ++;
+				}
+			}
+			removePref.setEntryValues(entryValues);
+			final CharSequence choosenValue = removePref.getEntry();
+			final CharSequence[] entries = removePref.getEntries();
+			final CharSequence[] titles = new CharSequence[entries.length - 1];
+			int curTitle = 0;
+			for (int curEntry = 0; curEntry < entries.length; curEntry++) {
+				if (!choosenValue.equals(entries[curEntry])) {
+					ids[curTitle] = entries[curEntry];
+					curTitle ++;
+				}
+			}
+			removePref.setEntries(titles);
 		}
 		
 		// Suppression de la valeur du jour à supprimer
@@ -306,20 +362,20 @@ public class PreferencesActivity extends PreferenceActivity implements OnSharedP
 		// du type de jour effectué, l'Activity n'existera plus (on fait un onBackPressed)
 		// et si on la laisse en listener, on va finir par tenter de faire un refreshContent
 		// qui échouera pour cause d'activité inexistante.
-		//prefs.registerOnSharedPreferenceChangeListener(this);
+		prefs.registerOnSharedPreferenceChangeListener(this);
 	}
 
-	private void refreshContent() {
-		// Impossible de rafraîchir l'écran. On va donc rappeler onCreate
-		// pour qu'il refasse le même boulot d'initialisation qu'au
-		// démarrage de l'activité. C'est crade, mais il n'y a que ça qui
-		// fonctionne.
-		// Une autre technique existe : finir l'activité et la redémarrer
-		// avec le même Intent. Le problème est que cette méthode met le
-		// bazar dans l'historique du bouton back.
-		//onCreate(mLastSavedInstanceState);
-//DBG		finish();
-//		Intent intent = new Intent("android.intent.action.VIEW", Uri.parse(URI_PAGE_DAYS), this, PreferencesActivity.class);
-//		startActivity(intent);
-	}
+//	private void refreshContent() {
+//		// Impossible de rafraîchir l'écran. On va donc rappeler onCreate
+//		// pour qu'il refasse le même boulot d'initialisation qu'au
+//		// démarrage de l'activité. C'est crade, mais il n'y a que ça qui
+//		// fonctionne.
+//		// Une autre technique existe : finir l'activité et la redémarrer
+//		// avec le même Intent. Le problème est que cette méthode met le
+//		// bazar dans l'historique du bouton back.
+//		//onCreate(mLastSavedInstanceState);
+////		finish();
+////		Intent intent = new Intent("android.intent.action.VIEW", Uri.parse(URI_PAGE_DAYS), this, PreferencesActivity.class);
+////		startActivity(intent);
+//	}
 }
