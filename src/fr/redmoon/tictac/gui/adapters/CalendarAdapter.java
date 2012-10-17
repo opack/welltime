@@ -119,10 +119,6 @@ public class CalendarAdapter extends BaseAdapter {
         dayView.setTextSize(TEXTSIZE_NORMAL);
 		view.setBackgroundColor(mActivity.getResources().getColor(R.color.app_background));
 		if (row != 0) {
-//DBG    		// La ligne 0 est celle où sont affichées les noms des jours. On n'aura
-//    		// donc pas à écrire de numéro de semaine dessus.
-//			dayView.setText("");
-//    	} else {
     		// Pour déterminer le numéro de la semaine, on se base sur le premier jour du mois,
     		// auquel on ajoute 7 jours pour chaque ligne. Ca nous donne donc le 1er, le 8 etc...
     		// Chaque jour étant forcément sur une ligne différente, on peut en déduire le numéro
