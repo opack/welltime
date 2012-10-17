@@ -47,7 +47,7 @@ public class CsvWeekBeanImporter extends FileImporter<List<WeekBean>> {
 		
 		final WeekBean day = new WeekBean();
 		day.date = DateUtils.parseDateDDMMYYYY(data[0]);
-		day.flexTime = TimeUtils.parseTime(data[1]);
+		day.flexTime = TimeUtils.parseMinutes(data[1]);
 		
 		return day;
 	}
