@@ -58,6 +58,11 @@ public class PreferencesActivity extends PreferenceActivity implements OnSharedP
 	// de jour.
 	private static Map<String, String> mDayTitlesById = new HashMap<String, String>();
 	
+	private static boolean mMustComputeFlex = false;
+	
+	private String mCurPage;
+	private int mDepth;
+	
 	public interface OnPreferenceChangedListener{
 		/**
 		 * Appelée lorsqu'une préférence a été mise à jour
@@ -90,26 +95,53 @@ public class PreferencesActivity extends PreferenceActivity implements OnSharedP
 		
 		// Pour contourner le bug Android 4611, on décide ici quel layout de préférences on va utiliser
 		// si on souhaite afficher un sous-menu de préférences.
-		String target = null;
+		mCurPage = null;
 		final Uri uri = getIntent().getData();
 		if (uri != null) {
-			target = uri.toString();
+			mCurPage = uri.toString();
 		}
-		if (URI_PAGE_LIMITS.equals(target)) {
+		if (URI_PAGE_LIMITS.equals(mCurPage)) {
+			mDepth = 1;
             addPreferencesFromResource(R.xml.preferences_limits);
-        } else if (URI_PAGE_DAYS.equals(target)) {
+        } else if (URI_PAGE_DAYS.equals(mCurPage)) {
+        	mDepth = 1;
+        	mMustComputeFlex = false;
             addPreferencesFromResource(R.xml.preferences_days);
             prepareDayTypesPrefScreen();
-        } else if (target != null && target.startsWith(URI_PAGE_DAYS + "/")) {
+        } else if (mCurPage != null && mCurPage.startsWith(URI_PAGE_DAYS + "/")) {
+        	mDepth = 2;
         	addPreferencesFromResource(R.xml.preferences_days_edit);
-        	customizeDayTypeEditPreferences(target.substring(URI_PAGE_DAYS.length() + 1));
+        	customizeDayTypeEditPreferences(mCurPage.substring(URI_PAGE_DAYS.length() + 1));
         } else {
+        	mDepth = 1;
             addPreferencesFromResource(R.xml.preferences_misc);
         }
 		
 		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         prefs.registerOnSharedPreferenceChangeListener(this);
 	}
+	
+	@Override
+	public void onBackPressed() {
+		// On fait toutes les mises à jour si on quitte définitivement les
+		// préférences, donc qu'on quitte une page de profondeur 1
+		if (mDepth == 1) {
+			// Mise à jour du bean faisant proxy pour les préférences
+			PreferencesUtils.updatePreferencesBean(this);
+			
+			// Mise à jour du temps additionnel si un temps a été modifié
+			// et qu'on quitte la page principale des types de jour.
+			// Ainsi on ne le fait qu'une seule fois même si plusieurs temps
+			// ont été modifiés.
+			if (URI_PAGE_DAYS.equals(mCurPage) && mMustComputeFlex) {
+				final FlexUtils flexUtils = new FlexUtils();
+			   	flexUtils.updateFlex();
+			}
+		}
+	   	
+		super.onBackPressed();
+	}
+	
 	private void prepareDayTypesPrefScreen() {
 		// Ajout des différents types de jour
 		addDayTypesPreferences();
@@ -251,15 +283,12 @@ public class PreferencesActivity extends PreferenceActivity implements OnSharedP
 		}
 		// S'il y a eut une mise à jour de la durée d'un type de jour, on recalcule l'HV
 		else if (key.startsWith(PREF_DAYTYPE_TIME)) {
-			final FlexUtils flexUtils = new FlexUtils();
-		   	flexUtils.updateFlex();
+			mMustComputeFlex = true;
 		}
-		
-		// Mise à jour du bean faisant proxy pour les préférences
-		PreferencesUtils.updatePreferencesBean(this);
-		
 		// Si on a activé la synchro calendrier, il faut s'assurer qu'on a accès au calendrier
-		CalendarAccess.getInstance().initAccess(this);
+		else if ("sync_calendar".equals(key)) {
+			CalendarAccess.getInstance().initAccess(this);
+		}
 		
 		// Mise à jour de l'interface
 		fireOnPreferenceChanged(sharedPreferences, key);
