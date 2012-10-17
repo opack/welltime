@@ -49,7 +49,7 @@ public enum PreferenceKeys {
 	flexCurTime("flex_cur_time"),
 	
 // Types de jour
-	dayTypeLabel(PreferencesActivity.PREF_DAYTYPE_TITLE + "_"),
+	dayTypeLabel(PreferencesActivity.PREF_DAYTYPE_LABEL + "_"),
 	dayTypeTime(PreferencesActivity.PREF_DAYTYPE_TIME + "_"), // en minutes
 	dayTypeColor(PreferencesActivity.PREF_DAYTYPE_COLOR + "_"); // en entier
 	

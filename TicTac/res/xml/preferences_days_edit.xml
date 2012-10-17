@@ -19,9 +19,5 @@
 			android:summary="@string/pref_daytype_label_summary"
 			android:key="daytype_label"
 			android:defaultValue=""/>
-		<Preference
-			android:title="@string/pref_daytype_remove"
-			android:summary="@string/pref_daytype_remove_summary"
-			android:key="daytype_remove" />
 	</PreferenceCategory>
 </PreferenceScreen>

@@ -523,8 +523,11 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
 
 	@Override
 	public void onPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-		// S'il y a eut une modification sur les types de jour, on recharge les listes
-		if (key.startsWith(PreferencesActivity.PREF_DAYTYPE_TITLE)) {
+		// S'il y a eut une modification sur les types de jour (ajout,
+		// suppression, renommage) alors on recharge les listes
+		if (PreferencesActivity.PREF_DAYTYPE_ADD.equals(key)
+		|| PreferencesActivity.PREF_DAYTYPE_REMOVE.equals(key)
+		|| key.startsWith(PreferencesActivity.PREF_DAYTYPE_LABEL)) {
 			refreshDayTypeSpinners();
 		}
 	}

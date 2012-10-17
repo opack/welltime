@@ -1,6 +1,6 @@
 package fr.redmoon.tictac.bus;
 
-import static fr.redmoon.tictac.gui.activities.PreferencesActivity.PATTERN_DAY_TYPE_TITLE;
+import static fr.redmoon.tictac.gui.activities.PreferencesActivity.PATTERN_DAY_TYPE_LABEL;
 
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -89,7 +89,7 @@ public class PreferencesUtils {
 			DayType dayType;
 			for (String prefKey : prefs.getAll().keySet()) {
 				// Si la clé n'est pas un type de jour, on passe
-				Matcher matcher = PATTERN_DAY_TYPE_TITLE.matcher(prefKey);
+				Matcher matcher = PATTERN_DAY_TYPE_LABEL.matcher(prefKey);
 				if (!matcher.matches()){
 					continue;
 				}
@@ -111,7 +111,7 @@ public class PreferencesUtils {
 		}
 	}
 	
-	private static void addDefaultDayTypes(final Map<String, DayType> dayTypes, final Resources res) {
+	public static void addDefaultDayTypes(final Map<String, DayType> dayTypes, final Resources res) {
 		// Les types de jour "normal" et "non travaillé" sont toujours présents.
 		dayTypes.put(StandardDayTypes.normal.name(), new DayType(
 			StandardDayTypes.normal.name(),
@@ -263,32 +263,5 @@ public class PreferencesUtils {
 		PreferencesUtils.updatePreferencesBean(activity);
     	PreferencesBean.instance.isFirstLaunch = false;
     	PreferencesUtils.savePreferencesBean(activity);
-	}
-
-	/**
-	 * Supprime les préférences de type de jour et restaure les préférences par défaut
-	 * @param preferencesActivity
-	 */
-	public static void resetDayTypesPreferences(final Activity activity) {
-		final Map<String, DayType> dayTypes = PreferencesBean.instance.dayTypes;
-		
-		// Supprime les préférences des types de jour
-		final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(activity);
-		final SharedPreferences.Editor editor = preferences.edit();
-		for (String prefKey : preferences.getAll().keySet()) {
-			// S'il s'agit d'une préférence liée aux types de jour, alors sa clé
-			// commence par PREF_DAYTYPE_PREFIX. Le cas échéant, on la supprime.
-			if (prefKey.startsWith(PreferencesActivity.PREF_DAYTYPE_PREFIX)) {
-				editor.remove(prefKey);
-			}
-		}
-		editor.commit();
-		
-		// Ajoute les préférences par défaut
-		dayTypes.clear();
-		addDefaultDayTypes(dayTypes, activity.getResources());
-		
-		// Sauvegarde des préférences
-		PreferencesUtils.savePreferencesBean(activity);
 	}
 }
