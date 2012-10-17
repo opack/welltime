@@ -69,7 +69,7 @@ public class CsvWeekBeanExporter extends FileExporter<List<WeekBean>> {
 		// Ajout des propriétés de la semaine
 		final StringBuilder csv = new StringBuilder();
 		csv.append(DateUtils.formatDateDDMMYYYY(week.date)).append(CSV_SEPARATOR);
-		csv.append(TimeUtils.formatTime(week.flexTime)).append(CSV_SEPARATOR);
+		csv.append(TimeUtils.formatMinutes(week.flexTime)).append(CSV_SEPARATOR);
 		
 		// Ajout d'un retour à la ligne
 		csv.append(System.getProperty("line.separator"));
