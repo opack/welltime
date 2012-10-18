@@ -65,7 +65,10 @@ public class SyncCalendarPeriodFragment extends DialogFragment implements OnClic
 		
 		// Récupération des jours à synchroniser
 		final List<DayBean> days = new ArrayList<DayBean>();
-		DbAdapter.getInstance().fetchDays(firstDay, lastDay, days);
+		final DbAdapter db = DbAdapter.getInstance(getActivity());
+		db.openDatabase();
+		db.fetchDays(firstDay, lastDay, days);
+		db.closeDatabase();
 		
 		// Synchronisation des jours
 		for (DayBean day : days) {

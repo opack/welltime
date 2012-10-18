@@ -13,7 +13,6 @@ import android.widget.TabHost;
 import fr.redmoon.tictac.R;
 import fr.redmoon.tictac.bus.PreferencesUtils;
 import fr.redmoon.tictac.bus.export.tocalendar.CalendarAccess;
-import fr.redmoon.tictac.db.DbAdapter;
 
 public class MainActivity extends TabActivity {
 	public static final int TAB_DAY_POS = 0;
@@ -26,18 +25,11 @@ public class MainActivity extends TabActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
-	    DbAdapter.getInstance().setContext(this);
 	    initPrefs();
 	    setContentView(R.layout.tictac);
 	    createTabs();
 	    CalendarAccess.getInstance().initAccess(this);
 	}
-	
-	@Override
-	protected void onDestroy() {
-		DbAdapter.getInstance().closeDatabase();
-		super.onDestroy();
-	};
 	
 	private void initPrefs() {
 	    // Initialisation des préférences

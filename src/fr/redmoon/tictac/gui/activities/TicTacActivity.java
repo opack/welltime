@@ -112,12 +112,6 @@ public abstract class TicTacActivity extends FragmentActivity {
     	super.onResume();
     }
 	
-	@Override
-	protected void onDestroy() {
-		DbAdapter.getInstance().closeDatabase();
-		super.onDestroy();
-	}
-	
 	protected void initPages(final String[] titles, final View... pages) {
 		mPages = pages;
 		final TicTacPagerAdapter adapter = new TicTacPagerAdapter(titles, pages);
@@ -228,7 +222,7 @@ public abstract class TicTacActivity extends FragmentActivity {
 	 * pointage à la date sélectionnée
 	 * @param date 
 	 */
-	protected void promptAddChecking(final long date) {
+	protected void promptAddCheckingFromMainApp(final long date) {
 		final Bundle args = new Bundle();
 		args.putLong(DialogArgs.DATE.name(), date);
 
@@ -242,7 +236,7 @@ public abstract class TicTacActivity extends FragmentActivity {
 	 * pointage à la date sélectionnée
 	 * @param date 
 	 */
-	protected void promptAddChecking(final long date, final int initialTime, final boolean finishActivityOnDismiss) {
+	protected void promptAddCheckingFromWidget(final long date, final int initialTime, final boolean finishActivityOnDismiss) {
 		final Bundle args = new Bundle();
 		args.putLong(DialogArgs.DATE.name(), date);
 		args.putInt(DialogArgs.TIME.name(), initialTime);
@@ -363,10 +357,13 @@ public abstract class TicTacActivity extends FragmentActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
             	// Suppression du jour en base
-            	DbAdapter.getInstance().deleteDay(date);
+            	final DbAdapter db = DbAdapter.getInstance(TicTacActivity.this);
+        		db.openDatabase();
+            	db.deleteDay(date);
             	
             	// Si la semaine de ce jour est vide, on la supprime
-            	updateFlexAfterDeletion(date);
+            	updateFlexAfterDeletion(date, db);
+            	db.closeDatabase();
             	
             	// Mise à jour de l'affichage
             	populateView(date);
@@ -394,7 +391,7 @@ public abstract class TicTacActivity extends FragmentActivity {
             	fireOnDeleteDay(date);
             }
 
-			private void updateFlexAfterDeletion(final long date) {
+			private void updateFlexAfterDeletion(final long date, final DbAdapter db) {
 				final Time time = new Time();
 				// On récupère le lundi correspondant au jour indiqué
 				TimeUtils.parseDate(date, time);
@@ -405,12 +402,12 @@ public abstract class TicTacActivity extends FragmentActivity {
 				final long lastDay = DateUtils.getDayId(mWorkTime);
 				
 				// Si la semaine est vide, on supprime l'enregistrement correspondant
-				if (DbAdapter.getInstance().countDaysBetween(firstDay, lastDay) == 0) {
-					DbAdapter.getInstance().deleteFlexTime(firstDay);
+				if (db.countDaysBetween(firstDay, lastDay) == 0) {
+					db.deleteFlexTime(firstDay);
 				}
 				
 				// Puis on met à jour l'HV
-				final FlexUtils flexUtils = new FlexUtils();
+				final FlexUtils flexUtils = new FlexUtils(db);
     			flexUtils.updateFlex(date);
 			}
         };

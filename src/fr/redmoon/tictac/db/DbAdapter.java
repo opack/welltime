@@ -13,6 +13,12 @@ public class DbAdapter {
 	private static final String DATABASE_NAME = "TicTac.db";
 	private static final int DATABASE_VERSION = 5;
 	
+	/**
+	 * On dispose de 2 instances car le widget doit pouvoir accéder à la base.
+	 * Or, lorsqu'il est lancé, il n'y a pas forcément de contexte lié à
+	 * l'application principale. Il lui faut donc sa propre instance avec son
+	 * propre contexte.
+	 */
 	private static final DbAdapter INSTANCE = new DbAdapter();
 	
 	private Context mCtx;
@@ -45,7 +51,8 @@ public class DbAdapter {
         }
     }
 	
-	public static DbAdapter getInstance() {
+	public static DbAdapter getInstance(final Context ctx) {
+		INSTANCE.mCtx = ctx;
 		return INSTANCE;
 	}
 	
@@ -58,11 +65,6 @@ public class DbAdapter {
         days = new DaysTableHelper();
         checkings = new CheckingsTableHelper();
     }
-    
-    public void setContext(final Context ctx) {
-        // Crée les objets permettant la manipulation de la base
-        mDbHelper = new DatabaseHelper(ctx, this);
-    }
 	
 	/**
      * Ouvre la BD. Si elle ne peut pas être ouverte, on essaie d'en créer une
@@ -74,7 +76,8 @@ public class DbAdapter {
      * @throws SQLException si la DB n'a pu être ni ouverte ni créée
      */
     public DbAdapter openDatabase() throws SQLException {
-    	
+    	// Crée les objets permettant la manipulation de la base
+        mDbHelper = new DatabaseHelper(mCtx, this);
         return this;
     }
     

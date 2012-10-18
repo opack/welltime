@@ -35,6 +35,7 @@ import fr.redmoon.tictac.bus.TimeUtils;
 import fr.redmoon.tictac.bus.bean.DayType;
 import fr.redmoon.tictac.bus.bean.PreferencesBean;
 import fr.redmoon.tictac.bus.export.tocalendar.CalendarAccess;
+import fr.redmoon.tictac.db.DbAdapter;
 
 public class PreferencesActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
 	public static final String URI_PAGE_MISC = "preferences://misc";
@@ -134,8 +135,11 @@ public class PreferencesActivity extends PreferenceActivity implements OnSharedP
 			// Ainsi on ne le fait qu'une seule fois même si plusieurs temps
 			// ont été modifiés.
 			if (URI_PAGE_DAYS.equals(mCurPage) && mMustComputeFlex) {
-				final FlexUtils flexUtils = new FlexUtils();
+				final DbAdapter db = DbAdapter.getInstance(this);
+				db.openDatabase();
+				final FlexUtils flexUtils = new FlexUtils(db);
 			   	flexUtils.updateFlex();
+			   	db.closeDatabase();
 			}
 		}
 	   	

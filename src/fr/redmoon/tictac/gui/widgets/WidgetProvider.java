@@ -20,7 +20,6 @@ public class WidgetProvider extends AppWidgetProvider {
     public void onEnabled(Context context) {
         // This is only called once, regardless of the number of widgets of this
         // type
-        // We do not have any global initialization
         super.onEnabled(context);
     }
 
@@ -31,12 +30,12 @@ public class WidgetProvider extends AppWidgetProvider {
     }
     
     private static DayBean getCurrentDay(final Context context) {
-        // Récupération du jour courant.
         final long today = DateUtils.getCurrentDayId();
         final DayBean day = new DayBean();
-        DbAdapter.getInstance().fetchDay(today, day);
-        
-        // Compte le nombre de pointages
+        final DbAdapter db = DbAdapter.getInstance(context);
+		db.openDatabase();
+        db.fetchDay(today, day);
+        db.closeDatabase();
         return day;
 	}
     

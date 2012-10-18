@@ -118,7 +118,10 @@ public class MonthActivity extends TicTacActivity implements OnDayDeletionListen
 				mSelectedDay = associatedTag;
 				
 				// Si le jour n'existe pas en base, on masque certaines options
-				final boolean isDayExisting = DbAdapter.getInstance().isDayExisting(mSelectedDay);
+				final DbAdapter db = DbAdapter.getInstance(MonthActivity.this);
+				db.openDatabase();
+				final boolean isDayExisting = db.isDayExisting(mSelectedDay);
+				db.closeDatabase();
 				mQuickAction.setActionVisible(QAID_SHOW_CHECKINGS, isDayExisting);
 				mQuickAction.setActionVisible(QAID_DELETE_DAY, isDayExisting);
 				
@@ -187,7 +190,10 @@ public class MonthActivity extends TicTacActivity implements OnDayDeletionListen
 		final int month = mAdapter.getMonth();
 		final long firstDay = DateUtils.getDayId(year, month, 1);
 		final long lastDay = DateUtils.getDayId(year, month, mAdapter.getNumberOfDaysInMonth());
-		DbAdapter.getInstance().fetchDays(firstDay, lastDay, mMonthDays);
+		final DbAdapter db = DbAdapter.getInstance(this);
+		db.openDatabase();
+		db.fetchDays(firstDay, lastDay, mMonthDays);
+		db.closeDatabase();
 		
 		// Ajout des jours dans l'adapteur
 		items.clear();

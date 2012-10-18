@@ -53,9 +53,11 @@ public class AddCheckingFragment extends DialogFragment implements TimePickerDia
 			return;
 		}
 		boolean dbUpdated = false;
+		final DbAdapter db = DbAdapter.getInstance(getActivity());
+		db.openDatabase();
 		
 		// Mise à jour de la base de données
-		if (DbAdapter.getInstance().isCheckingExisting(mDate, selectedTime)) {
+		if (db.isCheckingExisting(mDate, selectedTime)) {
 			// Le pointage existe déjà : affichage d'un message
 			Toast.makeText(
 				activity,
@@ -64,14 +66,14 @@ public class AddCheckingFragment extends DialogFragment implements TimePickerDia
 			.show();
 		} else {
 			// Création du nouveau pointage
-			if (!DbAdapter.getInstance().isDayExisting(mDate)) {
+			if (!db.isDayExisting(mDate)) {
 				// Le jour n'existe pas : on le crée.
 				final DayBean day = new DayBean();
 				day.date = mDate;
 				day.typeMorning = StandardDayTypes.normal.name();
 				day.typeAfternoon = StandardDayTypes.normal.name();
 				day.checkings.add(selectedTime);
-				DbAdapter.getInstance().createDay(day);
+				db.createDay(day);
 				dbUpdated = day.isValid;
 				
 				// Ajout des évènements dans le calendrier
@@ -80,20 +82,21 @@ public class AddCheckingFragment extends DialogFragment implements TimePickerDia
 				}
 			} else {
 				// Le jour existe : on ajoute simplement le pointage
-				dbUpdated = DbAdapter.getInstance().createChecking(mDate, selectedTime);
+				dbUpdated = db.createChecking(mDate, selectedTime);
 				
 				if (dbUpdated && PreferencesBean.instance.syncCalendar) {
 					// Ajout du pointage dans le calendrier
 					final List<Integer> checkings = new ArrayList<Integer>();
-					DbAdapter.getInstance().fetchCheckings(mDate, checkings);
+					db.fetchCheckings(mDate, checkings);
 					CalendarAccess.getInstance().createWorkEvents(mDate, checkings);
 				}
 			}
 			
 			// Mise à jour de l'HV.
-			final FlexUtils flexUtils = new FlexUtils();
+			final FlexUtils flexUtils = new FlexUtils(db);
 			flexUtils.updateFlex(mDate);
 		}
+		db.closeDatabase();
 		
 		// Mise à jour de l'affichage
 		if (dbUpdated) {

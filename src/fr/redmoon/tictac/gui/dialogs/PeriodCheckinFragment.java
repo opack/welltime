@@ -89,8 +89,11 @@ public class PeriodCheckinFragment extends DialogFragment implements OnClickList
 		final String note = mNote.getText().toString();
 		final DayType dayType = (DayType)mDayType.getSelectedItem();
 		
-		// Parcours des jours
 		final TicTacActivity activity = (TicTacActivity)getActivity();
+		final DbAdapter db = DbAdapter.getInstance(activity);
+		db.openDatabase();
+		
+		// Parcours des jours
 		final long firstDay = DateUtils.getDayId(calendar);
 		long curDate = firstDay;
 		final DayBean dayData = new DayBean();
@@ -98,7 +101,8 @@ public class PeriodCheckinFragment extends DialogFragment implements OnClickList
 			// On vérifie s'il s'agit d'un jour travaillé dans la semaine
 			if (DateUtils.isWorkingWeekDay(calendar)) {
 				// On prépare le jour à créer ou mettre à jour
-				DbAdapter.getInstance().fetchDay(curDate, dayData);
+				
+				db.fetchDay(curDate, dayData);
 				dayData.typeMorning = dayType.id;
 				dayData.typeAfternoon = dayType.id;
 				if (note != null) {
@@ -108,16 +112,17 @@ public class PeriodCheckinFragment extends DialogFragment implements OnClickList
 				// On crée ce jour en base s'il n'existe pas, sinon on le
 				// met à jour
 				if (dayData.isValid) {
-					DbAdapter.getInstance().updateDay(dayData);
+					db.updateDay(dayData);
 					if (dayData.isValid) {
 						nbDaysUpdated++;
 					}
 				} else {
-					DbAdapter.getInstance().createDay(dayData);
+					db.createDay(dayData);
 					if (dayData.isValid) {
 						nbDaysCreated++;
 					}
 				}
+				
 				if (dayData.isValid && PreferencesBean.instance.syncCalendar) {
 					// Créé ou mis à jour, le jour existe désormais et son type
 					// a été renseigné. Il faut à présent ajoutr l'évènement
@@ -132,8 +137,9 @@ public class PeriodCheckinFragment extends DialogFragment implements OnClickList
 		}
 		
 		// Mise à jour de l'HV.
-    	final FlexUtils flexUtils = new FlexUtils();
+    	final FlexUtils flexUtils = new FlexUtils(db);
     	flexUtils.updateFlex(firstDay);
+		db.closeDatabase();
 		
 		// Affichage des résultats
 		Toast.makeText(

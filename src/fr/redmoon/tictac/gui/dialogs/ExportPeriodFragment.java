@@ -85,8 +85,11 @@ public class ExportPeriodFragment extends DialogFragment implements OnClickListe
 		final long lastDay = DateUtils.getDayId(mDate2.getYear(), mDate2.getMonth(), mDate2.getDayOfMonth());
 		
 		// Export des jours et des semaines
-		final boolean resExportDays = exportDays(firstDay, lastDay);
-		final boolean resExportSemaines = exportWeeks(firstDay, lastDay);
+		final DbAdapter db = DbAdapter.getInstance(mActivity);
+		db.openDatabase();
+		final boolean resExportDays = exportDays(firstDay, lastDay, db);
+		final boolean resExportSemaines = exportWeeks(firstDay, lastDay, db);
+		db.closeDatabase();
 		
 		// Compression des fichiers dans un zip
 		final Map<String, String> files = new HashMap<String, String>();
@@ -115,10 +118,10 @@ public class ExportPeriodFragment extends DialogFragment implements OnClickListe
 		Toast.makeText(mActivity, message, Toast.LENGTH_LONG).show();
 	}
 
-	private boolean exportDays(final long firstDay, final long lastDay) {
+	private boolean exportDays(final long firstDay, final long lastDay, final DbAdapter db) {
 		// Récupération des jours à extraire
 		final List<DayBean> days = new ArrayList<DayBean>();
-		DbAdapter.getInstance().fetchDays(firstDay, lastDay, days);
+		db.fetchDays(firstDay, lastDay, days);
 		
 		// Export des jours vers le fichier texte
 		final FileExporter<List<DayBean>> daysExporter = new CsvDayBeanExporter(mActivity, firstDay, lastDay);
@@ -128,10 +131,10 @@ public class ExportPeriodFragment extends DialogFragment implements OnClickListe
 		return result;
 	}
 	
-	private boolean exportWeeks(final long firstDay, final long lastDay) {
+	private boolean exportWeeks(final long firstDay, final long lastDay, final DbAdapter db) {
 		// Récupération des jours à extraire
 		final List<WeekBean> weeks = new ArrayList<WeekBean>();
-		DbAdapter.getInstance().fetchWeeks(firstDay, lastDay, weeks);
+		db.fetchWeeks(firstDay, lastDay, weeks);
 		
 		// Export des jours vers le fichier texte
 		final FileExporter<List<WeekBean>> weeksExporter = new CsvWeekBeanExporter(mActivity, firstDay, lastDay);

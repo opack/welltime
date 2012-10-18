@@ -70,9 +70,11 @@ public class CleanDaysFragment extends DialogFragment implements OnClickListener
 		builder.setPositiveButton(R.string.btn_ok, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
 				// Suppression des jours
-				if (DbAdapter.getInstance().deleteDays(firstDay, lastDay)) {
+				final DbAdapter db = DbAdapter.getInstance(activity);
+				db.openDatabase();
+				if (db.deleteDays(firstDay, lastDay)) {
 					// Mise à jour de l'HV.
-			    	final FlexUtils flexUtils = new FlexUtils();
+			    	final FlexUtils flexUtils = new FlexUtils(db);
 			    	flexUtils.updateFlex(firstDay);
 			    	
 					final String message = activity.getResources().getString(
@@ -83,6 +85,7 @@ public class CleanDaysFragment extends DialogFragment implements OnClickListener
 				} else {
 					Toast.makeText(activity, R.string.period_cleaner_failed, Toast.LENGTH_SHORT).show();
 				}
+				db.closeDatabase();
 			}
 		});
 		builder.setNegativeButton(R.string.btn_no, new DialogInterface.OnClickListener() {
