@@ -94,7 +94,10 @@ public class SelectDayTypeReplacementFragment extends DialogFragment implements 
 		
 		// Mise à jour de tous les types de jours en base qui correspondent
 		final TicTacActivity activity = (TicTacActivity)getActivity();
-		final int nbUpdated = DbAdapter.getInstance().updateDayType(mTempDayTypeId, type.id);
+		final DbAdapter db = DbAdapter.getInstance(activity);
+		db.openDatabase();
+		final int nbUpdated = db.updateDayType(mTempDayTypeId, type.id);
+		db.closeDatabase();
 		
 		// Affichage des résultats
 		Toast.makeText(activity, "La mise à jour a été effectuée sur " + nbUpdated + " jours.", Toast.LENGTH_SHORT).show();

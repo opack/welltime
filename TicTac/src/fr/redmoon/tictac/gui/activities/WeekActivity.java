@@ -122,7 +122,10 @@ public class WeekActivity extends TicTacActivity implements OnDayDeletionListene
 				
 				// Si le jour n'existe pas en base, on masque certaines options
 				final DayBean day = mWeekDays.get(mSelectedDay);
-				final boolean isDayExisting = DbAdapter.getInstance().isDayExisting(day.date);
+				final DbAdapter db = DbAdapter.getInstance(WeekActivity.this);
+				db.openDatabase();
+				final boolean isDayExisting = db.isDayExisting(day.date);
+				db.closeDatabase();
 				mQuickAction.setActionVisible(QAID_SHOW_CHECKINGS, isDayExisting);
 				mQuickAction.setActionVisible(QAID_DELETE_DAY, isDayExisting);
 				
@@ -210,7 +213,10 @@ public class WeekActivity extends TicTacActivity implements OnDayDeletionListene
     	// On récupère le jour en base
     	mMonday = DateUtils.getDayId(monday);
     	mSunday = DateUtils.getDayId(sunday);
-    	DbAdapter.getInstance().fetchDays(mMonday, mSunday, mWeekDays);
+    	final DbAdapter db = DbAdapter.getInstance(this);
+		db.openDatabase();
+    	db.fetchDays(mMonday, mSunday, mWeekDays);
+    	db.closeDatabase();
 
     	// On conserve le jour de travail (notamment pour le sweep)
     	final Set<Long> daysById = new HashSet<Long>();
@@ -334,12 +340,15 @@ public class WeekActivity extends TicTacActivity implements OnDayDeletionListene
 		final int lost = Math.max(0, mWeekWorked - PreferencesBean.instance.weekMax);
 		
 		// Récupération du temps HV en début de semaine
-		DbAdapter.getInstance().fetchLastFlexTime(mMonday, mWeekData);
+		final DbAdapter db = DbAdapter.getInstance(this);
+		db.openDatabase();
+		db.fetchLastFlexTime(mMonday, mWeekData);
 		
 		// Calcul du nouvel HV en ajoutant le temps effectué cette semaine
 		// à l'HV en début de semaine
-		final FlexUtils flexUtils = new FlexUtils();
+		final FlexUtils flexUtils = new FlexUtils(db);
 		final int curWeekFlex = flexUtils.computeFlexTime(mWeekWorked, mWeekData.flexTime);
+		db.closeDatabase();
 		
         // Mise à jour des composants graphiques
 		final View pageDetails = getPage(PAGE_DETAILS);

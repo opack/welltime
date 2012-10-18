@@ -37,7 +37,12 @@ public class EditExtraFragment extends DialogFragment implements TimePickerDialo
 			return;
 		}
 		// Mise à jour de la base de données
-		if (DbAdapter.getInstance().updateDayExtra(mDate, newTime)) {
+		final DbAdapter db = DbAdapter.getInstance(activity);
+		db.openDatabase();
+		final boolean dbUpdated = db.updateDayExtra(mDate, newTime);
+		db.closeDatabase();
+		
+		if (dbUpdated) {
 			// Mise à jour de l'affichage
 			activity.populateView(mDate);
 		}

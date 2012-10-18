@@ -42,17 +42,20 @@ public class AddDayFragment extends DialogFragment implements DatePickerDialog.O
 		boolean dbUpdated = false;
 		
 		// Mise à jour de la base de données
-		if (!DbAdapter.getInstance().isDayExisting(selectedDate)) {
+		final DbAdapter db = DbAdapter.getInstance(activity);
+		db.openDatabase();
+		if (!db.isDayExisting(selectedDate)) {
 			final DayBean day = new DayBean();
 			day.date = selectedDate;
 			day.typeMorning = StandardDayTypes.normal.name();
 			day.typeAfternoon = StandardDayTypes.normal.name();
-			DbAdapter.getInstance().createDay(day);
+			db.createDay(day);
 			dbUpdated = day.isValid;
 			
 			// Mise à jour de l'HV.
-	    	final FlexUtils flexUtils = new FlexUtils();
+	    	final FlexUtils flexUtils = new FlexUtils(db);
 	    	flexUtils.updateFlex(day.date);
+	    	db.closeDatabase();
 	    	
 	    	// Ajout des évènements dans le calendrier
 			if (dbUpdated && PreferencesBean.instance.syncCalendar) {

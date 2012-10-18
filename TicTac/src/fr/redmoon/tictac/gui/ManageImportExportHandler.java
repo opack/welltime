@@ -41,7 +41,6 @@ import fr.redmoon.tictac.bus.export.tobinary.BinPreferencesBeanExporter;
 import fr.redmoon.tictac.bus.export.tobinary.BinPreferencesBeanImporter;
 import fr.redmoon.tictac.bus.export.tocsv.CsvDayBeanImporter;
 import fr.redmoon.tictac.bus.export.tocsv.CsvWeekBeanImporter;
-import fr.redmoon.tictac.db.DbAdapter;
 import fr.redmoon.tictac.gui.ProgressDialogHandler.OnProgressFinishedListener;
 import fr.redmoon.tictac.gui.activities.PreferencesActivity;
 import fr.redmoon.tictac.gui.dialogs.DialogArgs;
@@ -297,7 +296,7 @@ public class ManageImportExportHandler implements OnItemClickListener, OnDayType
 				// Ecrit ces données dans la base en utilisant un Thread et une belle
 				// boîte de dialogue avec une barre de progression pour montrer où on
 				// en est.
-				progressThread = new DbInserterThread(days, weeks);
+				progressThread = new DbInserterThread(activity, days, weeks);
 				// Si le handler existe déjà (c'est le cas si la boîte de dialogue a déjà été créée
 				// via createDialog) alors on l'assigne ici. Sinon, ce sera fait lors de la création
 				// de la boîte de dialogue.

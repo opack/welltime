@@ -15,9 +15,11 @@ public class FlexUtils {
 	public static final int NB_DAYS_IN_WEEK = 5;
 	
 	private final Time mWorkTime;
+	private final DbAdapter mDb;
 	
-	public FlexUtils() {
+	public FlexUtils(final DbAdapter db) {
 		mWorkTime = new Time();
+		mDb = db;
 	}
 	
 	/**
@@ -26,7 +28,7 @@ public class FlexUtils {
 	 */
 	public void updateFlex() {
 		final WeekBean weekData = new WeekBean();
-		DbAdapter.getInstance().fetchLastFlexTime(weekData);
+		mDb.fetchLastFlexTime(weekData);
 		updateFlex(weekData.date);
 	}
 	
@@ -47,7 +49,7 @@ public class FlexUtils {
 		long firstDay = DateUtils.getDayId(mWorkTime);
 		
 		// Récupération de l'HV pour la date indiquée
-		DbAdapter.getInstance().fetchLastFlexTime(initialDay, weekData);
+		mDb.fetchLastFlexTime(initialDay, weekData);
 		int flex = weekData.flexTime;
 
 		// Détermination du dimanche de la semaine
@@ -57,10 +59,10 @@ public class FlexUtils {
 		long lastDay = DateUtils.getDayId(calendar);
 		
 		// Récupération du dernier jour en base
-		long lastExistingDay = DbAdapter.getInstance().fetchPreviousDay(99999999);
+		long lastExistingDay = mDb.fetchPreviousDay(99999999);
 
 		// Récupération des jours entre cette date et le prochain dimanche
-		DbAdapter.getInstance().fetchDays(firstDay, lastDay, days);
+		mDb.fetchDays(firstDay, lastDay, days);
 		int curWeekTotal = 0;
 		while (lastDay <= lastExistingDay){
 			// Calcul de l'HV accumulé au cours de ces jours
@@ -80,10 +82,10 @@ public class FlexUtils {
 			lastDay = DateUtils.getDayId(calendar);
 			
 			// Mise à jour du nouvel HV au lundi
-			DbAdapter.getInstance().updateFlexTime(firstDay, flex);
+			mDb.updateFlexTime(firstDay, flex);
 			
 			// Récupération des jours entre cette date et le prochain dimanche
-			DbAdapter.getInstance().fetchDays(firstDay, lastDay, days);
+			mDb.fetchDays(firstDay, lastDay, days);
 		}
 	}
 
@@ -145,7 +147,7 @@ public class FlexUtils {
 		
 		// On récupère les jours de la semaine
 		final List<DayBean> days = new ArrayList<DayBean>();
-		DbAdapter.getInstance().fetchDays(firstDay, lastDay, days);
+		mDb.fetchDays(firstDay, lastDay, days);
 		
 		return computeWeekTotal(days) - PreferencesBean.instance.weekMin;
 	}

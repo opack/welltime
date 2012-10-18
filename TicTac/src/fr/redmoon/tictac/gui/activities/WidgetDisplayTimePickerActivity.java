@@ -12,7 +12,7 @@ public class WidgetDisplayTimePickerActivity extends TicTacActivity {
         super.onCreate(savedInstanceState);
         final Time now = TimeUtils.getNowTime();
     	final Integer checking = now.hour * 100 + now.minute;
-    	promptAddChecking(DateUtils.getCurrentDayId(), checking, true);
+    	promptAddCheckingFromWidget(DateUtils.getCurrentDayId(), checking, true);
     }
 
 	@Override

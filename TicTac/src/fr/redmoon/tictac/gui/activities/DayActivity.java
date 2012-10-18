@@ -172,7 +172,7 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.menu_day_add_checking:
-			promptAddChecking(mWorkDayBean.date);
+			promptAddCheckingFromMainApp(mWorkDayBean.date);
 			return true;
 		case R.id.menu_show_day:
 			promptShowDay();
@@ -200,19 +200,24 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
 	    		mWorkDayBean.checkings.add(clockin);
 	    	
 		    	// Ajout ou mise à jour du jour dans la base
+	    		final DbAdapter db = DbAdapter.getInstance(this);
+	    		db.openDatabase();
 		    	if (mWorkDayBean.isValid) {
-		    		DbAdapter.getInstance().updateDay(mWorkDayBean);
+		    		db.updateDay(mWorkDayBean);
 		    	} else {
 		    		// Le jour sera créé. On vient d'ajouter un pointage, donc c'est
 		    		// un jour de type "normal"
 		    		mWorkDayBean.typeMorning = StandardDayTypes.normal.name();
 		    		mWorkDayBean.typeAfternoon = StandardDayTypes.normal.name();
 		    		
-		    		DbAdapter.getInstance().createDay(mWorkDayBean);
+		    		db.createDay(mWorkDayBean);
 		    	}
+		    	
 		    	// Mise à jour de l'HV.
-		    	final FlexUtils flexUtils = new FlexUtils();
+		    	final FlexUtils flexUtils = new FlexUtils(db);
 		    	flexUtils.updateFlex(mWorkDayBean.date);
+		    	
+		    	db.closeDatabase();
 		    	
 		    	// Rafraîchissement de l'interface
 		    	if (mWorkDayBean.isValid) {
@@ -295,7 +300,10 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
      */
     public void populateView(final long day) {
     	// On récupère le jour en base
-    	DbAdapter.getInstance().fetchDay(day, mWorkDayBean);
+    	final DbAdapter db = DbAdapter.getInstance(this);
+		db.openDatabase();
+    	db.fetchDay(day, mWorkDayBean);
+    	db.closeDatabase();
     	
     	// Rafraîchit l'interface graphique.
     	populateView(mWorkDayBean);
@@ -444,11 +452,15 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
             @Override
             public void onClick(DialogInterface dialog, int which) {
             	// Suppression du jour en base
-            	DbAdapter.getInstance().deleteChecking(date, time);
+            	final DbAdapter db = DbAdapter.getInstance(DayActivity.this);
+	    		db.openDatabase();
+	    		db.deleteChecking(date, time);
             	
             	// Mise à jour de l'HV.
-				final FlexUtils flexUtils = new FlexUtils();
+				final FlexUtils flexUtils = new FlexUtils(db);
 				flexUtils.updateFlex(date);
+				
+				db.closeDatabase();
             	
             	// Mise à jour de l'affichage
         		populateView(date);
@@ -492,12 +504,18 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
 		// méthode sera appelée comme si l'utilisateur avait choisit une valeur. Or dans ce cas
 		// on ne veut pas créer un jour car le type de jour n'aura pas bougé.
 		if (!typeAfternoon.equals(mWorkDayBean.typeAfternoon) || !typeMorning.equals(mWorkDayBean.typeMorning)) {
-			if (DbAdapter.getInstance().updateDayType(mWorkDayBean.date, typeMorning, typeAfternoon)) {
+			final DbAdapter db = DbAdapter.getInstance(this);
+    		db.openDatabase();
+    		final boolean dbUpdated = db.updateDayType(mWorkDayBean.date, typeMorning, typeAfternoon);
+			if (dbUpdated) {
 				// Mise à jour de l'HV.
-				final FlexUtils flexUtils = new FlexUtils();
+				final FlexUtils flexUtils = new FlexUtils(db);
 		    	flexUtils.updateFlex(mWorkDayBean.date);
-		    	
-		    	// Ajout des évènements dans le calendrier
+			}
+			db.closeDatabase();
+			
+			if (dbUpdated) {
+				// Ajout des évènements dans le calendrier
 				if (PreferencesBean.instance.syncCalendar) {
 					CalendarAccess.getInstance().createDayTypeEvent(mWorkDayBean.date, typeMorning, typeAfternoon);
 				}

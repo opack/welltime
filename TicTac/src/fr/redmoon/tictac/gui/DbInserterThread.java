@@ -3,6 +3,7 @@ package fr.redmoon.tictac.gui;
 import java.util.Iterator;
 import java.util.List;
 
+import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 import fr.redmoon.tictac.bus.bean.DayBean;
@@ -17,6 +18,8 @@ public class DbInserterThread extends Thread {
 	public final static int STATE_IMPORTING_WEEKS = 2;
 	public final static int STATE_CANCEL = 3;
     
+	private final DbAdapter mDb;
+	
     private Handler mHandler;
     private int mState;
     
@@ -31,7 +34,9 @@ public class DbInserterThread extends Thread {
     private int nbWeeksProcessed;
     private final int nbWeeksToProcess;
    
-    public DbInserterThread(final List<DayBean> days, final List<WeekBean> weeks) {
+    public DbInserterThread(final Context context, final List<DayBean> days, final List<WeekBean> weeks) {
+    	mDb = DbAdapter.getInstance(context);
+    	
         mState = STATE_DONE;
         
         mDays = days;
@@ -45,6 +50,19 @@ public class DbInserterThread extends Thread {
         nbWeeksProcessed = 0;
         nbWeeksToProcess = mWeeks.size();
     }
+    
+    @Override
+    public synchronized void start() {
+    	mDb.openDatabase();
+    	super.start();
+    }
+    
+    private void stopProcess() {
+		mDb.closeDatabase();
+    	
+    	// On arrête le thread
+		mState = STATE_DONE;
+	}
    
     public void run() {
         mState = STATE_IMPORTING_DAYS;
@@ -72,8 +90,7 @@ public class DbInserterThread extends Thread {
             mHandler.sendMessage(msg);
 		}
     	
-    	// On arrête le thread
-		mState = STATE_DONE;
+    	stopProcess();
 	}
 
 	private void importNextWeek() {
@@ -82,10 +99,10 @@ public class DbInserterThread extends Thread {
     		// Notez qu'on ne tient pas le compte des semaines ajoutées.
     		// C'est transparent pour l'utilisateur.
         	final WeekBean week = mWeekIterator.next();
-			if (DbAdapter.getInstance().isWeekExisting(week.date)) {
-				DbAdapter.getInstance().updateWeek(week);
+			if (mDb.isWeekExisting(week.date)) {
+				mDb.updateWeek(week);
 			} else {
-				DbAdapter.getInstance().createWeek(week);
+				mDb.createWeek(week);
 			}
 			nbWeeksProcessed++;
 			
@@ -109,7 +126,7 @@ public class DbInserterThread extends Thread {
     		}
     		
     		// On arrête le thread
-			mState = STATE_DONE;
+			stopProcess();
     	}
 	}
 
@@ -117,13 +134,13 @@ public class DbInserterThread extends Thread {
     	if (mDayIterator.hasNext()) {
     		// Il reste des jours à écrire : on écrit le suivant
         	final DayBean day = mDayIterator.next();
-			if (DbAdapter.getInstance().isDayExisting(day.date)) {
-				DbAdapter.getInstance().updateDay(day);
+			if (mDb.isDayExisting(day.date)) {
+				mDb.updateDay(day);
 				if (day.isValid) {
 					nbDaysUpdated++;
 				}
 			} else {
-				DbAdapter.getInstance().createDay(day);
+				mDb.createDay(day);
 				if (day.isValid) {
 					nbDaysCreated++;
 				}

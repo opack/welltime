@@ -62,14 +62,17 @@ public class EditNoteFragment extends DialogFragment implements DialogInterface.
 	
 	@Override
 	public void onClick(DialogInterface dialog, int id) {
-		final TicTacActivity activity = (TicTacActivity)getActivity();
 		final String newNote = mInputField.getText().toString();
 		if (newNote == null || newNote.equals(mOldNote)) {
 			return;
 		}
 		
 		// Mise à jour de la base de données
-		boolean dbUpdated = DbAdapter.getInstance().updateDayNote(mDate, newNote);
+		final TicTacActivity activity = (TicTacActivity)getActivity();
+		final DbAdapter db = DbAdapter.getInstance(activity);
+		db.openDatabase();
+		boolean dbUpdated = db.updateDayNote(mDate, newNote);
+		db.closeDatabase();
 		
 		// Mise à jour de l'affichage
 		if (dbUpdated) {

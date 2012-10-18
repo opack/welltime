@@ -119,18 +119,23 @@ public class EditFlexTimeFragment extends DialogFragment implements DialogInterf
 		final int sign = (Integer)mBtnSign.getTag();
 		final int time = sign * (mTimePicker.getCurrentHour() * 60 + mTimePicker.getCurrentMinute());
 		
-		final TicTacActivity activity = (TicTacActivity)getActivity();
 		if (time == mOldTime) {
 			return;
 		}
 		
-		
 		// Mise à jour de la base de données
-		if (DbAdapter.getInstance().updateFlexTime(mDate, time)) {
+		final TicTacActivity activity = (TicTacActivity)getActivity();
+		final DbAdapter db = DbAdapter.getInstance(activity);
+		db.openDatabase();
+		final boolean dbUpdated = db.updateFlexTime(mDate, time);
+		if (dbUpdated) {
 			// Mise à jour de tous les HV qui suivent cette date
-			final FlexUtils flexUtils = new FlexUtils();
+			final FlexUtils flexUtils = new FlexUtils(db);
 			flexUtils.updateFlex(mDate);
-			
+		}
+		db.closeDatabase();
+		
+		if (dbUpdated) {
 			// Mise à jour de l'affichage
 			activity.populateView(mDate);
 		}
