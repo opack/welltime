@@ -2,7 +2,7 @@
 <resources>
 	<!-- Propriétés de l'application -->
     <string name="app_name">Welltime</string>
-    <string name="app_version">beta (0.4.10)</string>
+    <string name="app_version">beta (0.4.11)</string>
     
     <!-- Titre des onglets -->
     <string name="tab_day">Jour</string>
