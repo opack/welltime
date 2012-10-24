@@ -47,6 +47,9 @@ public class PreferencesUtils {
 		PreferencesBean.instance.weekMin = TimeUtils.parseMinutes(prefs.getString(PreferenceKeys.weekMin.getKey(), "35:00"));
 		PreferencesBean.instance.weekMax = TimeUtils.parseMinutes(prefs.getString(PreferenceKeys.weekMax.getKey(), "39:00"));
 		
+		// Nombre de jours dans la semaine
+		PreferencesBean.instance.nbDaysInWeek = Integer.valueOf(prefs.getString(PreferenceKeys.nbDaysInWeek.getKey(), "5"));
+		
 		// Horaire variable
 		PreferencesBean.instance.flexMin = TimeUtils.parseMinutes(prefs.getString(PreferenceKeys.flexMin.getKey(), "00:00"));
 		PreferencesBean.instance.flexMax = TimeUtils.parseMinutes(prefs.getString(PreferenceKeys.flexMax.getKey(), "07:00"));
@@ -223,6 +226,9 @@ public class PreferencesUtils {
 		editor.putString(PreferenceKeys.weekMin.getKey(), TimeUtils.formatMinutes(PreferencesBean.instance.weekMin));
 		editor.putString(PreferenceKeys.weekMax.getKey(), TimeUtils.formatMinutes(PreferencesBean.instance.weekMax));
 		
+		// Nombre de jours dans la semaine
+		editor.putString(PreferenceKeys.nbDaysInWeek.getKey(), String.valueOf(PreferencesBean.instance.nbDaysInWeek));
+				
 		// Horaire variable
 		editor.putString(PreferenceKeys.flexMin.getKey(), TimeUtils.formatMinutes(PreferencesBean.instance.flexMin));
 		editor.putString(PreferenceKeys.flexMax.getKey(), TimeUtils.formatMinutes(PreferencesBean.instance.flexMax));

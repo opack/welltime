@@ -1,20 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Ecran "Limites" -->
-    <string name="pref_dailyworktime">Temps de travail quotidien</string>
-    <string name="pref_weeklyworktime">Temps de travail hebdomadaire</string>
-    <string name="pref_lunch">Pause repas</string>
-    <string name="pref_lunch_min">Durée minimum</string>
-    <string name="pref_lunch_min_summary">Temps minimum à décompter pour chaque pause repas</string>
-    <string name="pref_lunch_start">Heure de début</string>
-    <string name="pref_lunch_start_summary">Heure à partir de laquelle une sortie débute la pause repas.</string>
-    <string name="pref_lunch_end">Heure de fin</string>
-    <string name="pref_lunch_end_summary">Heure jusqu\'à laquelle une sortie débute la pause repas.</string>
-    <string name="pref_flextime">Horaire variable</string>
-    <string name="pref_minimum">Minimum</string>
-    <string name="pref_minimum_summary">Temps de travail contractuel.</string>
-    <string name="pref_maximum">Maximum</string>
-    <string name="pref_maximum_summary">Temps au-dessus duquel vous êtes écrêté.</string>
+    <string name="pref_limits_dailyworktime">Temps de travail quotidien</string>
+    <string name="pref_limits_weeklyworktime">Temps de travail hebdomadaire</string>
+    <string name="pref_limits_lunch">Pause repas</string>
+    <string name="pref_limits_lunch_min">Durée minimum</string>
+    <string name="pref_limits_lunch_min_summary">Temps minimum à décompter pour chaque pause repas</string>
+    <string name="pref_limits_lunch_start">Heure de début</string>
+    <string name="pref_limits_lunch_start_summary">Heure à partir de laquelle une sortie débute la pause repas.</string>
+    <string name="pref_limits_lunch_end">Heure de fin</string>
+    <string name="pref_limits_lunch_end_summary">Heure jusqu\'à laquelle une sortie débute la pause repas.</string>
+    <string name="pref_limits_flextime">Horaire variable</string>
+    <string name="pref_limits_minimum">Minimum</string>
+    <string name="pref_limits_minimum_summary">Temps de travail contractuel.</string>
+    <string name="pref_limits_maximum">Maximum</string>
+    <string name="pref_limits_maximum_summary">Temps au-dessus duquel vous êtes écrêté.</string>
+    <string name="pref_limits_nb_days_in_week">Nombre de jours</string>
+    <string name="pref_limits_nb_days_in_week_summary">Nombre de jours travaillés dans une semaine.</string>
+    <string-array name="nb_days_in_week_labels">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+    </string-array>
+    <string-array name="nb_days_in_week_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+    </string-array>
+    
     
 	<!-- Ecran "Types de jour" -->
 	<string name="pref_daytype_time">Durée</string>
