@@ -61,14 +61,17 @@
 	        timepickerex:hourMax="99"
 	        timepickerex:minuteMin="0"
 	        timepickerex:minuteMax="60" />
-	   	<ListPreference
-	   	    android:title="@string/pref_limits_nb_days_in_week"
-			android:key="limits_nb_days_in_week"
-			android:summary="@string/pref_limits_nb_days_in_week_summary"
+	   	<!-- On utilise notre propre classe MultiSelectListPreference
+	   	car celle d'Android n'est disponible qu'à partir de l'API level
+	   	11, et que rien n'existe pour nous aider dans le android-support.jar -->
+	   	<TicTacMultiSelectListPreference
+	   	    android:title="@string/pref_limits_worked_days"
+			android:key="limits_worked_days"
+			android:summary="@string/pref_limits_worked_days_summary"
 			android:defaultValue="5"
 			android:dialogTitle="@string/app_name"
-			android:entries="@array/nb_days_in_week_labels"
-			android:entryValues="@array/nb_days_in_week_values" />
+			android:entries="@array/days_of_week_labels"
+			android:entryValues="@array/days_of_week_values" />
 	</PreferenceCategory>
 	
 	<!-- Horaire variable -->
