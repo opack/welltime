@@ -20,12 +20,14 @@ import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
+import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.util.Log;
+import android.widget.Toast;
 import fr.redmoon.tictac.R;
 import fr.redmoon.tictac.bus.PreferenceKeys;
 import fr.redmoon.tictac.bus.PreferencesUtils;
@@ -36,13 +38,14 @@ import fr.redmoon.tictac.bus.bean.DayType;
 import fr.redmoon.tictac.bus.bean.PreferencesBean;
 import fr.redmoon.tictac.bus.export.tocalendar.CalendarAccess;
 
-public class PreferencesActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
+public class PreferencesActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener, OnPreferenceChangeListener {
 	public static final String URI_PAGE_MISC = "preferences://misc";
 	public static final String URI_PAGE_LIMITS = "preferences://limits";
 	public static final String URI_PAGE_DAYS = "preferences://days";
 
 	// Nom des préférences dans les écrans de prefs, ou en tant que préfixe dans les préférences stockées
 	public static final String PREF_LIMITS_PREFIX = "limits_";
+	public static final String PREF_LIMITS_WORKED_DAYS = "limits_worked_days";
 	public static final String PREF_DAYTYPE_PREFIX = "daytype_";
 	private static final String PREF_DAYTYPE_TITLE = PREF_DAYTYPE_PREFIX + "title";
 	public static final String PREF_DAYTYPE_TIME = PREF_DAYTYPE_PREFIX + "time";
@@ -275,6 +278,18 @@ public class PreferencesActivity extends PreferenceActivity implements OnSharedP
 		labelPref.setKey(PreferenceKeys.dayTypeLabel.getKey() + id);
 		labelPref.setDefaultValue(title);
 		labelPref.setText(title);
+	}
+	
+	@Override
+	public boolean onPreferenceChange(Preference preference, Object newValue) {
+		if (PREF_LIMITS_WORKED_DAYS.equals(preference.getKey()) && ((String)newValue).length() == 0) {
+			// Si on veut modifier les jours de travail mais qu'on n'en sélectionne
+			// aucun, on affiche un message et on ne sauvegarde pas la préférence
+			Toast.makeText(this, "Vous devez sélectionner au moins un jour.", Toast.LENGTH_SHORT).show();
+			return false;
+		}
+		// La modification peut être enregistrée
+		return true;
 	}
 	
 	@Override

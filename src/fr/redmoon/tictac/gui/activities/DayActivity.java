@@ -29,6 +29,7 @@ import android.widget.Toast;
 import fr.redmoon.tictac.R;
 import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.bus.FlexUtils;
+import fr.redmoon.tictac.bus.PreferencesUtils;
 import fr.redmoon.tictac.bus.StandardDayTypes;
 import fr.redmoon.tictac.bus.TimeUtils;
 import fr.redmoon.tictac.bus.bean.DayBean;
@@ -247,16 +248,12 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
     public void showPrevious(final View btn) {
     	// On se place sur le dimanche de la semaine, et on avance d'un jour
     	mWorkCal.set(DateUtils.extractYear(mWorkDayBean.date), DateUtils.extractMonth(mWorkDayBean.date), DateUtils.extractDayOfMonth(mWorkDayBean.date));
-    	final int dayOfWeek = mWorkCal.get(Calendar.DAY_OF_WEEK);
-    	if (Calendar.TUESDAY <= dayOfWeek && dayOfWeek <= Calendar.FRIDAY) {
-    		// Si le jour est entre mardi et vendredi, on peut reculer d'un jour : on sera toujours
-    		// sur un jour de semaine travaillé (lundi - vendredi)
+    	// On passe au jour suivant jusqu'à trouver un jour affichable
+    	int dayOfWeek;
+    	do {
     		mWorkCal.add(Calendar.DAY_OF_YEAR, -1);
-    	} else {
-    		// On est dimanche ou lundi, et on ne peut pas avancer d'un seul jour sinon on tombe le
-    		// week-end. On va donc se placer sur le vendredi puis reculer le 7 jours
-    		mWorkCal.add(Calendar.DAY_OF_YEAR, Calendar.FRIDAY - dayOfWeek - 7);
-    	}
+    		dayOfWeek = mWorkCal.get(Calendar.DAY_OF_WEEK) - 1; // -1 car les valeurs de jours dans Calendar commencent à 1 (SUNDAY)
+    	} while(!PreferencesUtils.WORKED_DAYS[dayOfWeek]);
     	
     	// Maintenant on affiche la semaine de ce jour
     	final long dayId = DateUtils.getDayId(mWorkCal);
@@ -272,22 +269,18 @@ public class DayActivity extends TicTacActivity implements OnDayDeletionListener
      * @param btn
      */
     public void showNext(final View btn) {
-    	// On se place sur le jour courant, et on avance d'un jour
+    	// On se place sur le jour courant
     	mWorkCal.set(DateUtils.extractYear(mWorkDayBean.date), DateUtils.extractMonth(mWorkDayBean.date), DateUtils.extractDayOfMonth(mWorkDayBean.date));
-    	final int dayOfWeek = mWorkCal.get(Calendar.DAY_OF_WEEK);
-    	if (Calendar.SUNDAY <= dayOfWeek && dayOfWeek <= Calendar.THURSDAY) {
-    		// Si le jour est entre dimanche et jeudi, on peut avancer d'un jour : on sera toujours
-    		// sur un jour de semaine travaillé (lundi - vendredi)
+    	// On passe au jour suivant jusqu'à trouver un jour affichable
+    	int dayOfWeek;
+    	do {
     		mWorkCal.add(Calendar.DAY_OF_YEAR, 1);
-    	} else {
-    		// On est vendredi ou samedi, et on ne peut pas avancer d'un seul jour sinon on tombe le
-    		// week-end. On va donc avancer d'assez de jours pour tomber sur le lundi.
-    		mWorkCal.add(Calendar.DAY_OF_YEAR, 9 - dayOfWeek);
-    	}
+    		dayOfWeek = mWorkCal.get(Calendar.DAY_OF_WEEK) - 1; // -1 car les valeurs de jours dans Calendar commencent à 1 (SUNDAY)
+    	} while(!PreferencesUtils.WORKED_DAYS[dayOfWeek]);
     	
-    	// Maintenant on affiche la semaine de ce jour
+    	// Maintenant on affiche ce jour
     	final long dayId = DateUtils.getDayId(mWorkCal);
-    	populateView(DateUtils.getDayId(mWorkCal));
+    	populateView(dayId);
     	
     	// Sauvegarde du jour courant dans le synchroniseur de vues pour accorder
     	// toutes les vues sur le même jour

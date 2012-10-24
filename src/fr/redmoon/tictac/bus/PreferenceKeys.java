@@ -19,24 +19,27 @@ public enum PreferenceKeys {
 	
 // Limites
 	// Temps de travail quotidien en minutes
-	dayMin("day_min"),
-	dayMax("day_max"),
+	dayMin("limits_day_min"),
+	dayMax("limits_day_max"),
 	
 	// Pause repas
-	lunchMin("lunch_min"),		// en minutes
-	lunchStart("lunch_start"),	// au format hhmm
-	lunchEnd("lunch_end"),		// au format hhmm
+	lunchMin("limits_lunch_min"),		// en minutes
+	lunchStart("limits_lunch_start"),	// au format hhmm
+	lunchEnd("limits_lunch_end"),		// au format hhmm
 	
 	// Temps de travail hebdomadaire en minutes
-	weekMin("week_min"),
-	weekMax("week_max"),
+	weekMin("limits_week_min"),
+	weekMax("limits_week_max"),
 	
 	// Nombre de jours dans la semaine
-	nbDaysInWeek("nb_days_in_week"),
+	nbDaysInWeek("limits_nb_days_in_week"),
+	
+	// Jours travaillés
+	workedDays("limits_worked_days"),
 	
 	// Horaire variable en minutes
-	flexMin("flex_min"),
-	flexMax("flex_max"),
+	flexMin("limits_flex_min"),
+	flexMax("limits_flex_max"),
 	
 // Initialisation de l'horaire variable
 	// Date initiale au format yyyymmdd

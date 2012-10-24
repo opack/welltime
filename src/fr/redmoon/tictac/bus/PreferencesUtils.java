@@ -2,6 +2,8 @@ package fr.redmoon.tictac.bus;
 
 import static fr.redmoon.tictac.gui.activities.PreferencesActivity.PATTERN_DAY_TYPE_LABEL;
 
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Map;
 import java.util.regex.Matcher;
 
@@ -12,12 +14,36 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
+import android.preference.TicTacMultiSelectListPreference;
 import fr.redmoon.tictac.R;
 import fr.redmoon.tictac.bus.bean.DayType;
 import fr.redmoon.tictac.bus.bean.PreferencesBean;
 import fr.redmoon.tictac.gui.activities.PreferencesActivity;
 
 public class PreferencesUtils {
+	public static final boolean[] WORKED_DAYS = new boolean[7];
+	
+	private static void updateWorkedDays() {
+		// Initialisation du tableau à false et du nombre de jours travaillés à 0
+		Arrays.fill(WORKED_DAYS, false);
+		PreferencesBean.instance.nbDaysInWeek = 0;
+		
+		// Mise à true des valeurs sélectionnées
+    	final String[] selectedDays = PreferencesBean.instance.workedDays.split(TicTacMultiSelectListPreference.SEPARATOR);
+    	int dayId;
+    	for (String selected : selectedDays) {
+    		dayId = Integer.valueOf(selected);
+    		WORKED_DAYS[dayId - 1] = true; // -1 car les valeurs de jours dans Calendar commencent à 1 (SUNDAY) 
+    		PreferencesBean.instance.nbDaysInWeek ++;
+    	}
+    	
+    	// Sécurité pour s'assurer qu'il y a au moins 1 jour
+    	if (PreferencesBean.instance.nbDaysInWeek == 0) {
+    		WORKED_DAYS[Calendar.MONDAY - 1] = true; // -1 car les valeurs de jours dans Calendar commencent à 1 (SUNDAY)
+    		PreferencesBean.instance.nbDaysInWeek = 1;
+    	}
+	}
+	
 	public static void updatePreferencesBean(final Context context) {
 		// Met à jour le bean PreferencesBean avec les valeurs sauvegardées
 		final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -48,7 +74,17 @@ public class PreferencesUtils {
 		PreferencesBean.instance.weekMax = TimeUtils.parseMinutes(prefs.getString(PreferenceKeys.weekMax.getKey(), "39:00"));
 		
 		// Nombre de jours dans la semaine
-		PreferencesBean.instance.nbDaysInWeek = Integer.valueOf(prefs.getString(PreferenceKeys.nbDaysInWeek.getKey(), "5"));
+		// Cette valeur est déduite de workedDays
+		//PreferencesBean.instance.nbDaysInWeek = Integer.valueOf(prefs.getString(PreferenceKeys.nbDaysInWeek.getKey(), "5"));
+		
+		// Jours travaillés
+		PreferencesBean.instance.workedDays = prefs.getString(PreferenceKeys.workedDays.getKey(),
+			Calendar.MONDAY + TicTacMultiSelectListPreference.SEPARATOR
+			+ Calendar.TUESDAY + TicTacMultiSelectListPreference.SEPARATOR
+			+ Calendar.WEDNESDAY + TicTacMultiSelectListPreference.SEPARATOR
+			+ Calendar.THURSDAY + TicTacMultiSelectListPreference.SEPARATOR
+			+ Calendar.FRIDAY + TicTacMultiSelectListPreference.SEPARATOR);
+		updateWorkedDays();
 		
 		// Horaire variable
 		PreferencesBean.instance.flexMin = TimeUtils.parseMinutes(prefs.getString(PreferenceKeys.flexMin.getKey(), "00:00"));
@@ -227,8 +263,12 @@ public class PreferencesUtils {
 		editor.putString(PreferenceKeys.weekMax.getKey(), TimeUtils.formatMinutes(PreferencesBean.instance.weekMax));
 		
 		// Nombre de jours dans la semaine
-		editor.putString(PreferenceKeys.nbDaysInWeek.getKey(), String.valueOf(PreferencesBean.instance.nbDaysInWeek));
-				
+		// Cette valeur est déduite de workedDays
+		//editor.putString(PreferenceKeys.nbDaysInWeek.getKey(), String.valueOf(PreferencesBean.instance.nbDaysInWeek));
+		
+		// Jours travaillés
+		editor.putString(PreferenceKeys.workedDays.getKey(), PreferencesBean.instance.workedDays);
+		
 		// Horaire variable
 		editor.putString(PreferenceKeys.flexMin.getKey(), TimeUtils.formatMinutes(PreferencesBean.instance.flexMin));
 		editor.putString(PreferenceKeys.flexMax.getKey(), TimeUtils.formatMinutes(PreferencesBean.instance.flexMax));
@@ -266,8 +306,8 @@ public class PreferencesUtils {
 		// Note : les 3 lignes qui suivent devraient pouvoir être remplacées par l'appel
     	// à PreferenceManager.setDefaultValues(this, R.xml.preferences, true), mais ça
     	// ne fonctionne pas donc on doit écrire les préférences à la main :'(
-		PreferencesUtils.updatePreferencesBean(activity);
+		updatePreferencesBean(activity);
     	PreferencesBean.instance.isFirstLaunch = false;
-    	PreferencesUtils.savePreferencesBean(activity);
+    	savePreferencesBean(activity);
 	}
 }

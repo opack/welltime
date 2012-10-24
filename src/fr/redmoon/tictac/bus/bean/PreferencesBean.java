@@ -38,7 +38,12 @@ public class PreferencesBean implements Serializable{
 	public int weekMax;	// minutes
 	
 	// Nombre de jours travaillés dans la semaine
+	// Pas directement éditable depuis les préférence, cette
+	// valeur est déduite du contenu de workedDays.
 	public int nbDaysInWeek;
+	
+	// Jours travaillés
+	public String workedDays;
 	
 	// Horaire variable
 	public int flexMin;	// minutes
