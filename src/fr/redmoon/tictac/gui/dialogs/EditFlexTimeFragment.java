@@ -14,8 +14,8 @@ import android.widget.DatePicker;
 import android.widget.TimePicker;
 import fr.redmoon.tictac.R;
 import fr.redmoon.tictac.bus.DateUtils;
-import fr.redmoon.tictac.bus.FlexUtils;
 import fr.redmoon.tictac.bus.TimeUtils;
+import fr.redmoon.tictac.bus.UpdateFlexTask;
 import fr.redmoon.tictac.db.DbAdapter;
 import fr.redmoon.tictac.gui.activities.TicTacActivity;
 
@@ -130,8 +130,8 @@ public class EditFlexTimeFragment extends DialogFragment implements DialogInterf
 		final boolean dbUpdated = db.updateFlexTime(mDate, time);
 		if (dbUpdated) {
 			// Mise à jour de tous les HV qui suivent cette date
-			final FlexUtils flexUtils = new FlexUtils(db);
-			flexUtils.updateFlex(mDate);
+			final UpdateFlexTask task = new UpdateFlexTask(activity);
+			task.execute(mDate);
 		}
 		db.closeDatabase();
 		

@@ -31,6 +31,9 @@ public enum PreferenceKeys {
 	weekMin("week_min"),
 	weekMax("week_max"),
 	
+	// Nombre de jours dans la semaine
+	nbDaysInWeek("nb_days_in_week"),
+	
 	// Horaire variable en minutes
 	flexMin("flex_min"),
 	flexMax("flex_max"),

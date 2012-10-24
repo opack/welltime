@@ -231,7 +231,7 @@ public class WeekActivity extends TicTacActivity implements OnDayDeletionListene
     	// Ajout de jours permettant de remplir les trous de la semaine
     	mWorkCal.set(monday.year, monday.month, monday.monthDay);
     	long dayId;
-    	for (int curDay = 0; curDay < FlexUtils.NB_DAYS_IN_WEEK; curDay++) {
+    	for (int curDay = 0; curDay < PreferencesBean.instance.nbDaysInWeek; curDay++) {
     		// Si le jour n'est pas en base, on en crée un faux
     		dayId = DateUtils.getDayId(mWorkCal);
     		if (!daysById.contains(dayId)) {

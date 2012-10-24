@@ -12,8 +12,6 @@ import fr.redmoon.tictac.bus.bean.WeekBean;
 import fr.redmoon.tictac.db.DbAdapter;
 
 public class FlexUtils {
-	public static final int NB_DAYS_IN_WEEK = 5;
-	
 	private final Time mWorkTime;
 	private final DbAdapter mDb;
 	
@@ -117,13 +115,17 @@ public class FlexUtils {
 
 	/**
 	 * Retourne le temps "non travaillé" cette semaine. Ce temps est déduit du nombre
-	 * de jours travaillés (nbWorkedDays) et du temps de travail théorique d'un jour
-	 * (PreferencesBean.instance.dayMin)
+	 * de jours travaillés (nbWorkedDays), du nombre de jours qui devraient être
+	 * travaillés (PreferencesBean.instance.nbDaysInWeek) et du temps de travail
+	 * théorique d'un jour (PreferencesBean.instance.dayMin)
 	 * @param nbWorkedDays
 	 * @return
 	 */
 	public int computeWeekNotWorkedTime(final int nbWorkedDays) {
-		return (NB_DAYS_IN_WEEK - nbWorkedDays) * PreferencesBean.instance.dayMin;
+		if (nbWorkedDays >= PreferencesBean.instance.nbDaysInWeek){
+			return 0;
+		}
+		return (PreferencesBean.instance.nbDaysInWeek - nbWorkedDays) * PreferencesBean.instance.dayMin;
 	}
 
 	/**

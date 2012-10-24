@@ -27,15 +27,14 @@ import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.util.Log;
 import fr.redmoon.tictac.R;
-import fr.redmoon.tictac.bus.FlexUtils;
 import fr.redmoon.tictac.bus.PreferenceKeys;
 import fr.redmoon.tictac.bus.PreferencesUtils;
 import fr.redmoon.tictac.bus.StandardDayTypes;
 import fr.redmoon.tictac.bus.TimeUtils;
+import fr.redmoon.tictac.bus.UpdateFlexTask;
 import fr.redmoon.tictac.bus.bean.DayType;
 import fr.redmoon.tictac.bus.bean.PreferencesBean;
 import fr.redmoon.tictac.bus.export.tocalendar.CalendarAccess;
-import fr.redmoon.tictac.db.DbAdapter;
 
 public class PreferencesActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
 	public static final String URI_PAGE_MISC = "preferences://misc";
@@ -43,6 +42,7 @@ public class PreferencesActivity extends PreferenceActivity implements OnSharedP
 	public static final String URI_PAGE_DAYS = "preferences://days";
 
 	// Nom des préférences dans les écrans de prefs, ou en tant que préfixe dans les préférences stockées
+	public static final String PREF_LIMITS_PREFIX = "limits_";
 	public static final String PREF_DAYTYPE_PREFIX = "daytype_";
 	private static final String PREF_DAYTYPE_TITLE = PREF_DAYTYPE_PREFIX + "title";
 	public static final String PREF_DAYTYPE_TIME = PREF_DAYTYPE_PREFIX + "time";
@@ -131,15 +131,24 @@ public class PreferencesActivity extends PreferenceActivity implements OnSharedP
 			PreferencesUtils.updatePreferencesBean(this);
 			
 			// Mise à jour du temps additionnel si un temps a été modifié
-			// et qu'on quitte la page principale des types de jour.
+			// et qu'on quitte la page principale des types de jour ou des
+			// limites.
 			// Ainsi on ne le fait qu'une seule fois même si plusieurs temps
 			// ont été modifiés.
-			if (URI_PAGE_DAYS.equals(mCurPage) && mMustComputeFlex) {
-				final DbAdapter db = DbAdapter.getInstance(this);
-				db.openDatabase();
-				final FlexUtils flexUtils = new FlexUtils(db);
-			   	flexUtils.updateFlex();
-			   	db.closeDatabase();
+			if (mMustComputeFlex && 
+				(URI_PAGE_DAYS.equals(mCurPage) || URI_PAGE_LIMITS.equals(mCurPage)) ) {
+				final UpdateFlexTask task = new UpdateFlexTask(this, new UpdateFlexTask.OnTaskCompleteListener() {
+					@Override
+					public void onTaskComplete() {
+						PreferencesActivity.super.onBackPressed();
+					}
+				});
+				task.execute();
+			   	mMustComputeFlex = false;
+			   	// On ne veut pas quitter tout de suite car on est en train de faire la mise
+			   	// à jour de l'HV. On quittera quand le listener aura reçu l'info de fin
+			   	// de traitement.
+			   	return;
 			}
 		}
 	   	
@@ -286,7 +295,8 @@ public class PreferencesActivity extends PreferenceActivity implements OnSharedP
 			renameDayType(sharedPreferences, key);
 		}
 		// S'il y a eut une mise à jour de la durée d'un type de jour, on recalcule l'HV
-		else if (key.startsWith(PREF_DAYTYPE_TIME)) {
+		else if (key.startsWith(PREF_DAYTYPE_TIME)
+			|| key.startsWith(PREF_LIMITS_PREFIX)) {
 			mMustComputeFlex = true;
 		}
 		// Si on a activé la synchro calendrier, il faut s'assurer qu'on a accès au calendrier

@@ -37,6 +37,9 @@ public class PreferencesBean implements Serializable{
 	public int weekMin;	// minutes
 	public int weekMax;	// minutes
 	
+	// Nombre de jours travaillés dans la semaine
+	public int nbDaysInWeek;
+	
 	// Horaire variable
 	public int flexMin;	// minutes
 	public int flexMax;	// minutes
