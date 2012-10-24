@@ -230,8 +230,8 @@ public class DateUtils {
 	 * @return
 	 */
 	public static boolean isWorkingWeekDay(Calendar calendar) {
-		final int dayId = calendar.get(Calendar.DAY_OF_WEEK);
-		return Calendar.MONDAY <= dayId && dayId <= Calendar.FRIDAY;
+		final int dayId = calendar.get(Calendar.DAY_OF_WEEK) - 1; // -1 car les valeurs de jours dans Calendar commencent à 1 (SUNDAY)
+		return PreferencesUtils.WORKED_DAYS[dayId];
 	}
 
 //	/**
