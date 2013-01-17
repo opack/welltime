@@ -16,10 +16,11 @@ import fr.redmoon.tictac.R;
 import fr.redmoon.tictac.bus.DateUtils;
 import fr.redmoon.tictac.bus.TimeUtils;
 import fr.redmoon.tictac.bus.UpdateFlexTask;
+import fr.redmoon.tictac.bus.UpdateFlexTask.OnTaskCompleteListener;
 import fr.redmoon.tictac.db.DbAdapter;
 import fr.redmoon.tictac.gui.activities.TicTacActivity;
 
-public class EditFlexTimeFragment extends DialogFragment implements DialogInterface.OnClickListener {
+public class EditFlexTimeFragment extends DialogFragment implements DialogInterface.OnClickListener, OnTaskCompleteListener {
 	public final static String TAG = EditFlexTimeFragment.class.getName();
 	
 	private final CharSequence NEGATIVE_SIGN = "-";
@@ -32,6 +33,8 @@ public class EditFlexTimeFragment extends DialogFragment implements DialogInterf
 	private TimePicker mTimePicker;
 	private Button mBtnSign;
 	
+	private TicTacActivity mActivityToUpdate;
+	
 	@Override
 	public void setArguments(Bundle args) {
 		mDate = args.getLong(DialogArgs.DATE.name());
@@ -40,6 +43,8 @@ public class EditFlexTimeFragment extends DialogFragment implements DialogInterf
 	
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
+		
+		
 		//On instancie notre layout en tant que View
 		LayoutInflater factory = LayoutInflater.from(getActivity());
         final View dialogView = factory.inflate(R.layout.dlg_date_time, null);
@@ -128,16 +133,19 @@ public class EditFlexTimeFragment extends DialogFragment implements DialogInterf
 		final DbAdapter db = DbAdapter.getInstance(activity);
 		db.openDatabase();
 		final boolean dbUpdated = db.updateFlexTime(mDate, time);
-		if (dbUpdated) {
-			// Mise à jour de tous les HV qui suivent cette date
-			final UpdateFlexTask task = new UpdateFlexTask(activity);
-			task.execute(mDate);
-		}
 		db.closeDatabase();
-		
 		if (dbUpdated) {
-			// Mise à jour de l'affichage
-			activity.populateView(mDate);
-		}
+			mActivityToUpdate = activity;
+			
+			// Mise à jour de tous les HV qui suivent cette date
+			final UpdateFlexTask task = new UpdateFlexTask(activity, this);
+			task.execute(mDate);
+		}		
+	}
+
+	@Override
+	public void onTaskComplete() {
+		// Mise à jour de l'affichage une fois l'HV mis à jour
+		mActivityToUpdate.populateView(mDate);
 	}
 }
