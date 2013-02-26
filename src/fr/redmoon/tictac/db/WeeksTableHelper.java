@@ -82,11 +82,12 @@ public class WeeksTableHelper extends TableHelper {
 		final String orderClause = COL_DATE + " desc LIMIT 1";
 		final Cursor cursor = fetchWhere(db, whereClause, orderClause);
 		
-		weekData.date = dayId;
 		if (cursor.getCount() > 0) {
+			weekData.date = cursor.getInt(COL_DATE_INDEX);
 			weekData.flexTime = cursor.getInt(COL_FLEX_TIME_INDEX);
 			weekData.isValid = true;
 		} else {
+			weekData.date = dayId;
 			weekData.flexTime = TimeUtils.UNKNOWN_TIME;
 			weekData.isValid = false;
 		}
