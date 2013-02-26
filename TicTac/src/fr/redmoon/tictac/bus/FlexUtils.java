@@ -59,10 +59,10 @@ public class FlexUtils {
 		// Récupération du dernier jour en base
 		long lastExistingDay = mDb.fetchPreviousDay(99999999);
 
-		// Récupération des jours entre cette date et le prochain dimanche
-		mDb.fetchDays(firstDay, lastDay, days);
+		// Récupération des jours entre le dernier jour ayant un flex et son dimanche
+		mDb.fetchDays(weekData.date, lastDay, days);
 		int curWeekTotal = 0;
-		while (lastDay <= lastExistingDay){
+		do{
 			// Calcul de l'HV accumulé au cours de ces jours
 			curWeekTotal = computeWeekTotal(days);
 			
@@ -84,7 +84,7 @@ public class FlexUtils {
 			
 			// Récupération des jours entre cette date et le prochain dimanche
 			mDb.fetchDays(firstDay, lastDay, days);
-		}
+		}while (lastDay <= lastExistingDay);
 	}
 
 	/**
