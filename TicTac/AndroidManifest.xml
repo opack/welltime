@@ -13,6 +13,8 @@
     <!-- Pour la création d'évènements dans le calendrier -->
     <uses-permission android:name="android.permission.READ_CALENDAR" />
     <uses-permission android:name="android.permission.WRITE_CALENDAR" />
+    <!-- Pour l'écriture dans la BD -->
+    <uses-permission android:name="android.permission.INTERACT_ACROSS_USERS_FULL" />
     
     <application
     	android:icon="@drawable/icon"
