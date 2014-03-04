@@ -145,6 +145,10 @@ public class TimeUtils {
 						// Pour avoir le temps effectué jusqu'à maintenant, on triche et on ajoute
 						// un pointage à l'heure actuelle.
 						out = convertInMinutes(parseTime(now));
+						// Si le dernier pointage est dans le futur, on ne calcule par le temps
+						if (out < in) {
+							continue;
+						}
 					}
 					// Il manque un pointage et on n'est pas en train de calculer le temps d'aujourd'hui.
 					// On se contente d'ignorer cet intervalle.
